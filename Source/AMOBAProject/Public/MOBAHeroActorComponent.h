@@ -14,4 +14,12 @@ class AMOBAPROJECT_API UMOBAHeroActorComponent : public UMOBABaseActorComponent
 {
 	GENERATED_BODY()
 	
+
+public:
+
+	UMOBAHeroActorComponent();
+
+protected:
+	HeroState heroState;
+
 };

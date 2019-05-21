@@ -6,80 +6,80 @@
 #include "MOBABaseActor.h"
 #include "MOBAHeroActor.generated.h"
 
-//¼ÆÊ±Æ÷ÉùÃ÷
+//è®¡æ—¶å™¨å£°æ˜
 struct FTimerHandle;
 
-//Ó¢ĞÛÊôĞÔ
+//è‹±é›„å±æ€§
 struct HeroProperty {
-	//¸´»îÊ±¼ä
+	//å¤æ´»æ—¶é—´
 	int resetTime;
 
-	//±©»÷ÂÊ¼°±©»÷ÉËº¦
+	//æš´å‡»ç‡åŠæš´å‡»ä¼¤å®³
 	float strikeRate;
 	float strikeDamage;
 
-	//ÖØÉË
+	//é‡ä¼¤
 	bool bIsInjured;
 
-	//Ïà¶Ô´©Í¸
+	//ç›¸å¯¹ç©¿é€
 	float relativeArmorPenetration;
 	float relativeMagicResistPenetration;
 
-	//¾ø¶Ô´©Í¸
+	//ç»å¯¹ç©¿é€
 	int absoluteMagicResistPenetration;
 	int absoluteArmorPentration;
 
-	//ÉúÃüÍµÈ¡
+	//ç”Ÿå‘½å·å–
 	float lifeSteal;
 
 };
 
-//³É³¤ÊôĞÔ
+//æˆé•¿å±æ€§
 struct HeroGrowth {
-	//ÉúÃü³É³¤£¬·¨Á¦³É³¤
+	//ç”Ÿå‘½æˆé•¿ï¼Œæ³•åŠ›æˆé•¿
 	int hpGrowth;
 	int mpGrowth;
 
-	//»Ö¸´³É³¤
+	//æ¢å¤æˆé•¿
 	float hpRecoveryGrowth;
 	float mpRecoveryGrowth;
 
-	//»¤¼×Ä§¿¹³É³¤
+	//æŠ¤ç”²é­”æŠ—æˆé•¿
 	int armorGrowth;
 	int magicResistGrowth;
 
-	//¹¥»÷Á¦¹¥»÷ËÙ¶È³É³¤
+	//æ”»å‡»åŠ›æ”»å‡»é€Ÿåº¦æˆé•¿
 	int attackGrowth;
 	float attackSpeedGrowth;
 
-	//ËùĞ¯´ø¾­ÑéÖµ³É³¤
+	//æ‰€æºå¸¦ç»éªŒå€¼æˆé•¿
 	int experienceCarriedGrowth;
 
-	//¸´»îÊ±¼ä³É³¤
+	//å¤æ´»æ—¶é—´æˆé•¿
 	int resetTimeGrowth;
 };
 
-//»÷É±½±Àø
+//å‡»æ€å¥–åŠ±
 struct HeroValue {
-	//½ğÇ®½±Àø
+	//é‡‘é’±å¥–åŠ±
 	int goldValue;
 
-	//¾­Ñé½±Àø
+	//ç»éªŒå¥–åŠ±
 	int experienceValue;
 
 	//...
 
 };
 
-//¼¼ÄÜÀäÈ´Ê±¼äºÍ¸´»îÊ±¼ä´¦Àí
+//æŠ€èƒ½å†·å´æ—¶é—´å’Œå¤æ´»æ—¶é—´å¤„ç†
 struct TimerHandles {
-	//¼¼ÄÜÀäÈ´Ê±¼ä:Q,W,E,R
+	//æŠ€èƒ½å†·å´æ—¶é—´:Q,W,E,R
 	FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;
 	FTimerHandle skillETimer;
 	FTimerHandle skillRTimer;
 
-	//¸´»îÊ±¼ä
+	//å¤æ´»æ—¶é—´
 	FTimerHandle resetTimer;
 };
 
@@ -111,7 +111,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
-
+	
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetQSkill();
 
