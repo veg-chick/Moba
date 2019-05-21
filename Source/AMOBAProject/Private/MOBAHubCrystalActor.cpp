@@ -6,3 +6,7 @@
 AMOBAHubCrystalActor::AMOBAHubCrystalActor(BaseProperty aBaseProperty, BaseValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
 
 }
+
+AMOBAHubCrystalActor::AMOBAHubCrystalActor(){
+
+}
