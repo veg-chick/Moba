@@ -76,3 +76,6 @@ DerivedDataCache/*
 
 #Content like photo, Materials, and so on
 Content/*
+
+#vscode run file
+.vscode
