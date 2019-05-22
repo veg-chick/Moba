@@ -79,3 +79,6 @@ Content/*
 
 #vscode run file
 .vscode
+
+#Don't ignore these contents that shoule be push
+!Content/PushContent/
