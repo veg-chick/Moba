@@ -6,6 +6,9 @@
 #include "MOBABaseActor.h"
 #include "MOBATowerActor.generated.h"
 
+class UStaticMeshComponent;
+class USphereComponent;
+
 UENUM()
 enum TowerRoad { top, mid, down };
 
@@ -39,4 +42,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerType getTowerType();
 
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* RootComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* BaseMeshComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* StructMeshComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		USphereComponent* CollisionComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		USphereComponent* ClickComp;
 };

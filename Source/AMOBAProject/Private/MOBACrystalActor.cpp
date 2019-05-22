@@ -2,13 +2,43 @@
 
 
 #include "Public/MOBACrystalActor.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/SphereComponent.h"
 
 AMOBACrystalActor::AMOBACrystalActor(BaseProperty ABaseProperty, BaseValue aBaseValue, CrystalRoad aRoad) :AMOBABaseActor(ABaseProperty, aBaseValue), road(aRoad) {
+	
+	RootComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootComp"));
+	RootComponent = RootComp;
 
+	BaseMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMeshComp"));
+	BaseMeshComp->SetupAttachment(RootComp);
+
+	StructMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StructMeshComp"));
+	StructMeshComp->SetupAttachment(RootComp);
+
+	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
+	CollisionComp->SetupAttachment(RootComp);
+
+	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
+	ClickComp->SetupAttachment(RootComp);
 }
 
 AMOBACrystalActor::AMOBACrystalActor() {
 
+	RootComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootComp"));
+	RootComponent = RootComp;
+
+	BaseMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMeshComp"));
+	BaseMeshComp->SetupAttachment(RootComp);
+
+	StructMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StructMeshComp"));
+	StructMeshComp->SetupAttachment(RootComp);
+
+	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
+	CollisionComp->SetupAttachment(RootComp);
+
+	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
+	ClickComp->SetupAttachment(RootComp);
 }
 
 bool AMOBACrystalActor::isBroken() {

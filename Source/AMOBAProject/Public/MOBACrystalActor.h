@@ -6,6 +6,9 @@
 #include "MOBABaseActor.h"
 #include "MOBACrystalActor.generated.h"
 
+class UStaticMeshComponent;
+class USphereComponent;
+
 UENUM()
 enum CrystalRoad { top, mid, down };
 
@@ -27,12 +30,26 @@ protected:
 
 	CrystalRoad road;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* RootComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* BaseMeshComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* StructMeshComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		USphereComponent* CollisionComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		USphereComponent* ClickComp;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool isBroken();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		CrystalRoad getRoad();
-
 
 };

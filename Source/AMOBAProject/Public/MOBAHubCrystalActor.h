@@ -6,9 +6,9 @@
 #include "MOBABaseActor.h"
 #include "MOBAHubCrystalActor.generated.h"
 
-/**
- *
- */
+class UStaticMeshComponent;
+class USphereComponent;
+
 UCLASS()
 class AMOBAPROJECT_API AMOBAHubCrystalActor : public AMOBABaseActor
 {
@@ -17,5 +17,22 @@ class AMOBAPROJECT_API AMOBAHubCrystalActor : public AMOBABaseActor
 public:
 	AMOBAHubCrystalActor();
 	AMOBAHubCrystalActor(BaseProperty aBaseProperty, BaseValue aBaseValue);
+
+protected:
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* RootComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* BaseMeshComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		UStaticMeshComponent* StructMeshComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		USphereComponent* CollisionComp;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+		USphereComponent* ClickComp;
 
 };
