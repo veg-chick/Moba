@@ -7,7 +7,7 @@ AMOBACrystalActor::AMOBACrystalActor(BaseProperty ABaseProperty, BaseValue aBase
 
 }
 
-AMOBACrystalActor::AMOBACrystalActor(){
+AMOBACrystalActor::AMOBACrystalActor() {
 
 }
 

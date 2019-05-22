@@ -20,7 +20,6 @@ void UMOBABaseActorComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
 }
 
 

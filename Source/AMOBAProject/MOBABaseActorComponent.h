@@ -26,9 +26,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
-	//组件的持有者
 	AActor* myOwner;
 
-	
+
 
 };

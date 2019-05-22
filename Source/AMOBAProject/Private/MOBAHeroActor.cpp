@@ -8,27 +8,27 @@ AMOBAHeroActor::AMOBAHeroActor() {
 
 }
 
-AMOBAHeroActor::AMOBAHeroActor(BaseProperty bP,BaseValue bV, HeroProperty hP, HeroGrowth hG,HeroValue hV):AMOBABaseActor(bP,bV),heroProperty(hP),heroGrowth(hG),heroValue(hV){
+AMOBAHeroActor::AMOBAHeroActor(BaseProperty bP, BaseValue bV, HeroProperty hP, HeroGrowth hG, HeroValue hV) :AMOBABaseActor(bP, bV), heroProperty(hP), heroGrowth(hG), heroValue(hV) {
 
 }
 
-void AMOBAHeroActor::resetHero(){
+void AMOBAHeroActor::resetHero() {
 
 }
 
-void AMOBAHeroActor::resetQSkill(){
+void AMOBAHeroActor::resetQSkill() {
 
 }
 
-void AMOBAHeroActor::resetWSkill(){
+void AMOBAHeroActor::resetWSkill() {
 
 }
 
-void AMOBAHeroActor::resetESkill(){
+void AMOBAHeroActor::resetESkill() {
 
 }
 
-void AMOBAHeroActor::resetRSkill(){
+void AMOBAHeroActor::resetRSkill() {
 
 }
 

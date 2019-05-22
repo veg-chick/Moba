@@ -6,7 +6,6 @@
 #include "MOBABaseActor.h"
 #include "MOBASoldierActor.generated.h"
 
-//分路:上路，中路，下路
 UENUM()
 enum SoldierRoad { top, mid, down };
 
@@ -23,11 +22,17 @@ public:
 	AMOBASoldierActor(BaseProperty aBaseProperty, BaseValue aBaseValue, SoldierRoad aRoad);
 
 protected:
-	//分路
+<<<<<<< HEAD
+	//锟斤拷路
 	SoldierRoad road;
 
 public:
-	//获取分路
+	//锟斤拷取锟斤拷路
+=======
+	SoldierRoad road;
+
+public:
+>>>>>>> c83824acd38368cd963a7467f290283660d3ff5a
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		SoldierRoad getRoad();
 

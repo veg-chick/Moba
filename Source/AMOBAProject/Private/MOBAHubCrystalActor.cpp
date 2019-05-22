@@ -3,10 +3,10 @@
 
 #include "Public/MOBAHubCrystalActor.h"
 
-AMOBAHubCrystalActor::AMOBAHubCrystalActor(BaseProperty aBaseProperty, BaseValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
+AMOBAHubCrystalActor::AMOBAHubCrystalActor() {
 
 }
 
-AMOBAHubCrystalActor::AMOBAHubCrystalActor(){
+AMOBAHubCrystalActor::AMOBAHubCrystalActor(BaseProperty aBaseProperty, BaseValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
 
 }

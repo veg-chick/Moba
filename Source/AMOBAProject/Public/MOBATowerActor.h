@@ -6,11 +6,9 @@
 #include "MOBABaseActor.h"
 #include "MOBATowerActor.generated.h"
 
-//分路:上路，中路，下路
 UENUM()
 enum TowerRoad { top, mid, down };
 
-//类型:一塔，二塔，高地塔，门牙塔
 UENUM()
 enum TowerType { outter, inner, highland, hub };
 
@@ -35,11 +33,9 @@ protected:
 	TowerType towerType;
 
 public:
-	//获取防御塔分路
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerRoad getRoad();
 
-	//获取防御塔类型
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerType getTowerType();
 

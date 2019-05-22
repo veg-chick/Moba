@@ -7,7 +7,7 @@ AMOBATowerActor::AMOBATowerActor(BaseProperty aBaseProperty, BaseValue aBaseValu
 
 }
 
-AMOBATowerActor::AMOBATowerActor(){
+AMOBATowerActor::AMOBATowerActor() {
 
 }
 

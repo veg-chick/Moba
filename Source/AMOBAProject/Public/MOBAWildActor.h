@@ -23,14 +23,11 @@ public:
 
 protected:
 
-	//复活计时器
 	FTimerHandle wildResetTimeHanlde;
 
-	//脱离战斗后快速恢复
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void quickRecovery();
 
-	//与TimeHanlde绑定的复活函数
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetWild();
 
