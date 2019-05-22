@@ -22,9 +22,17 @@ public:
 	AMOBASoldierActor(BaseProperty aBaseProperty, BaseValue aBaseValue, SoldierRoad aRoad);
 
 protected:
+<<<<<<< HEAD
+	//��·
 	SoldierRoad road;
 
 public:
+	//��ȡ��·
+=======
+	SoldierRoad road;
+
+public:
+>>>>>>> c83824acd38368cd963a7467f290283660d3ff5a
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		SoldierRoad getRoad();
 

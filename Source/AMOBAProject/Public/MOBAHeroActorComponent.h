@@ -21,6 +21,12 @@ struct HeroPackage {
 };
 
 
+<<<<<<< HEAD
+/**
+ *
+ */
+=======
+>>>>>>> c83824acd38368cd963a7467f290283660d3ff5a
 UCLASS()
 class AMOBAPROJECT_API UMOBAHeroActorComponent : public UMOBABaseActorComponent
 {
@@ -30,9 +36,33 @@ public:
 
 	UMOBAHeroActorComponent();
 
+<<<<<<< HEAD
+protected:
+
+// 	virtual void BeginPlay() override;
+
+protected:
+	/*
+	//�����˺�
+	virtual void applyDamage(AActor* damagedActor, DamageType damageType, int damage, AActor* damageCauser)override;
+
+	//����
+	virtual void deadHandle(AActor* deadActor, int deadTime)override;
+
+	//����
+	virtual void attack(AActor* damagedActor, DamageType DamageType, int damage, AActor* damageCauser)override;
+
+	//�ܷ���й���
+	virtual bool canAttack(AActor* damagedActor, DamageType DamageType, int damage, AActor* damageCauser)override;
+
+	*/
+protected:
+	//����״̬
+=======
 
 protected:
 
+>>>>>>> c83824acd38368cd963a7467f290283660d3ff5a
 	HeroState heroState;
 
 };
