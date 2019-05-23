@@ -52,4 +52,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		CrystalRoad getRoad();
 
+	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
+
 };

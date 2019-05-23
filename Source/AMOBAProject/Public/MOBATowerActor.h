@@ -42,6 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerType getTowerType();
 
+	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,TowerRoad aRoad,TowerType aTowerType);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		UStaticMeshComponent* RootComp;

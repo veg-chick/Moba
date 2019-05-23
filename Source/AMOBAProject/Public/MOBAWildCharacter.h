@@ -32,5 +32,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetWild();
 
+	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
+
 
 };

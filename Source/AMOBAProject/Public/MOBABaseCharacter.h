@@ -57,4 +57,7 @@ public:
 
 	Camp getCamp();
 
+	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
+
 };

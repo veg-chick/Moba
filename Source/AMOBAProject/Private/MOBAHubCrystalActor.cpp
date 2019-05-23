@@ -25,3 +25,9 @@ AMOBAHubCrystalActor::AMOBAHubCrystalActor() {
 AMOBAHubCrystalActor::AMOBAHubCrystalActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
 
 }
+
+void AMOBAHubCrystalActor::assignHubCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
+
+	assignBaseValueForAPI(aBaseProperty, aBaseValue);
+
+}

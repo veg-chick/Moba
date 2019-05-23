@@ -160,3 +160,10 @@ Camp AMOBABaseCharacter::getCamp(){
 
 }
 
+void AMOBABaseCharacter::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
+
+	this->baseProperty = aBaseProperty;
+	this->baseValue = aBaseValue;
+
+}
+

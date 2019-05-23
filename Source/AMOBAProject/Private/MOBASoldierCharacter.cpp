@@ -12,3 +12,10 @@ SoldierRoad AMOBASoldierCharacter::getRoad()
 {
 	return road;
 }
+
+void AMOBASoldierCharacter::assignSoldierValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, SoldierRoad aRoad){
+
+	assignBaseValueForAPI(aBaseProperty, aBaseValue);
+	this->road = aRoad;
+
+}

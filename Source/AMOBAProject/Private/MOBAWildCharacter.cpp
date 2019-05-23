@@ -19,3 +19,9 @@ void AMOBAWildCharacter::resetWild()
 {
 
 }
+
+void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
+
+	assignBaseValueForAPI(aBaseProperty, aBaseValue);
+
+}

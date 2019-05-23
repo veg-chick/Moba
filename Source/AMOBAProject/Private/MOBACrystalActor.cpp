@@ -48,3 +48,11 @@ bool AMOBACrystalActor::isBroken() {
 CrystalRoad AMOBACrystalActor::getRoad() {
 	return road;
 }
+
+void AMOBACrystalActor::assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad){
+
+	assignBaseValueForAPI(aBaseProperty, aBaseValue);
+
+	this->road = aRoad;
+
+}

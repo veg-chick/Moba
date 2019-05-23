@@ -33,3 +33,11 @@ TowerRoad AMOBATowerActor::getRoad() {
 TowerType AMOBATowerActor::getTowerType() {
 	return towerType;
 }
+
+void AMOBATowerActor::assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType){
+
+	assignBaseValueForAPI(aBaseProperty, aBaseValue);
+	this->road = aRoad;
+	this->towerType = aTowerType;
+
+}

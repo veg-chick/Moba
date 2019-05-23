@@ -11,8 +11,7 @@ void AMOBABaseActor::setValue() {
 }
 
 // Sets default values
-AMOBABaseActor::AMOBABaseActor()
-{
+AMOBABaseActor::AMOBABaseActor(){
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -27,9 +26,15 @@ bool AMOBABaseActor::canBeAttacked()
 	return this->baseProperty.bCanBeAttacked;
 }
 
-Camp AMOBABaseActor::getCamp()
-{
+Camp AMOBABaseActor::getCamp(){
 	return this->baseProperty.baseCamp;
+}
+
+void AMOBABaseActor::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
+
+	this->baseProperty = aBaseProperty;
+	this->baseValue = aBaseValue;
+
 }
 
 // Called when the game starts or when spawned

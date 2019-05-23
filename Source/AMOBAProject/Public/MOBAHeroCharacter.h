@@ -67,21 +67,6 @@ struct FHeroGrowth {
 	int resetTimeGrowth;
 };
 
-//击杀奖励
-USTRUCT()
-struct FHeroValue {
-
-	GENERATED_BODY()
-
-		//金钱奖励
-		int goldValue;
-
-	//经验奖励
-	int experienceValue;
-
-	//...
-
-};
 
 //技能冷却时间和复活时间处理
 USTRUCT()
@@ -117,9 +102,11 @@ protected:
 
 	FHeroGrowth heroGrowth;
 
-	FHeroValue heroValue;
-
 	FTimerHandles timeHandles;
+
+	FBaseActorProperty baseProperty;
+
+	FBaseActorValue baseValue;
 
 protected:
 
@@ -137,5 +124,10 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetRSkill();
+
+public:
+
+	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,FHeroProperty aHeroProperty,FHeroGrowth aHeroGrowth);
 
 };

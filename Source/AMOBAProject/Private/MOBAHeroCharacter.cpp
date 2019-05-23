@@ -32,3 +32,11 @@ void AMOBAHeroCharacter::resetRSkill()
 {
 
 }
+
+void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth){
+
+	assignBaseValueForAPI(aBaseProperty, aBaseValue);
+	this->heroProperty = aHeroProperty;
+	this->heroGrowth = aHeroGrowth;
+
+}
