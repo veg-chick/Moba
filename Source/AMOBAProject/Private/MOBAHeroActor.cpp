@@ -8,7 +8,7 @@ AMOBAHeroActor::AMOBAHeroActor() {
 
 }
 
-AMOBAHeroActor::AMOBAHeroActor(BaseProperty bP, BaseValue bV, HeroProperty hP, HeroGrowth hG, HeroValue hV) :AMOBABaseActor(bP, bV), heroProperty(hP), heroGrowth(hG), heroValue(hV) {
+AMOBAHeroActor::AMOBAHeroActor(FBaseActorProperty bP, FBaseActorValue bV, FHeroProperty hP, FHeroGrowth hG, FHeroValue hV) :AMOBABaseActor(bP, bV), heroProperty(hP), heroGrowth(hG), heroValue(hV) {
 
 }
 

@@ -23,7 +23,7 @@ class AMOBAPROJECT_API AMOBACrystalActor : public AMOBABaseActor
 public:
 	AMOBACrystalActor();
 
-	AMOBACrystalActor(BaseProperty ABaseProperty, BaseValue aBaseValue, CrystalRoad aRoad);
+	AMOBACrystalActor(FBaseActorProperty ABaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
 
 protected:
 	bool bIsBroken;

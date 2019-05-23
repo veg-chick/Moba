@@ -16,7 +16,7 @@ class AMOBAPROJECT_API AMOBAHubCrystalActor : public AMOBABaseActor
 
 public:
 	AMOBAHubCrystalActor();
-	AMOBAHubCrystalActor(BaseProperty aBaseProperty, BaseValue aBaseValue);
+	AMOBAHubCrystalActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
 protected:
 

@@ -6,9 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "MOBABaseActor.generated.h"
 
+UENUM()
 enum Camp { blue, red, other };
 
-struct BaseProperty {
+USTRUCT()
+struct FBaseActorProperty {
 	Camp baseCamp;
 
 	float hp;
@@ -44,7 +46,8 @@ struct BaseProperty {
 UENUM()
 enum DamageType { physical, magic, real, treat };
 
-struct BaseValue {
+USTRUCT()
+struct FBaseActorValue {
 	int goldValue;
 
 	int experienceValue;
@@ -70,9 +73,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	BaseProperty baseProperty;
+	FBaseActorProperty baseProperty;
 
-	BaseValue baseValue;
+	FBaseActorValue baseValue;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void applyDamage(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
@@ -92,6 +95,6 @@ protected:
 public:
 
 
-	AMOBABaseActor(BaseProperty aBaseProperty, BaseValue aBaseValue);
+	AMOBABaseActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
 };

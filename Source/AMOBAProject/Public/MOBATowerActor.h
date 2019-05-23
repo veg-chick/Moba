@@ -24,7 +24,7 @@ class AMOBAPROJECT_API AMOBATowerActor : public AMOBABaseActor
 	GENERATED_BODY()
 
 public:
-	AMOBATowerActor(BaseProperty aBaseProperty, BaseValue aBaseValue, TowerRoad aRoad, TowerType aTowerType);
+	AMOBATowerActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType);
 	AMOBATowerActor();
 
 protected:

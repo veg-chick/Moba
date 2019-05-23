@@ -3,7 +3,7 @@
 
 #include "Public/MOBASoldierActor.h"
 
-AMOBASoldierActor::AMOBASoldierActor(BaseProperty aBaseProperty, BaseValue aBaseValue, SoldierRoad aRoad) :AMOBABaseActor(aBaseProperty, aBaseValue), road(aRoad) {
+AMOBASoldierActor::AMOBASoldierActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, SoldierRoad aRoad) :AMOBABaseActor(aBaseProperty, aBaseValue), road(aRoad) {
 
 }
 

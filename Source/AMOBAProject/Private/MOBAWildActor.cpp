@@ -8,7 +8,7 @@ AMOBAWildActor::AMOBAWildActor() {
 
 }
 
-AMOBAWildActor::AMOBAWildActor(BaseProperty aBaseProperty, BaseValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
+AMOBAWildActor::AMOBAWildActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
 
 }
 

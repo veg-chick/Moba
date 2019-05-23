@@ -19,7 +19,7 @@ class AMOBAPROJECT_API AMOBASoldierActor : public AMOBABaseActor
 
 public:
 	AMOBASoldierActor();
-	AMOBASoldierActor(BaseProperty aBaseProperty, BaseValue aBaseValue, SoldierRoad aRoad);
+	AMOBASoldierActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, SoldierRoad aRoad);
 
 protected:
 	SoldierRoad road;

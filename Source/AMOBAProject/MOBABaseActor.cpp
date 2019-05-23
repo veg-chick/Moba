@@ -15,7 +15,7 @@ AMOBABaseActor::AMOBABaseActor()
 
 }
 
-AMOBABaseActor::AMOBABaseActor(BaseProperty aBaseProperty, BaseValue aBaseValue) :baseProperty(aBaseProperty), baseValue(aBaseValue) {
+AMOBABaseActor::AMOBABaseActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :baseProperty(aBaseProperty), baseValue(aBaseValue) {
 
 }
 

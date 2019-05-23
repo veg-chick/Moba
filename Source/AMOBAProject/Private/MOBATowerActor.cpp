@@ -5,7 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 
-AMOBATowerActor::AMOBATowerActor(BaseProperty aBaseProperty, BaseValue aBaseValue, TowerRoad aRoad, TowerType aTowerType) :AMOBABaseActor(aBaseProperty, aBaseValue), road(aRoad), towerType(aTowerType) {
+AMOBATowerActor::AMOBATowerActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType) :AMOBABaseActor(aBaseProperty, aBaseValue), road(aRoad), towerType(aTowerType) {
 
 }
 

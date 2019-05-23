@@ -10,7 +10,8 @@
 struct FTimerHandle;
 
 //英雄属性
-struct HeroProperty {
+USTRUCT()
+struct FHeroProperty {
 	//复活时间
 	int resetTime;
 
@@ -35,7 +36,8 @@ struct HeroProperty {
 };
 
 //成长属性
-struct HeroGrowth {
+USTRUCT()
+struct FHeroGrowth {
 	//生命成长，法力成长
 	int hpGrowth;
 	int mpGrowth;
@@ -60,7 +62,8 @@ struct HeroGrowth {
 };
 
 //击杀奖励
-struct HeroValue {
+USTRUCT()
+struct FHeroValue {
 	//金钱奖励
 	int goldValue;
 
@@ -72,7 +75,8 @@ struct HeroValue {
 };
 
 //技能冷却时间和复活时间处理
-struct TimerHandles {
+USTRUCT()
+struct FTimerHandles {
 	//技能冷却时间:Q,W,E,R
 	FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;
@@ -95,17 +99,17 @@ class AMOBAPROJECT_API AMOBAHeroActor : public AMOBABaseActor
 public:
 
 	AMOBAHeroActor();
-	AMOBAHeroActor(BaseProperty bP, BaseValue bV, HeroProperty hP, HeroGrowth hG, HeroValue hV);
+	AMOBAHeroActor(FBaseActorProperty bP, FBaseActorValue bV,FHeroProperty hP, FHeroGrowth hG, FHeroValue hV);
 
 protected:
 
-	HeroProperty heroProperty;
+	FHeroProperty heroProperty;
 
-	HeroGrowth heroGrowth;
+	FHeroGrowth heroGrowth;
 
-	HeroValue heroValue;
+	FHeroValue heroValue;
 
-	TimerHandles timeHandles;
+	FTimerHandles timeHandles;
 
 protected:
 

@@ -19,7 +19,7 @@ class AMOBAPROJECT_API AMOBAWildActor : public AMOBABaseActor
 public:
 
 	AMOBAWildActor();
-	AMOBAWildActor(BaseProperty aBaseProperty, BaseValue aBaseValue);
+	AMOBAWildActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
 protected:
 

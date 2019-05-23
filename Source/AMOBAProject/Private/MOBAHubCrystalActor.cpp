@@ -22,6 +22,6 @@ AMOBAHubCrystalActor::AMOBAHubCrystalActor() {
 	ClickComp->SetupAttachment(RootComp);
 }
 
-AMOBAHubCrystalActor::AMOBAHubCrystalActor(BaseProperty aBaseProperty, BaseValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
+AMOBAHubCrystalActor::AMOBAHubCrystalActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
 
 }
