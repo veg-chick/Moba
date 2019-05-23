@@ -12,6 +12,9 @@ struct FTimerHandle;
 //英雄属性
 USTRUCT()
 struct FHeroProperty {
+
+	GENERATED_BODY()
+
 	//复活时间
 	int resetTime;
 
@@ -38,6 +41,9 @@ struct FHeroProperty {
 //成长属性
 USTRUCT()
 struct FHeroGrowth {
+
+	GENERATED_BODY()
+
 	//生命成长，法力成长
 	int hpGrowth;
 	int mpGrowth;
@@ -64,6 +70,9 @@ struct FHeroGrowth {
 //击杀奖励
 USTRUCT()
 struct FHeroValue {
+
+	GENERATED_BODY()
+
 	//金钱奖励
 	int goldValue;
 
@@ -77,6 +86,9 @@ struct FHeroValue {
 //技能冷却时间和复活时间处理
 USTRUCT()
 struct FTimerHandles {
+
+	GENERATED_BODY()
+
 	//技能冷却时间:Q,W,E,R
 	FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;

@@ -11,6 +11,9 @@ enum Camp { blue, red, other };
 
 USTRUCT()
 struct FBaseActorProperty {
+
+	GENERATED_BODY()
+
 	Camp baseCamp;
 
 	float hp;
@@ -28,6 +31,7 @@ struct FBaseActorProperty {
 	int moveSpeed;
 
 	bool bAbleToAttack;
+	bool bCanBeAttacked;
 	bool bIsRemote;
 	int attackRange;
 
@@ -48,6 +52,9 @@ enum DamageType { physical, magic, real, treat };
 
 USTRUCT()
 struct FBaseActorValue {
+
+	GENERATED_BODY()
+
 	int goldValue;
 
 	int experienceValue;
@@ -78,9 +85,6 @@ protected:
 	FBaseActorValue baseValue;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void applyDamage(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void deadHandle(AActor* deadActor, AActor* deadCauser);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -88,13 +92,19 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
-
+	
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void setValue();
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void applyDamage(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
 
 	AMOBABaseActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
+
+	bool canBeAttacked();
+
+	Camp getCamp();
 
 };

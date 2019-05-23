@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MOBABaseActor.h"
 #include "GameFramework/Character.h"
 #include "MOBABaseCharacter.generated.h"
+
+
 
 UCLASS()
 class AMOBAPROJECT_API AMOBABaseCharacter : public ACharacter
@@ -25,5 +28,33 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+
+	FBaseActorProperty baseProperty;
+
+	FBaseActorValue baseValue;
+
+	
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void deadHandle(AActor* deadActor, AActor* deadCauser);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		virtual void setValue();
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void applyDamage(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
+
+	bool canBeAttacked();
+
+	Camp getCamp();
 
 };
