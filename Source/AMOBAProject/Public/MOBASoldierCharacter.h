@@ -3,29 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MOBABaseActor.h"
-#include "MOBASoldierActor.generated.h"
-/*
+#include "MOBABaseCharacter.h"
+#include "MOBASoldierCharacter.generated.h"
+
 UENUM()
 enum SoldierRoad { top, mid, down };
-*/
+
+
 /**
- *
+ * 
  */
 UCLASS()
-class AMOBAPROJECT_API AMOBASoldierActor : public AMOBABaseActor
+class AMOBAPROJECT_API AMOBASoldierCharacter : public AMOBABaseCharacter
 {
 	GENERATED_BODY()
-
+	
 public:
-	AMOBASoldierActor();
-	/*
+	AMOBASoldierCharacter();
+
 protected:
 	SoldierRoad road;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		SoldierRoad getRoad();
-		*/
+
+
 
 };

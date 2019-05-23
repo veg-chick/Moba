@@ -3,117 +3,115 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MOBABaseActor.h"
-#include "MOBAHeroActor.generated.h"
-/*
-//è®¡æ—¶å™¨å£°æ˜
+#include "MOBABaseCharacter.h"
+#include "MOBAHeroCharacter.generated.h"
+
+//¼ÆÊ±Æ÷ÉùÃ÷
 struct FTimerHandle;
 
-//è‹±é›„å±æ€§
+//Ó¢ĞÛÊôĞÔ
 USTRUCT()
 struct FHeroProperty {
 
 	GENERATED_BODY()
 
-	//å¤æ´»æ—¶é—´
-	int resetTime;
+		//¸´»îÊ±¼ä
+		int resetTime;
 
-	//æš´å‡»ç‡åŠæš´å‡»ä¼¤å®³
+	//±©»÷ÂÊ¼°±©»÷ÉËº¦
 	float strikeRate;
 	float strikeDamage;
 
-	//é‡ä¼¤
+	//ÖØÉË
 	bool bIsInjured;
 
-	//ç›¸å¯¹ç©¿é€
+	//Ïà¶Ô´©Í¸
 	float relativeArmorPenetration;
 	float relativeMagicResistPenetration;
 
-	//ç»å¯¹ç©¿é€
+	//¾ø¶Ô´©Í¸
 	int absoluteMagicResistPenetration;
 	int absoluteArmorPentration;
 
-	//ç”Ÿå‘½å·å–
+	//ÉúÃüÍµÈ¡
 	float lifeSteal;
 
 };
 
-//æˆé•¿å±æ€§
+//³É³¤ÊôĞÔ
 USTRUCT()
 struct FHeroGrowth {
 
 	GENERATED_BODY()
 
-	//ç”Ÿå‘½æˆé•¿ï¼Œæ³•åŠ›æˆé•¿
-	int hpGrowth;
+		//ÉúÃü³É³¤£¬·¨Á¦³É³¤
+		int hpGrowth;
 	int mpGrowth;
 
-	//æ¢å¤æˆé•¿
+	//»Ö¸´³É³¤
 	float hpRecoveryGrowth;
 	float mpRecoveryGrowth;
 
-	//æŠ¤ç”²é­”æŠ—æˆé•¿
+	//»¤¼×Ä§¿¹³É³¤
 	int armorGrowth;
 	int magicResistGrowth;
 
-	//æ”»å‡»åŠ›æ”»å‡»é€Ÿåº¦æˆé•¿
+	//¹¥»÷Á¦¹¥»÷ËÙ¶È³É³¤
 	int attackGrowth;
 	float attackSpeedGrowth;
 
-	//æ‰€æºå¸¦ç»éªŒå€¼æˆé•¿
+	//ËùĞ¯´ø¾­ÑéÖµ³É³¤
 	int experienceCarriedGrowth;
 
-	//å¤æ´»æ—¶é—´æˆé•¿
+	//¸´»îÊ±¼ä³É³¤
 	int resetTimeGrowth;
 };
 
-//å‡»æ€å¥–åŠ±
+//»÷É±½±Àø
 USTRUCT()
 struct FHeroValue {
 
 	GENERATED_BODY()
 
-	//é‡‘é’±å¥–åŠ±
-	int goldValue;
+		//½ğÇ®½±Àø
+		int goldValue;
 
-	//ç»éªŒå¥–åŠ±
+	//¾­Ñé½±Àø
 	int experienceValue;
 
 	//...
 
 };
 
-//æŠ€èƒ½å†·å´æ—¶é—´å’Œå¤æ´»æ—¶é—´å¤„ç†
+//¼¼ÄÜÀäÈ´Ê±¼äºÍ¸´»îÊ±¼ä´¦Àí
 USTRUCT()
 struct FTimerHandles {
 
 	GENERATED_BODY()
 
-	//æŠ€èƒ½å†·å´æ—¶é—´:Q,W,E,R
-	FTimerHandle skillQTimer;
+		//¼¼ÄÜÀäÈ´Ê±¼ä:Q,W,E,R
+		FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;
 	FTimerHandle skillETimer;
 	FTimerHandle skillRTimer;
 
-	//å¤æ´»æ—¶é—´
+	//¸´»îÊ±¼ä
 	FTimerHandle resetTimer;
 };
-*/
+
 
 /**
- *
+ * 
  */
 UCLASS()
-class AMOBAPROJECT_API AMOBAHeroActor : public AMOBABaseActor
+class AMOBAPROJECT_API AMOBAHeroCharacter : public AMOBABaseCharacter
 {
 	GENERATED_BODY()
-
+	
 public:
+	AMOBAHeroCharacter();
 
-	AMOBAHeroActor();
-
-	/*
-	protected:
+protected:
 
 	FHeroProperty heroProperty;
 
@@ -127,7 +125,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
-	
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetQSkill();
 
@@ -139,5 +137,5 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetRSkill();
-		*/
+
 };

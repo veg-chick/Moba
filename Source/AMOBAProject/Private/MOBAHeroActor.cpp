@@ -8,10 +8,7 @@ AMOBAHeroActor::AMOBAHeroActor() {
 
 }
 
-AMOBAHeroActor::AMOBAHeroActor(FBaseActorProperty bP, FBaseActorValue bV, FHeroProperty hP, FHeroGrowth hG, FHeroValue hV) :AMOBABaseActor(bP, bV), heroProperty(hP), heroGrowth(hG), heroValue(hV) {
-
-}
-
+/*
 void AMOBAHeroActor::resetHero() {
 
 }
@@ -32,3 +29,4 @@ void AMOBAHeroActor::resetRSkill() {
 
 }
 
+*/
