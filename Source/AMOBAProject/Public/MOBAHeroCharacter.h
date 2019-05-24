@@ -6,81 +6,63 @@
 #include "MOBABaseCharacter.h"
 #include "MOBAHeroCharacter.generated.h"
 
-//计时器声明
 struct FTimerHandle;
 
-//英雄属性
 USTRUCT(BlueprintType)
 struct FHeroProperty {
 
 	GENERATED_BODY()
 
-		//复活时间
-		int resetTime;
+	int resetTime;
 
-	//暴击率及暴击伤害
 	float strikeRate;
 	float strikeDamage;
 
-	//重伤
 	bool bIsInjured;
 
-	//相对穿透
 	float relativeArmorPenetration;
 	float relativeMagicResistPenetration;
 
-	//绝对穿透
 	int absoluteMagicResistPenetration;
 	int absoluteArmorPentration;
 
-	//生命偷取
 	float lifeSteal;
 
 };
 
-//成长属性
 USTRUCT(BlueprintType)
 struct FHeroGrowth {
 
 	GENERATED_BODY()
 
-		//生命成长，法力成长
-		int hpGrowth;
+	int hpGrowth;
 	int mpGrowth;
 
-	//恢复成长
 	float hpRecoveryGrowth;
 	float mpRecoveryGrowth;
 
-	//护甲魔抗成长
 	int armorGrowth;
 	int magicResistGrowth;
 
-	//攻击力攻击速度成长
 	int attackGrowth;
 	float attackSpeedGrowth;
 
-	//所携带经验值成长
 	int experienceCarriedGrowth;
 
-	//复活时间成长
 	int resetTimeGrowth;
 };
 
 
-//技能冷却时间和复活时间处理
 USTRUCT(BlueprintType)
 struct FTimerHandles {
 
 	GENERATED_BODY()
 
-		//技能冷却时间:Q,W,E,R
 		FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;
 	FTimerHandle skillETimer;
 	FTimerHandle skillRTimer;
 
-	//复活时间
 	FTimerHandle resetTimer;
 };
 
@@ -108,6 +90,7 @@ protected:
 
 	FBaseActorValue baseValue;
 
+
 protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -133,4 +116,27 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
+
+public:
+	virtual void Tick(float DeltaSeconds) override;
+
+	/** Returns TopDownCameraComponent subobject **/
+	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns CursorToWorld subobject **/
+	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
+
+protected:
+	/** Top down camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* TopDownCameraComponent;
+
+	/** Camera boom positioning the camera above the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
+
+	/** A decal that projects to the cursor location. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UDecalComponent* CursorToWorld;
 };

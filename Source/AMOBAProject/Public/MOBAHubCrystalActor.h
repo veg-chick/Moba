@@ -35,6 +35,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		USphereComponent* ClickComp;
 
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignHubCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
