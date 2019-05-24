@@ -7,7 +7,7 @@
 #include "MOBASoldierCharacter.generated.h"
 
 UENUM()
-enum SoldierRoad { top, mid, down };
+enum SoldierRoad { soldierTop, soldierMid, soldierDown };
 
 
 /**
@@ -28,7 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		SoldierRoad getRoad();
 
-	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignSoldierValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,SoldierRoad aRoad);
 
 };

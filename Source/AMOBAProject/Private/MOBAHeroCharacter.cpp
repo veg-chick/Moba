@@ -11,6 +11,15 @@ AMOBAHeroCharacter::AMOBAHeroCharacter()
 void AMOBAHeroCharacter::resetHero()
 {
 
+	DetachFromControllerPendingDestroy();
+
+	float resetTime = this->heroProperty.resetTime;
+
+	auto myTimeHanlde = timeHandles.resetTimer;
+
+	GetWorldTimerManager().SetTimer(myTimeHanlde, this,&AMOBAHeroCharacter::resetHeroHandle, resetTime);
+
+
 }
 
 void AMOBAHeroCharacter::resetQSkill()
@@ -29,6 +38,11 @@ void AMOBAHeroCharacter::resetESkill()
 }
 
 void AMOBAHeroCharacter::resetRSkill()
+{
+
+}
+
+void AMOBAHeroCharacter::resetHeroHandle()
 {
 
 }

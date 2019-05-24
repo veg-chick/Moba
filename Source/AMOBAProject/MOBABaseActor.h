@@ -9,7 +9,7 @@
 UENUM()
 enum Camp { blue, red, other };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FBaseActorProperty {
 
 	GENERATED_BODY()
@@ -50,7 +50,7 @@ struct FBaseActorProperty {
 UENUM()
 enum DamageType { physical, magic, real, treat };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FBaseActorValue {
 
 	GENERATED_BODY()
@@ -107,7 +107,7 @@ public:
 
 	Camp getCamp();
 
-	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
 };

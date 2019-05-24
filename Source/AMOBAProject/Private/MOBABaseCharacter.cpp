@@ -2,6 +2,10 @@
 
 
 #include "Public/MOBABaseCharacter.h"
+#include "Public/MOBAHeroCharacter.h"
+#include "Engine/Classes/GameFramework/Character.h"
+#include "Engine/Classes/GameFramework/PawnMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AMOBABaseCharacter::AMOBABaseCharacter(){
@@ -78,6 +82,24 @@ void AMOBABaseCharacter::applyDamage(AActor* damagedActor, DamageType damageType
 }
 
 void AMOBABaseCharacter::deadHandle(AActor* deadActor, AActor* deadCauser){
+
+	auto myActor = Cast<AMOBABaseCharacter>(deadActor);
+	if (myActor) {
+
+		GetMovementComponent()->StopMovementImmediately();
+
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		SetLifeSpan(10.0f);
+
+		auto mayBeHero = Cast<AMOBAHeroCharacter>(deadActor);
+
+		if (mayBeHero) {
+			mayBeHero->resetHero();
+		}
+
+	}
+
 
 }
 

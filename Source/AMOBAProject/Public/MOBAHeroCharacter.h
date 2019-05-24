@@ -10,7 +10,7 @@
 struct FTimerHandle;
 
 //英雄属性
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FHeroProperty {
 
 	GENERATED_BODY()
@@ -39,7 +39,7 @@ struct FHeroProperty {
 };
 
 //成长属性
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FHeroGrowth {
 
 	GENERATED_BODY()
@@ -69,7 +69,7 @@ struct FHeroGrowth {
 
 
 //技能冷却时间和复活时间处理
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FTimerHandles {
 
 	GENERATED_BODY()
@@ -111,9 +111,6 @@ protected:
 protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void resetHero();
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetQSkill();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -125,9 +122,15 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetRSkill();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void resetHeroHandle();
+
+
 public:
 
-	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,FHeroProperty aHeroProperty,FHeroGrowth aHeroGrowth);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void resetHero();
 };

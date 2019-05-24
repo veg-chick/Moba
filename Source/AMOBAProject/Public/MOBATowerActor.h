@@ -10,7 +10,7 @@ class UStaticMeshComponent;
 class USphereComponent;
 
 UENUM()
-enum TowerRoad { top, mid, down };
+enum TowerRoad { towerTop, towerMid, towerDown };
 
 UENUM()
 enum TowerType { outter, inner, highland, hub };
@@ -42,7 +42,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerType getTowerType();
 
-	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,TowerRoad aRoad,TowerType aTowerType);
 
 protected:
