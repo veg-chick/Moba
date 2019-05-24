@@ -7,14 +7,10 @@
 		{
 			"Name": "AMOBAProject",
 			"Type": "Runtime",
-<<<<<<< HEAD
-			"LoadingPhase": "Default"
-=======
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine"
 			]
->>>>>>> b959a95c580fb81434e1d756cc14af1db0f077cf
 		}
 	]
 }
