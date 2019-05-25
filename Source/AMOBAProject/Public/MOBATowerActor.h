@@ -29,7 +29,6 @@ public:
 
 protected:
 
-	bool bIsBroken;
 
 	TowerRoad road;
 

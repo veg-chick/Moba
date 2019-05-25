@@ -41,6 +41,7 @@ struct FBaseActorProperty {
 	float maxAttackSpeed;
 
 	int level;
+	int maxLevel;
 	int experience;
 
 	int sightRange;
@@ -81,6 +82,8 @@ public:
 
 protected:
 	FBaseActorProperty baseProperty;
+
+	bool bIsBroken;
 
 	FBaseActorValue baseValue;
 

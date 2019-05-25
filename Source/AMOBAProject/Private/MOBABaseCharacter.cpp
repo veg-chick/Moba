@@ -90,12 +90,13 @@ void AMOBABaseCharacter::deadHandle(AActor* deadActor, AActor* deadCauser){
 
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-		SetLifeSpan(10.0f);
 
 		auto mayBeHero = Cast<AMOBAHeroCharacter>(deadActor);
 
 		if (mayBeHero) {
 			mayBeHero->resetHero();
+		}else {
+			SetLifeSpan(10.0f);
 		}
 
 	}

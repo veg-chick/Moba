@@ -11,6 +11,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
+#include "Math/UnrealMathUtility.h"
+#include "Math/Vector.h"
 #include "Engine/World.h"
 
 AMOBAHeroCharacter::AMOBAHeroCharacter()
@@ -80,14 +82,23 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 void AMOBAHeroCharacter::resetHero()
 {
 
-	DetachFromControllerPendingDestroy();
+	//DetachFromControllerPendingDestroy();
 
 	float resetTime = this->heroProperty.resetTime;
 
 	auto myTimeHanlde = timeHandles.resetTimer;
 
-	GetWorldTimerManager().SetTimer(myTimeHanlde, this,&AMOBAHeroCharacter::resetHeroHandle, resetTime);
+	GetWorldTimerManager().SetTimer(myTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
 
+
+}
+
+void AMOBAHeroCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+	birthLocation = this->GetActorLocation();
 
 }
 
@@ -116,7 +127,35 @@ void AMOBAHeroCharacter::resetHeroHandle()
 
 }
 
-void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth){
+void AMOBAHeroCharacter::levelUp()
+{
+	auto& myPro = this->baseProperty;
+	if (myPro.level < myPro.maxLevel) {
+		auto& heroPro = this->heroProperty;
+		auto myGro = this->heroGrowth;
+
+
+		myPro.maxHp += myGro.hpGrowth;
+		myPro.hp += myGro.hpGrowth;
+
+		myPro.maxMp += myGro.mpGrowth;
+		myPro.mp += myGro.mpGrowth;
+
+		myPro.attackStrength += myGro.attackGrowth;
+		myPro.attackSpeed = FMath::Clamp(myPro.attackSpeed + myGro.attackSpeedGrowth, 0.0f, myPro.maxAttackSpeed);
+
+		myPro.armor += myGro.armorGrowth;
+		myPro.magicResist += myGro.magicResistGrowth;
+
+		heroPro.resetTime += myGro.resetTimeGrowth;
+
+	}
+
+
+
+}
+
+void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {
 
 	assignBaseValueForAPI(aBaseProperty, aBaseValue);
 	this->heroProperty = aHeroProperty;

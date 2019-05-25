@@ -98,13 +98,11 @@ void AMOBABaseActor::applyDamage(AActor* damagedActor, DamageType damageType, fl
 
 }
 
-void AMOBABaseActor::deadHandle(AActor* deadActor, AActor* deadCauser) {
+ void AMOBABaseActor::deadHandle(AActor* deadActor, AActor* deadCauser) {
 
 	auto myActor = Cast<AMOBABaseActor>(deadActor);
 	if (myActor) {
-
-		//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+		this->bIsBroken = true;
 	}
 }
 

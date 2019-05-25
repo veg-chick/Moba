@@ -7,6 +7,7 @@
 #include "MOBAHeroCharacter.generated.h"
 
 struct FTimerHandle;
+struct FVector;
 
 USTRUCT(BlueprintType)
 struct FHeroProperty {
@@ -26,6 +27,8 @@ struct FHeroProperty {
 	int absoluteMagicResistPenetration;
 	int absoluteArmorPentration;
 
+
+	UPROPERTY(BlueprintReadWrite,VisibleAnywhere,Category="FUCK")
 	float lifeSteal;
 
 };
@@ -58,12 +61,15 @@ struct FTimerHandles {
 
 	GENERATED_BODY()
 
-		FTimerHandle skillQTimer;
+	FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;
 	FTimerHandle skillETimer;
 	FTimerHandle skillRTimer;
 
 	FTimerHandle resetTimer;
+
+
+
 };
 
 
@@ -90,8 +96,14 @@ protected:
 
 	FBaseActorValue baseValue;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "MOBAComponents")
+	FVector birthLocation;
+
 
 protected:
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		virtual void BeginPlay()override;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetQSkill();
@@ -107,6 +119,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHeroHandle();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void levelUp();
 
 
 public:

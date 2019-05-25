@@ -26,7 +26,6 @@ public:
 	AMOBACrystalActor(FBaseActorProperty ABaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
 
 protected:
-	bool bIsBroken;
 
 	CrystalRoad road;
 
