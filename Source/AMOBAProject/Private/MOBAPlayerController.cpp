@@ -13,6 +13,29 @@ AMOBAPlayerController::AMOBAPlayerController()
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
+void AMOBAPlayerController::SetupInputComponent()
+{
+	// set up gameplay key bindings
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AMOBAPlayerController::OnSetDestinationPressed);
+	InputComponent->BindAction("SetDestination", IE_Released, this, &AMOBAPlayerController::OnSetDestinationReleased);
+}
+
+
+void AMOBAPlayerController::OnSetDestinationPressed()
+{
+	// set flag to keep updating destination until released
+	bMoveToMouseCursor = true;
+}
+
+void AMOBAPlayerController::OnSetDestinationReleased()
+{
+	// clear flag to indicate we should stop updating the destination
+	bMoveToMouseCursor = false;
+}
+
+
 void AMOBAPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
@@ -22,16 +45,6 @@ void AMOBAPlayerController::PlayerTick(float DeltaTime)
 	{
 		MoveToMouseCursor();
 	}
-}
-
-void AMOBAPlayerController::SetupInputComponent()
-{
-	// set up gameplay key bindings
-	Super::SetupInputComponent();
-
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AMOBAPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &AMOBAPlayerController::OnSetDestinationReleased);
-
 }
 
 
@@ -62,16 +75,4 @@ void AMOBAPlayerController::SetNewMoveDestination(const FVector DestLocation)
 			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
 		}
 	}
-}
-
-void AMOBAPlayerController::OnSetDestinationPressed()
-{
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
-}
-
-void AMOBAPlayerController::OnSetDestinationReleased()
-{
-	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
 }

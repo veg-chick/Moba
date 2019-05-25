@@ -29,7 +29,7 @@ protected:
 
 	CrystalRoad road;
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPROPERTY(VisibleAnywhere ,Category = "Components")
 		UStaticMeshComponent* RootComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
