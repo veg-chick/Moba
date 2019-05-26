@@ -123,6 +123,11 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void levelUp();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void reCall();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void reCallHandle();
 
 public:
 

@@ -81,15 +81,27 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 
 void AMOBAHeroCharacter::resetHero()
 {
-
+	//No need to disable player input
 	//DetachFromControllerPendingDestroy();
 
-	float resetTime = this->heroProperty.resetTime;
+	//Prohibition of release Skills
+	this->baseProperty.bAbleToAttack = false;
 
+	auto myMovementComp = GetCharacterMovement();
+	//Set the move speed to 0
+	auto accelerationBefore = myMovementComp->MaxAcceleration;
+	myMovementComp->MaxAcceleration = 0.0f;
+	auto  maxWalkSpeedBefore = myMovementComp->MaxWalkSpeed;
+	myMovementComp->MaxWalkSpeed = 0.0f;
+
+	float resetTime = this->heroProperty.resetTime;
 	auto myTimeHanlde = timeHandles.resetTimer;
 
 	GetWorldTimerManager().SetTimer(myTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
 
+	//Set the move speed to before
+	myMovementComp->MaxAcceleration = accelerationBefore;
+	myMovementComp->MaxWalkSpeed = maxWalkSpeedBefore;
 
 }
 
@@ -125,6 +137,14 @@ void AMOBAHeroCharacter::resetRSkill()
 void AMOBAHeroCharacter::resetHeroHandle()
 {
 
+	this->baseProperty.hp = this->baseProperty.maxHp;
+	this->baseProperty.mp = this->baseProperty.maxMp;
+	this->baseProperty.bAbleToAttack = true;
+	//Allow release skills
+
+	this->SetActorLocation(birthLocation);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 }
 
 void AMOBAHeroCharacter::levelUp()
@@ -152,6 +172,16 @@ void AMOBAHeroCharacter::levelUp()
 	}
 
 
+
+}
+
+void AMOBAHeroCharacter::reCall()
+{
+
+}
+
+void AMOBAHeroCharacter::reCallHandle()
+{
 
 }
 
