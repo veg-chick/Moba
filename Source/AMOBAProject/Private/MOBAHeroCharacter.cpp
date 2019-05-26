@@ -131,7 +131,7 @@ void AMOBAHeroCharacter::resetESkill()
 
 void AMOBAHeroCharacter::resetRSkill()
 {
-
+	
 }
 
 void AMOBAHeroCharacter::resetHeroHandle()
@@ -177,12 +177,17 @@ void AMOBAHeroCharacter::levelUp()
 
 void AMOBAHeroCharacter::reCall()
 {
+	auto& myTimeHandle = this->timeHandles.resetTimer;
+
+	GetWorldTimerManager().ClearTimer(myTimeHandle);
+
+	GetWorldTimerManager().SetTimer(myTimeHandle, this, &AMOBAHeroCharacter::reCallHandle, 8.0f);
 
 }
 
 void AMOBAHeroCharacter::reCallHandle()
 {
-
+	SetActorLocation(birthLocation);
 }
 
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {
