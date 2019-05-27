@@ -9,11 +9,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Materials/Material.h"
 #include "Math/UnrealMathUtility.h"
 #include "Math/Vector.h"
 #include "Engine/World.h"
+#include "MOBAPlayerController.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 AMOBAHeroCharacter::AMOBAHeroCharacter()
 {
@@ -78,6 +79,33 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 	}
 }
 
+
+void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
+{
+	float const Distance = FVector::Dist(DestLocation, GetActorLocation());
+
+	// We need to issue move command only if far enough in order for walk animation to play correctly
+	if ((Distance > 120.0f)) {
+
+		this->GetCharacterMovement()->MaxWalkSpeed = Speed;
+		AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(PC, DestLocation);
+	}
+}
+
+void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
+{
+	float const Distance = FVector::Dist(BeAttackedActor->GetActorLocation(), this->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("Attack To Actor Succeed!"));
+	if (Distance > this->getAttackRange()) return;
+}
+
+void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter)
+{
+	float const Distance = FVector::Dist(BeAttackedCharacter->GetActorLocation(), this->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("Attack To Character Succeed!"));
+	if (Distance > this->getAttackRange()) return;
+}
 
 void AMOBAHeroCharacter::resetHero()
 {

@@ -28,12 +28,12 @@ struct FBaseActorProperty {
 	int armor;
 	int magicResist;
 
-	int moveSpeed;
+	float moveSpeed;
 
 	bool bAbleToAttack;
 	bool bCanBeAttacked;
 	bool bIsRemote;
-	int attackRange;
+	float attackRange;
 	int sightRange;
 
 	int attackStrength;
@@ -145,7 +145,7 @@ public:
 		int& getMagicResist() { return baseProperty.magicResist; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getMoveSpeed() { return baseProperty.moveSpeed; }
+		float& getMoveSpeed() { return baseProperty.moveSpeed; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& getBAbleToAttack() { return baseProperty.bAbleToAttack; }
@@ -154,7 +154,7 @@ public:
 		bool& getBIsRemote() { return baseProperty.bIsRemote; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getAttackRange() { return baseProperty.attackRange; }
+		float& getAttackRange() { return baseProperty.attackRange; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		int& getSeightrange() { return baseProperty.sightRange; }

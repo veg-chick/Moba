@@ -145,6 +145,13 @@ public:
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
+	/** Navigate player to the given world location. */
+	void SetNewMoveDestination(const FVector DestLocation, float Speed);
+
+	void AttackToAActor(AMOBABaseActor* BeAttackedActor);
+
+	void AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter);
+
 protected:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
