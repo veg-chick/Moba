@@ -21,12 +21,12 @@ AMOBABaseActor::AMOBABaseActor(FBaseActorProperty aBaseProperty, FBaseActorValue
 
 }
 
-bool AMOBABaseActor::canBeAttacked()
+bool& AMOBABaseActor::getBCanBeAttacked()
 {
 	return this->baseProperty.bCanBeAttacked;
 }
 
-Camp AMOBABaseActor::getCamp(){
+Camp& AMOBABaseActor::getCamp(){
 	return this->baseProperty.baseCamp;
 }
 
@@ -153,7 +153,7 @@ bool AMOBABaseActor::canAttack(AActor* damagedActor, DamageType damageType, floa
 	auto otherCharacter = Cast<AMOBABaseCharacter>(damagedActor);
 	if (otherCharacter) {
 		bool can = myActor->baseProperty.bAbleToAttack;
-		bool canBe = otherCharacter->canBeAttacked();
+		bool canBe = otherCharacter->getBCanBeAttacked();
 
 		auto causerCamp = myActor->baseProperty.baseCamp;
 		auto damagedCamp = otherCharacter->getCamp();

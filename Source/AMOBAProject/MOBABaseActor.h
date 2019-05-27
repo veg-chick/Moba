@@ -14,7 +14,7 @@ struct FBaseActorProperty {
 
 	GENERATED_BODY()
 
-	Camp baseCamp;
+		Camp baseCamp;
 
 	float hp;
 	float maxHp;
@@ -34,6 +34,7 @@ struct FBaseActorProperty {
 	bool bCanBeAttacked;
 	bool bIsRemote;
 	int attackRange;
+	int sightRange;
 
 	int attackStrength;
 	int powerStrength;
@@ -43,8 +44,6 @@ struct FBaseActorProperty {
 	int level;
 	int maxLevel;
 	int experience;
-
-	int sightRange;
 
 };
 
@@ -81,6 +80,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+
 	FBaseActorProperty baseProperty;
 
 	bool bIsBroken;
@@ -95,7 +95,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void setValue();
 
@@ -106,11 +106,87 @@ public:
 
 	AMOBABaseActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
-	bool canBeAttacked();
-
-	Camp getCamp();
-
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& getBCanBeAttacked();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		Camp& getCamp();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getHp() { return baseProperty.hp; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getMaxHp() { return baseProperty.maxHp; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getHpRecovery() { return baseProperty.hpRecovery; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& getBHaveMp() { return baseProperty.bHaveMp; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getMp() { return baseProperty.mp; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getMaxMp() { return baseProperty.maxMp; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getMpRecovery() { return baseProperty.mpRecovery; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getArmor() { return baseProperty.armor; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getMagicResist() { return baseProperty.magicResist; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getMoveSpeed() { return baseProperty.moveSpeed; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& getBAbleToAttack() { return baseProperty.bAbleToAttack; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& getBIsRemote() { return baseProperty.bIsRemote; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getAttackRange() { return baseProperty.attackRange; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getSeightrange() { return baseProperty.sightRange; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getAttackStrength() { return baseProperty.attackStrength; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getPowerStrength() { return baseProperty.powerStrength; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getAttackSpeed() { return baseProperty.attackSpeed; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getMaxAttackSpeed() { return baseProperty.maxAttackSpeed; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getLevel() { return baseProperty.level; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getMaxLevel() { return baseProperty.maxLevel; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getExperience() { return baseProperty.experience; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getGoldValue() { return baseValue.goldValue; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getExperienceValue() { return baseValue.experienceValue; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& getBIsBroken() { return bIsBroken; }
 
 };

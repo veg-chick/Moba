@@ -14,7 +14,7 @@ struct FHeroProperty {
 
 	GENERATED_BODY()
 
-	int resetTime;
+		int resetTime;
 
 	float strikeRate;
 	float strikeDamage;
@@ -27,8 +27,6 @@ struct FHeroProperty {
 	int absoluteMagicResistPenetration;
 	int absoluteArmorPentration;
 
-
-	UPROPERTY(BlueprintReadWrite,VisibleAnywhere,Category="FUCK")
 	float lifeSteal;
 
 };
@@ -38,7 +36,7 @@ struct FHeroGrowth {
 
 	GENERATED_BODY()
 
-	int hpGrowth;
+		int hpGrowth;
 	int mpGrowth;
 
 	float hpRecoveryGrowth;
@@ -61,7 +59,7 @@ struct FTimerHandles {
 
 	GENERATED_BODY()
 
-	FTimerHandle skillQTimer;
+		FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;
 	FTimerHandle skillETimer;
 	FTimerHandle skillRTimer;
@@ -74,13 +72,13 @@ struct FTimerHandles {
 
 
 /**
- * 
+ *
  */
 UCLASS()
 class AMOBAPROJECT_API AMOBAHeroCharacter : public AMOBABaseCharacter
 {
 	GENERATED_BODY()
-	
+
 public:
 	AMOBAHeroCharacter();
 
@@ -97,7 +95,7 @@ protected:
 	FBaseActorValue baseValue;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "MOBAComponents")
-	FVector birthLocation;
+		FVector birthLocation;
 
 
 protected:
@@ -132,8 +130,8 @@ protected:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,FHeroProperty aHeroProperty,FHeroGrowth aHeroGrowth);
-	
+		void assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth);
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
 
@@ -159,4 +157,63 @@ protected:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UDecalComponent* CursorToWorld;
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getHpGrowth() { return heroGrowth.hpGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getMpGrowth() { return heroGrowth.mpGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getHpRecoveryGrowth() { return heroGrowth.hpRecoveryGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getMpRecoveryGrowth() { return heroGrowth.mpRecoveryGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getArmorGrowth() { return heroGrowth.armorGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getMagicResistGrowth() { return heroGrowth.magicResistGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getAttackGrowth() { return heroGrowth.attackGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getAttackSpeedGrowth() { return heroGrowth.attackSpeedGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getExperienceCarriedGrowth() { return heroGrowth.experienceCarriedGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getResetTimeGrowth() { return heroGrowth.resetTimeGrowth; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getResetTime() { return heroProperty.resetTime; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getStrikeRate() { return heroProperty.strikeRate; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getStrikeDamage() { return heroProperty.strikeDamage; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& getBIsInjured() { return heroProperty.bIsInjured; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getRelativeArmorPenetration() { return heroProperty.relativeArmorPenetration; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getRelativeMagicResistPenetration() { return heroProperty.relativeMagicResistPenetration; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getAbsoluteMagicResistPenetration() { return heroProperty.absoluteMagicResistPenetration; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		int& getAbsoluteArmorPentration() { return heroProperty.absoluteArmorPentration; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& getLifeSteal() { return heroProperty.lifeSteal; }
 };

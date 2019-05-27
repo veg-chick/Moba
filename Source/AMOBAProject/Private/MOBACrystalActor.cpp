@@ -41,11 +41,8 @@ AMOBACrystalActor::AMOBACrystalActor() {
 	ClickComp->SetupAttachment(RootComp);
 }
 
-bool AMOBACrystalActor::isBroken() {
-	return bIsBroken;
-}
 
-CrystalRoad AMOBACrystalActor::getRoad() {
+CrystalRoad& AMOBACrystalActor::getRoad() {
 	return road;
 }
 

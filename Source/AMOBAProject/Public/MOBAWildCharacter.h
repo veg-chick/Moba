@@ -7,7 +7,7 @@
 #include "MOBAWildCharacter.generated.h"
 
 struct FTimerHandle;
-
+struct FVector;
 
 /**
  * 
@@ -35,5 +35,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
+	FVector birthLocation;
+
+	virtual void BeginPlay() override;
 
 };

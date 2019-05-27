@@ -45,11 +45,9 @@ protected:
 		USphereComponent* ClickComp;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		bool isBroken();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		CrystalRoad getRoad();
+		CrystalRoad& getRoad();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);

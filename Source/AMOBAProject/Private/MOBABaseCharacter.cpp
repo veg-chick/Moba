@@ -135,7 +135,7 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 	auto otherActor = Cast<AMOBABaseActor>(damagedActor);
 	if (otherActor) {
 		bool can = myActor->baseProperty.bAbleToAttack;
-		bool canBe = otherActor->canBeAttacked();
+		bool canBe = otherActor->getBCanBeAttacked();
 
 		auto causerCamp = myActor->baseProperty.baseCamp;
 		auto damagedCamp = otherActor->getCamp();
@@ -150,7 +150,7 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 	auto otherCharacter = Cast<AMOBABaseCharacter>(damagedActor);
 	if (otherCharacter) {
 		bool can = myActor->baseProperty.bAbleToAttack;
-		bool canBe = otherCharacter->canBeAttacked();
+		bool canBe = otherCharacter->getBCanBeAttacked();
 
 		auto causerCamp = myActor->baseProperty.baseCamp;
 		auto damagedCamp = otherCharacter->getCamp();
@@ -168,18 +168,6 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 }
 
 void AMOBABaseCharacter::setValue(){
-
-}
-
-bool AMOBABaseCharacter::canBeAttacked(){
-
-	return this->baseProperty.bCanBeAttacked;
-
-}
-
-Camp AMOBABaseCharacter::getCamp(){
-
-	return this->baseProperty.baseCamp;
 
 }
 

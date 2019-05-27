@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MOBABaseActor.h"
-#include "MOBATowerActor.generated.h"
+#include "MOBABaseCharacter.h"
+#include "MOBATowerCharacter.generated.h"
 
 class UStaticMeshComponent;
 class USphereComponent;
@@ -15,20 +15,19 @@ enum TowerRoad { towerTop, towerMid, towerDown };
 UENUM()
 enum TowerType { outter, inner, highland, hub };
 
+
 /**
- *
+ * 
  */
 UCLASS()
-class AMOBAPROJECT_API AMOBATowerActor : public AMOBABaseActor
+class AMOBAPROJECT_API AMOBATowerCharacter : public AMOBABaseCharacter
 {
 	GENERATED_BODY()
 
 public:
-	AMOBATowerActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType);
-	AMOBATowerActor();
+	AMOBATowerCharacter();
 
 protected:
-
 
 	TowerRoad road;
 
@@ -36,13 +35,13 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		TowerRoad getRoad();
+		TowerRoad& getRoad();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		TowerType getTowerType();
+		TowerType& getTowerType();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,TowerRoad aRoad,TowerType aTowerType);
+		void assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -59,4 +58,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		USphereComponent* ClickComp;
+	
 };
