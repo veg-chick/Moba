@@ -7,6 +7,9 @@
 #include "MOBAPlayerState.h"
 #include "MOBAHeroCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+#include "MOBABaseActor.h"
+#include "GameFramework/GameModeBase.h"
+#include "MOBAGameState.h"
 
 
 AMOBAGameMode::AMOBAGameMode()
@@ -74,4 +77,9 @@ void AMOBAGameMode::StartPlay()
 	TimeBetweenWaves = 60.0f;
 
 	PrepareForNextWave();
+}
+
+void AMOBAGameMode::GameOver(Camp SuccessCamp)
+{
+	GetGameState<AMOBAGameState>()->MultiCastOnGameOver(SuccessCamp);
 }

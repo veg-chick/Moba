@@ -6,6 +6,8 @@
 #include "GameFramework/GameMode.h"
 #include "MOBAGameMode.generated.h"
 
+enum class Camp : uint8;
+
 
 UCLASS()
 class AMOBAPROJECT_API AMOBAGameMode : public AGameMode
@@ -44,4 +46,7 @@ public:
 	AMOBAGameMode();
 
 	virtual void StartPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category = "GameMode")
+		void GameOver(Camp SuccessCamp);
 };

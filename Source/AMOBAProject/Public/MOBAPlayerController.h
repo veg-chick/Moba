@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "MOBAPlayerController.generated.h"
+enum class Camp : uint8;
 
 UCLASS()
 class AMOBAPlayerController : public APlayerController
@@ -13,6 +14,9 @@ class AMOBAPlayerController : public APlayerController
 
 public:
 	AMOBAPlayerController();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "PlayerController")
+		void OnGameOver(Camp SuccessCamp);
 
 protected:
 
