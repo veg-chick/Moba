@@ -49,70 +49,66 @@ void AMOBABaseActor::Tick(float DeltaTime) {
 
 }
 
-void AMOBABaseActor::applyDamage(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser) {
 
-	auto myActor = Cast<AMOBABaseActor>(damagedActor);
+void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, DamageType Type, float Damage, AMOBABaseCharacter* DamageCauser)
+{
+	if (DamagedActor)
+	{
+		auto& myHp = DamagedActor->baseProperty.hp;
 
-	//auto mayBeHero = Cast<AMOBAHeroActor>(damageCauser);
-
-	if (myActor) {
-
-		auto& myHp = myActor->baseProperty.hp;
-
-		auto myMaxHp = myActor->baseProperty.maxHp;
-		auto myArmor = myActor->baseProperty.armor;
-		auto myMagicResist = myActor->baseProperty.magicResist;
+		auto myMaxHp = DamagedActor->baseProperty.maxHp;
+		auto myArmor = DamagedActor->baseProperty.armor;
+		auto myMagicResist = DamagedActor->baseProperty.magicResist;
 
 		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
-		if (damageType == DamageType::real) {
-			myHp = FMath::Clamp(myHp - damage, 0.0f, myMaxHp);
+		if (Type == DamageType::real) {
+			myHp = FMath::Clamp(myHp - Damage, 0.0f, myMaxHp);
 		}
 
-		if (damageType == DamageType::physical) {
+		if (Type == DamageType::physical) {
 
-			float tDamage = damage * physicalPercent;
+			float tDamage = Damage * physicalPercent;
 
 			myHp = FMath::Clamp(myHp - tDamage, 0.0f, myMaxHp);
 
 		}
 
-		if (damageType == DamageType::magic) {
+		if (Type == DamageType::magic) {
 
-			float tDamage = damage * magicPercent;
+			float tDamage = Damage * magicPercent;
 
 			myHp = FMath::Clamp(myHp - tDamage, 0.0f, myMaxHp);
 
 		}
 
-		if (damageType == DamageType::treat) {
-			myHp = FMath::Clamp(myHp + damage, 0.0f, myMaxHp);
+		if (Type == DamageType::treat) {
+			myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
 		}
 
 		if (myHp == 0.0f) {
-			deadHandle(damagedActor, damageCauser);
+			DeadHandle(DamagedActor);
 		}
-
-	}
-
-}
-
- void AMOBABaseActor::deadHandle(AActor* deadActor, AActor* deadCauser) {
-
-	auto myActor = Cast<AMOBABaseActor>(deadActor);
-	if (myActor) {
-		this->bIsBroken = true;
 	}
 }
 
-void AMOBABaseActor::attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser) {
+void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor) {
+	if (DeadActor) 
+	{
+		this->GetbIsBroken()= true;
+		this->GetbCanBeAttacked() = false;
+	}
+}
 
-	if (canAttack(damagedActor, damageType, damage, damageCauser)) {
+/*
+void AMOBABaseActor::attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser) 
+{
 
 		auto otherActor = Cast<AMOBABaseActor>(damagedActor);
 
-		if (otherActor) {
+		if (otherActor) 
+		{
 
 			otherActor->applyDamage(damagedActor, damageType, damage, damageCauser);
 
@@ -120,16 +116,16 @@ void AMOBABaseActor::attack(AActor* damagedActor, DamageType damageType, float d
 
 		auto otherCharacter = Cast<AMOBABaseCharacter>(damagedActor);
 
-		if (otherCharacter) {
+		if (otherCharacter) 
+		{
 
 			otherCharacter->applyDamage(damagedActor,damageType, damage, damageCauser);
 
 		}
 
 
-	}
-
 }
+*/
 
 bool AMOBABaseActor::canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser) {
 

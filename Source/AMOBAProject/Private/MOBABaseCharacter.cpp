@@ -32,72 +32,116 @@ void AMOBABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 }
 
-void AMOBABaseCharacter::applyDamage(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser){
+void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageType Type, float Damage, AActor* DamageCauser)
+{
 
-	auto myActor = Cast<AMOBABaseCharacter>(damagedActor);
+	if (DamagedActor) 
+	{
 
-	//auto mayBeHero = Cast<AMOBAHeroActor>(damageCauser);
+		auto& myHp = DamagedActor->baseProperty.hp;
 
-	if (myActor) {
-
-		auto& myHp = myActor->baseProperty.hp;
-
-		auto myMaxHp = myActor->baseProperty.maxHp;
-		auto myArmor = myActor->baseProperty.armor;
-		auto myMagicResist = myActor->baseProperty.magicResist;
+		auto myMaxHp = DamagedActor->baseProperty.maxHp;
+		auto myArmor = DamagedActor->baseProperty.armor;
+		auto myMagicResist = DamagedActor->baseProperty.magicResist;
 
 		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
-		if (damageType == DamageType::real) {
+		if (Type == DamageType::real) {
 			UE_LOG(LogTemp, Warning, TEXT("Real Damage Applyed!"));
-			myHp = FMath::Clamp(myHp - damage, 0.0f, myMaxHp);
+			myHp = FMath::Clamp(myHp - Damage, 0.0f, myMaxHp);
 		}
 
-		if (damageType == DamageType::physical) {
+		if (Type == DamageType::physical) {
 
-			float tDamage = damage * physicalPercent;
+			float tDamage = Damage * physicalPercent;
 
 			myHp = FMath::Clamp(myHp - tDamage, 0.0f, myMaxHp);
 
 		}
 
-		if (damageType == DamageType::magic) {
+		if (Type == DamageType::magic) {
 
-			float tDamage = damage * magicPercent;
+			float tDamage = Damage * magicPercent;
 
 			myHp = FMath::Clamp(myHp - tDamage, 0.0f, myMaxHp);
 
 		}
 
-		if (damageType == DamageType::treat) {
-			myHp = FMath::Clamp(myHp + damage, 0.0f, myMaxHp);
+		if (Type == DamageType::treat) {
+			myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
 		}
 
-		if (myHp == 0.0f) {
-			deadHandle(damagedActor, damageCauser);
+		if (myHp <= 0.0f) {
+			DeadHandle(DamagedActor);
 		}
 
 	}
 
 }
 
-void AMOBABaseCharacter::deadHandle(AActor* deadActor, AActor* deadCauser){
+void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedActor, DamageType Type, float Damage, AMOBABaseCharacter* DamageCauser)
+{
 
-	auto myActor = Cast<AMOBABaseCharacter>(deadActor);
-	if (myActor) {
+	if (DamagedActor) 
+	{
 
-		GetMovementComponent()->StopMovementImmediately();
+		auto& myHp = DamagedActor->baseProperty.hp;
 
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		auto myMaxHp = DamagedActor->baseProperty.maxHp;
+		auto myArmor = DamagedActor->baseProperty.armor;
+		auto myMagicResist = DamagedActor->baseProperty.magicResist;
+
+		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
+		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
+
+		if (Type == DamageType::real) {
+			UE_LOG(LogTemp, Warning, TEXT("Real Damage Applyed!"));
+			myHp = FMath::Clamp(myHp - Damage, 0.0f, myMaxHp);
+		}
+
+		if (Type == DamageType::physical) {
+
+			float tDamage = Damage * physicalPercent;
+
+			myHp = FMath::Clamp(myHp - tDamage, 0.0f, myMaxHp);
+
+		}
+
+		if (Type == DamageType::magic) {
+
+			float tDamage = Damage * magicPercent;
+
+			myHp = FMath::Clamp(myHp - tDamage, 0.0f, myMaxHp);
+
+		}
+
+		if (Type == DamageType::treat) {
+			myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
+		}
+
+		if (myHp <= 0.0f) {
+			
+		}
+
+	}
+}
+
+void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
+{
+	if (DeadCharacter) 
+	{
+		DeadCharacter->GetMovementComponent()->StopMovementImmediately();
+
+		DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 
-		auto mayBeHero = Cast<AMOBAHeroCharacter>(deadActor);
+		auto mayBeHero = Cast<AMOBAHeroCharacter>(DeadCharacter);
 
 		if (mayBeHero) {
 			mayBeHero->resetHero();
 		}else {
-			SetLifeSpan(10.0f);
+			DeadCharacter->SetLifeSpan(10.0f);
 		}
 
 	}
@@ -105,6 +149,7 @@ void AMOBABaseCharacter::deadHandle(AActor* deadActor, AActor* deadCauser){
 
 }
 
+/*
 void AMOBABaseCharacter::attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser){
 
 	if (canAttack(damagedActor, damageType, damage, damageCauser)) {
@@ -128,7 +173,7 @@ void AMOBABaseCharacter::attack(AActor* damagedActor, DamageType damageType, flo
 
 	}
 
-}
+}*/
 
 bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser){
 	auto myActor = Cast<AMOBABaseCharacter>(damageCauser);

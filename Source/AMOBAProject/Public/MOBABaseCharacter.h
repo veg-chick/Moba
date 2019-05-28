@@ -7,7 +7,8 @@
 #include "GameFramework/Character.h"
 #include "MOBABaseCharacter.generated.h"
 
-
+struct FBaseActorProperty;
+struct FBaseActorValue;
 
 UCLASS()
 class AMOBAPROJECT_API AMOBABaseCharacter : public ACharacter
@@ -38,10 +39,7 @@ protected:
 		FBaseActorValue baseValue;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void deadHandle(AActor* deadActor, AActor* deadCauser);
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
+		void DeadHandle(AMOBABaseCharacter* DeadCharacter);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
@@ -51,14 +49,15 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void applyDamage(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
+		void ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageType Type, float Damage, AActor* DamageCauser);
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedActor,DamageType Type, float Damage,AMOBABaseCharacter* DamageCauser);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
 public:
-
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbCanBeAttacked() { return baseProperty.bCanBeAttacked; }
 

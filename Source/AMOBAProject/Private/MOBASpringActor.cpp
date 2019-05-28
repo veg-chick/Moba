@@ -26,26 +26,36 @@ void AMOBASpringActor::Tick(float DeltaTime)
 
 }
 
-void AMOBASpringActor::assignSpringCampForAPI(Camp aCamp)
+void AMOBASpringActor::AssignSpringCampForAPI(Camp aCamp)
 {
 	springCamp = aCamp;
 }
 
-void AMOBASpringActor::friendHandle(AActor* who)
+void AMOBASpringActor::FriendHandle(AMOBABaseCharacter* who)
 {
-	auto treatedCharacter = Cast<AMOBABaseCharacter>(who);
-	if (treatedCharacter)
+	if (who)
 	{
-		treatedCharacter->applyDamage(who, DamageType::treat, 500.0f, this);
+		if (who->GetHp() != 0.0f)
+		{
+			while (who->GetHp() < who->GetMaxHp())
+			{
+				who->ApplyDamage(who, DamageType::treat, 500.0f, this);
+			}
+		}
 	}
 }
 
-void AMOBASpringActor::enemyHandle(AActor* who)
+void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)	
 {
-	auto DamagedCharacter = Cast<AMOBABaseCharacter>(who);
-	if (DamagedCharacter)
+	if (who)
 	{
-		DamagedCharacter->applyDamage(who, DamageType::real, 1000.0f, this);
+		if (who->GetHp() != 0.0f)
+		{
+			while (who->GetHp() > 0.0f)
+			{
+				who->ApplyDamage(who, DamageType::real, 1000.0f, this);
+			}
+		}
 	}
 }
 

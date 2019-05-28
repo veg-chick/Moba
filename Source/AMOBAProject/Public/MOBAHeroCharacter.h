@@ -79,18 +79,16 @@ struct FTimerHandles {
 	GENERATED_BODY()
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
-		FTimerHandle skillQTimer;
+		FTimerHandle SkillQTimer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
-		FTimerHandle skillWTimer;
+		FTimerHandle SkillWTimer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
-		FTimerHandle skillETimer;
+		FTimerHandle SkillETimer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
-		FTimerHandle skillRTimer;
+		FTimerHandle SkillRTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
-		FTimerHandle resetTimer;
-
-
+		FTimerHandle ResetTimer;
 
 };
 
@@ -120,6 +118,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+		FVector RecallLocation;
 
 protected:
 

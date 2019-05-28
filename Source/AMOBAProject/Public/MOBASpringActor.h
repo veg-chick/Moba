@@ -28,14 +28,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void assignSpringCampForAPI(Camp aCamp);
+		void AssignSpringCampForAPI(Camp aCamp);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		Camp& GetCamp() { return springCamp; };
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void friendHandle(AActor* who);
+		void FriendHandle(AMOBABaseCharacter* who);
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void enemyHandle(AActor* who);
+		void EnemyHandle(AMOBABaseCharacter* who);
 };

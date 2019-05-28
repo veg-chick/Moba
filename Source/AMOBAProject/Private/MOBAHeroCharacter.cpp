@@ -85,8 +85,8 @@ void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float
 	float const Distance = FVector::Dist(DestLocation, GetActorLocation());
 
 	// We need to issue move command only if far enough in order for walk animation to play correctly
-	if ((Distance > 120.0f)) {
-
+	if ((Distance > 120.0f)) 
+	{
 		this->GetCharacterMovement()->MaxWalkSpeed = Speed;
 		AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(PC, DestLocation);
@@ -98,6 +98,12 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 	float const Distance = FVector::Dist(BeAttackedActor->GetActorLocation(), this->GetActorLocation());
 	UE_LOG(LogTemp, Warning, TEXT("Attack To Actor Succeed!"));
 	if (Distance > this->GetAttackRange()) return;
+	else
+	{
+		auto MyAttackStrength = this->GetAttackStrength();
+		BeAttackedActor->ReceiveDamageFromCharacter(BeAttackedActor, DamageType::physical, MyAttackStrength, this);
+	}
+
 }
 
 void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter)
@@ -105,6 +111,12 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	float const Distance = FVector::Dist(BeAttackedCharacter->GetActorLocation(), this->GetActorLocation());
 	UE_LOG(LogTemp, Warning, TEXT("Attack To Character Succeed!"));
 	if (Distance > this->GetAttackRange()) return;
+	else
+	{
+		auto MyAttackStrength = this->GetAttackStrength();
+		BeAttackedCharacter->ReceiveDamageFromCharacter(BeAttackedCharacter, DamageType::physical, MyAttackStrength, this);
+
+	}
 }
 
 void AMOBAHeroCharacter::resetHero()
@@ -123,7 +135,7 @@ void AMOBAHeroCharacter::resetHero()
 	myMovementComp->MaxWalkSpeed = 0.0f;
 
 	float resetTime = this->heroProperty.resetTime;
-	auto myTimeHanlde = timeHandles.resetTimer;
+	auto myTimeHanlde = timeHandles.ResetTimer;
 	GetWorldTimerManager().SetTimer(myTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
 
 	//Set the move speed to before
@@ -204,7 +216,11 @@ void AMOBAHeroCharacter::levelUp()
 
 void AMOBAHeroCharacter::reCall()
 {
-	auto& myTimeHandle = this->timeHandles.resetTimer;
+	GetCharacterMovement()->StopMovementImmediately();
+
+	auto& myTimeHandle = this->timeHandles.ResetTimer;
+
+	RecallLocation = GetActorLocation();
 
 	GetWorldTimerManager().ClearTimer(myTimeHandle);
 
@@ -214,7 +230,14 @@ void AMOBAHeroCharacter::reCall()
 
 void AMOBAHeroCharacter::reCallHandle()
 {
-	SetActorLocation(birthLocation);
+	if (GetActorLocation() == RecallLocation)
+	{
+		SetActorLocation(birthLocation);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(timeHandles.ResetTimer);
+	}
 }
 
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {
