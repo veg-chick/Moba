@@ -9,8 +9,13 @@
 class UStaticMeshComponent;
 class USphereComponent;
 
-UENUM()
-enum CrystalRoad { crystaltTop, crystalMid, crystalDown };
+UENUM(BlueprintType)
+enum class CrystalRoad : uint8
+{
+	crystalTop UMETA(DisplayName="crystalTop"),
+	crystalMid UMETA(DisplayName="crystalMid"),
+	crystalDown UMETA(DisplayName="crystalDown")
+};
 
 /**
  *
@@ -27,9 +32,10 @@ public:
 
 protected:
 
-	CrystalRoad road;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		CrystalRoad road;
 
-	UPROPERTY(VisibleAnywhere ,Category = "Components")
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 		UStaticMeshComponent* RootComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")

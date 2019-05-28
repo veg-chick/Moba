@@ -6,29 +6,35 @@
 #include "MOBABaseCharacter.h"
 #include "MOBASoldierCharacter.generated.h"
 
-UENUM()
-enum SoldierRoad { soldierTop, soldierMid, soldierDown };
+UENUM(BlueprintType)
+enum class SoldierRoad : uint8
+{
+	soldierTop UMETA(DisplayName = "soldierTop"),
+	soldierMid UMETA(DisplayName = "soldierMid"),
+	soldierDown UMETA(DisplayName = "soldierDown")
+};
 
 
 /**
- * 
+ *
  */
 UCLASS()
 class AMOBAPROJECT_API AMOBASoldierCharacter : public AMOBABaseCharacter
 {
 	GENERATED_BODY()
-	
+
 public:
 	AMOBASoldierCharacter();
 
 protected:
-	SoldierRoad road;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		SoldierRoad road;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		SoldierRoad& GetRoad();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void assignSoldierValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,SoldierRoad aRoad);
+		void assignSoldierValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, SoldierRoad aRoad);
 
 };

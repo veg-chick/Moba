@@ -9,15 +9,26 @@
 class UStaticMeshComponent;
 class USphereComponent;
 
-UENUM()
-enum TowerRoad { towerTop, towerMid, towerDown };
+UENUM(BlueprintType)
+enum class TowerRoad : uint8
+{
+	towerTop UMETA(DisplayName = "towerTop"),
+	towerMid UMETA(DisplayName = "towerMid"),
+	towerDown UMETA(DisplayName = "towerDown")
+};
 
-UENUM()
-enum TowerType { outter, inner, highland, hub };
+UENUM(BlueprintType)
+enum class TowerType : uint8
+{
+	outter UMETA(DisplayName = "outter"),
+	inner UMETA(DisplayName = "inner"),
+	highland UMETA(DisplayName = "highland"),
+	hub UMETA(DisplayName = "hub")
+};
 
 
 /**
- * 
+ *
  */
 UCLASS()
 class AMOBAPROJECT_API AMOBATowerCharacter : public AMOBABaseCharacter
@@ -28,10 +39,11 @@ public:
 	AMOBATowerCharacter();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		TowerRoad road;
 
-	TowerRoad road;
-
-	TowerType towerType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		TowerType towerType;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -58,5 +70,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		USphereComponent* ClickComp;
-	
+
 };

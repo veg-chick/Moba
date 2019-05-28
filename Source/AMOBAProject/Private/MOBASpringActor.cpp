@@ -36,7 +36,7 @@ void AMOBASpringActor::friendHandle(AActor* who)
 	auto treatedCharacter = Cast<AMOBABaseCharacter>(who);
 	if (treatedCharacter)
 	{
-		treatedCharacter->applyDamage(who, treat, 500.0f, this);
+		treatedCharacter->applyDamage(who, DamageType::treat, 500.0f, this);
 	}
 }
 
@@ -45,7 +45,7 @@ void AMOBASpringActor::enemyHandle(AActor* who)
 	auto DamagedCharacter = Cast<AMOBABaseCharacter>(who);
 	if (DamagedCharacter)
 	{
-		DamagedCharacter->applyDamage(who, real, 1000.0f, this);
+		DamagedCharacter->applyDamage(who, DamageType::real, 1000.0f, this);
 	}
 }
 

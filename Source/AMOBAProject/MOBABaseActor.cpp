@@ -66,11 +66,11 @@ void AMOBABaseActor::applyDamage(AActor* damagedActor, DamageType damageType, fl
 		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
-		if (damageType == real) {
+		if (damageType == DamageType::real) {
 			myHp = FMath::Clamp(myHp - damage, 0.0f, myMaxHp);
 		}
 
-		if (damageType == physical) {
+		if (damageType == DamageType::physical) {
 
 			float tDamage = damage * physicalPercent;
 
@@ -78,7 +78,7 @@ void AMOBABaseActor::applyDamage(AActor* damagedActor, DamageType damageType, fl
 
 		}
 
-		if (damageType == magic) {
+		if (damageType == DamageType::magic) {
 
 			float tDamage = damage * magicPercent;
 
@@ -86,7 +86,7 @@ void AMOBABaseActor::applyDamage(AActor* damagedActor, DamageType damageType, fl
 
 		}
 
-		if (damage == treat) {
+		if (damageType == DamageType::treat) {
 			myHp = FMath::Clamp(myHp + damage, 0.0f, myMaxHp);
 		}
 

@@ -14,20 +14,29 @@ struct FHeroProperty {
 
 	GENERATED_BODY()
 
-	float resetTime;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float resetTime;
 
-	float strikeRate;
-	float strikeDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float strikeRate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float strikeDamage;
 
-	bool bIsInjured;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bIsInjured;
 
-	float relativeArmorPenetration;
-	float relativeMagicResistPenetration;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float relativeArmorPenetration;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float relativeMagicResistPenetration;
 
-	int absoluteMagicResistPenetration;
-	int absoluteArmorPentration;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float absoluteMagicResistPenetration;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float absoluteArmorPentration;
 
-	float lifeSteal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float lifeSteal;
 
 };
 
@@ -36,21 +45,31 @@ struct FHeroGrowth {
 
 	GENERATED_BODY()
 
-	float hpGrowth;
-	float mpGrowth;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float hpGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float mpGrowth;
 
-	float hpRecoveryGrowth;
-	float mpRecoveryGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float hpRecoveryGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float mpRecoveryGrowth;
 
-	int armorGrowth;
-	int magicResistGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float armorGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float magicResistGrowth;
 
-	int attackGrowth;
-	float attackSpeedGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float attackGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float attackSpeedGrowth;
 
-	int experienceCarriedGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float experienceCarriedGrowth;
 
-	float resetTimeGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+		float resetTimeGrowth;
 };
 
 
@@ -59,12 +78,17 @@ struct FTimerHandles {
 
 	GENERATED_BODY()
 
-	FTimerHandle skillQTimer;
-	FTimerHandle skillWTimer;
-	FTimerHandle skillETimer;
-	FTimerHandle skillRTimer;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle skillQTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle skillWTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle skillETimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle skillRTimer;
 
-	FTimerHandle resetTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle resetTimer;
 
 
 
@@ -84,17 +108,16 @@ public:
 
 protected:
 
-	FHeroProperty heroProperty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FHeroProperty heroProperty;
 
-	FHeroGrowth heroGrowth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FHeroGrowth heroGrowth;
 
-	FTimerHandles timeHandles;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandles timeHandles;
 
-	FBaseActorProperty baseProperty;
-
-	FBaseActorValue baseValue;
-
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "MOBAComponents")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
 
 
@@ -180,19 +203,19 @@ public:
 		float& GetMpRecoveryGrowth() { return heroGrowth.mpRecoveryGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetArmorGrowth() { return heroGrowth.armorGrowth; }
+		float& GetArmorGrowth() { return heroGrowth.armorGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetMagicResistGrowth() { return heroGrowth.magicResistGrowth; }
+		float& GetMagicResistGrowth() { return heroGrowth.magicResistGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetAttackGrowth() { return heroGrowth.attackGrowth; }
+		float& GetAttackGrowth() { return heroGrowth.attackGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetAttackSpeedGrowth() { return heroGrowth.attackSpeedGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetExperienceCarriedGrowth() { return heroGrowth.experienceCarriedGrowth; }
+		float& GetExperienceCarriedGrowth() { return heroGrowth.experienceCarriedGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetResetTimeGrowth() { return heroGrowth.resetTimeGrowth; }
@@ -216,10 +239,10 @@ public:
 		float& GetRelativeMagicResistPenetration() { return heroProperty.relativeMagicResistPenetration; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetAbsoluteMagicResistPenetration() { return heroProperty.absoluteMagicResistPenetration; }
+		float& GetAbsoluteMagicResistPenetration() { return heroProperty.absoluteMagicResistPenetration; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetAbsoluteArmorPentration() { return heroProperty.absoluteArmorPentration; }
+		float& GetAbsoluteArmorPentration() { return heroProperty.absoluteArmorPentration; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetLifeSteal() { return heroProperty.lifeSteal; }

@@ -20,7 +20,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	Camp springCamp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		Camp springCamp;
 
 public:
 	// Called every frame

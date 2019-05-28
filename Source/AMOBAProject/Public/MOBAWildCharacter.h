@@ -10,13 +10,13 @@ struct FTimerHandle;
 struct FVector;
 
 /**
- * 
+ *
  */
 UCLASS()
 class AMOBAPROJECT_API AMOBAWildCharacter : public AMOBABaseCharacter
 {
 	GENERATED_BODY()
-	
+
 public:
 
 	AMOBAWildCharacter();
@@ -24,7 +24,8 @@ public:
 
 protected:
 
-	FTimerHandle wildResetTimeHanlde;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandle wildResetTimeHanlde;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void quickRecovery();

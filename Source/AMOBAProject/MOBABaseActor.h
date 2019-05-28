@@ -6,58 +6,94 @@
 #include "GameFramework/Actor.h"
 #include "MOBABaseActor.generated.h"
 
-UENUM()
-enum Camp { blue, red, other };
+UENUM(BlueprintType)
+enum class Camp : uint8
+{
+	blue UMETA(DisplayName = "blue"),
+	red UMETA(DisplayName = "red"),
+	other UMETA(DisplayName = "other")
+};
 
 USTRUCT(BlueprintType)
 struct FBaseActorProperty {
 
 	GENERATED_BODY()
 
-	Camp baseCamp;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		Camp baseCamp;
 
-	float hp;
-	float maxHp;
-	float hpRecovery;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float hp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float maxHp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float hpRecovery;
 
-	bool bHaveMp;
-	float mp;
-	float maxMp;
-	float mpRecovery;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		bool bHaveMp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float mp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float maxMp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float mpRecovery;
 
-	int armor;
-	int magicResist;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float armor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float magicResist;
 
-	float moveSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float moveSpeed;
 
-	bool bAbleToAttack;
-	bool bCanBeAttacked;
-	bool bIsRemote;
-	float attackRange;
-	float sightRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		bool bAbleToAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		bool bCanBeAttacked;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		bool bIsRemote;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float attackRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float sightRange;
 
-	int attackStrength;
-	int powerStrength;
-	float attackSpeed;
-	float maxAttackSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float attackStrength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float powerStrength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float attackSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float maxAttackSpeed;
 
-	int level;
-	int maxLevel;
-	int experience;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float level;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float maxLevel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		float experience;
 
 };
 
-UENUM()
-enum DamageType { physical, magic, real, treat };
+UENUM(BlueprintType)
+enum class DamageType : uint8
+{
+	physical UMETA(DisplayName = "physical"),
+	magic UMETA(DisplayName = "magic"),
+	real UMETA(DisplayName = "real"),
+	treat UMETA(DisplayName = "treat")
+};
 
 USTRUCT(BlueprintType)
 struct FBaseActorValue {
 
 	GENERATED_BODY()
 
-	int goldValue;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseValue")
+		float goldValue;
 
-	int experienceValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseValue")
+		float experienceValue;
 
 };
 
@@ -80,12 +116,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FBaseActorProperty baseProperty;
 
-	FBaseActorProperty baseProperty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		bool bIsBroken;
 
-	bool bIsBroken;
-
-	FBaseActorValue baseValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FBaseActorValue baseValue;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void deadHandle(AActor* deadActor, AActor* deadCauser);
@@ -139,10 +177,10 @@ public:
 		float& GetMpRecovery() { return baseProperty.mpRecovery; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetArmor() { return baseProperty.armor; }
+		float& GetArmor() { return baseProperty.armor; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetMagicResist() { return baseProperty.magicResist; }
+		float& GetMagicResist() { return baseProperty.magicResist; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetMoveSpeed() { return baseProperty.moveSpeed; }
@@ -160,10 +198,10 @@ public:
 		float& GetSeightrange() { return baseProperty.sightRange; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetAttackStrength() { return baseProperty.attackStrength; }
+		float& GetAttackStrength() { return baseProperty.attackStrength; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetPowerStrength() { return baseProperty.powerStrength; }
+		float& GetPowerStrength() { return baseProperty.powerStrength; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetAttackSpeed() { return baseProperty.attackSpeed; }
@@ -172,19 +210,19 @@ public:
 		float& GetMaxAttackSpeed() { return baseProperty.maxAttackSpeed; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetLevel() { return baseProperty.level; }
+		float& GetLevel() { return baseProperty.level; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetMaxLevel() { return baseProperty.maxLevel; }
+		float& GetMaxLevel() { return baseProperty.maxLevel; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetExperience() { return baseProperty.experience; }
+		float& GetExperience() { return baseProperty.experience; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetGoldValue() { return baseValue.goldValue; }
+		float& GetGoldValue() { return baseValue.goldValue; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetExperienceValue() { return baseValue.experienceValue; }
+		float& GetExperienceValue() { return baseValue.experienceValue; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsBroken() { return bIsBroken; }

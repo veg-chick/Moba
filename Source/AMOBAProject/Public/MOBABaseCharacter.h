@@ -22,7 +22,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -31,11 +31,11 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere,Category="MyMOBA")
-	FBaseActorProperty baseProperty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FBaseActorProperty baseProperty;
 
-	UPROPERTY(EditAnywhere,Category="MyMOBA")
-	FBaseActorValue baseValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FBaseActorValue baseValue;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void deadHandle(AActor* deadActor, AActor* deadCauser);
@@ -87,10 +87,10 @@ public:
 		float& GetMpRecovery() { return baseProperty.mpRecovery; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetArmor() { return baseProperty.armor; }
+		float& GetArmor() { return baseProperty.armor; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetMagicResist() { return baseProperty.magicResist; }
+		float& GetMagicResist() { return baseProperty.magicResist; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetMoveSpeed() { return baseProperty.moveSpeed; }
@@ -108,10 +108,10 @@ public:
 		float& GetSeightrange() { return baseProperty.sightRange; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetAttackStrength() { return baseProperty.attackStrength; }
+		float& GetAttackStrength() { return baseProperty.attackStrength; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetPowerStrength() { return baseProperty.powerStrength; }
+		float& GetPowerStrength() { return baseProperty.powerStrength; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetAttackSpeed() { return baseProperty.attackSpeed; }
@@ -120,21 +120,18 @@ public:
 		float& GetMaxAttackSpeed() { return baseProperty.maxAttackSpeed; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetLevel() { return baseProperty.level; }
+		float& GetLevel() { return baseProperty.level; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetMaxLevel() { return baseProperty.maxLevel; }
+		float& GetMaxLevel() { return baseProperty.maxLevel; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetExperience() { return baseProperty.experience; }
+		float& GetExperience() { return baseProperty.experience; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetGoldValue() { return baseValue.goldValue; }
+		float& GetGoldValue() { return baseValue.goldValue; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& GetExperienceValue() { return baseValue.experienceValue; }
+		float& GetExperienceValue() { return baseValue.experienceValue; }
 
-public:
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void setHp(float ok) { this->baseProperty.hp = ok; }
 };
