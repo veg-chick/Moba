@@ -39,7 +39,7 @@ void AMOBAPlayerController::MoveToMouseCursor()
 	if (Hit.bBlockingHit)
 	{
 		AMOBAHeroCharacter* MyCharacter = Cast<AMOBAHeroCharacter>(this->GetCharacter());
-		MyCharacter->SetNewMoveDestination(Hit.ImpactPoint, MyCharacter->getMoveSpeed());
+		MyCharacter->SetNewMoveDestination(Hit.ImpactPoint, MyCharacter->GetMoveSpeed());
 	}
 }
 
@@ -55,10 +55,10 @@ void AMOBAPlayerController::AttackToMouseCursor()
 
 	AMOBAHeroCharacter* MyCharacter = Cast<AMOBAHeroCharacter>(this->GetCharacter());
 
-	if (BeAttackedCharacter && BeAttackedCharacter->getCamp() != MyCharacter->getCamp() && BeAttackedCharacter->getBCanBeAttacked()) {
+	if (BeAttackedCharacter && BeAttackedCharacter->GetCamp() != MyCharacter->GetCamp() && BeAttackedCharacter->GetbCanBeAttacked()) {
 		MyCharacter->AttackToACharacter(BeAttackedCharacter);
 	}
-	else if (BeAttackedActor && BeAttackedActor->getCamp() != MyCharacter->getCamp() && BeAttackedActor->getBCanBeAttacked()) {
+	else if (BeAttackedActor && BeAttackedActor->GetCamp() != MyCharacter->GetCamp() && BeAttackedActor->GetbCanBeAttacked()) {
 		MyCharacter->AttackToAActor(BeAttackedActor);
 	}
 

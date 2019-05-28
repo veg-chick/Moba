@@ -8,7 +8,7 @@ AMOBASoldierCharacter::AMOBASoldierCharacter()
 
 }
 
-SoldierRoad& AMOBASoldierCharacter::getRoad()
+SoldierRoad& AMOBASoldierCharacter::GetRoad()
 {
 	return road;
 }

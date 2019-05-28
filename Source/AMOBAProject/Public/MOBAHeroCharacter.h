@@ -14,7 +14,7 @@ struct FHeroProperty {
 
 	GENERATED_BODY()
 
-		int resetTime;
+	float resetTime;
 
 	float strikeRate;
 	float strikeDamage;
@@ -36,8 +36,8 @@ struct FHeroGrowth {
 
 	GENERATED_BODY()
 
-		int hpGrowth;
-	int mpGrowth;
+	float hpGrowth;
+	float mpGrowth;
 
 	float hpRecoveryGrowth;
 	float mpRecoveryGrowth;
@@ -50,7 +50,7 @@ struct FHeroGrowth {
 
 	int experienceCarriedGrowth;
 
-	int resetTimeGrowth;
+	float resetTimeGrowth;
 };
 
 
@@ -59,7 +59,7 @@ struct FTimerHandles {
 
 	GENERATED_BODY()
 
-		FTimerHandle skillQTimer;
+	FTimerHandle skillQTimer;
 	FTimerHandle skillWTimer;
 	FTimerHandle skillETimer;
 	FTimerHandle skillRTimer;
@@ -168,59 +168,59 @@ protected:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getHpGrowth() { return heroGrowth.hpGrowth; }
+		float& GetHpGrowth() { return heroGrowth.hpGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getMpGrowth() { return heroGrowth.mpGrowth; }
+		float& GetMpGrowth() { return heroGrowth.mpGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getHpRecoveryGrowth() { return heroGrowth.hpRecoveryGrowth; }
+		float& GetHpRecoveryGrowth() { return heroGrowth.hpRecoveryGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getMpRecoveryGrowth() { return heroGrowth.mpRecoveryGrowth; }
+		float& GetMpRecoveryGrowth() { return heroGrowth.mpRecoveryGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getArmorGrowth() { return heroGrowth.armorGrowth; }
+		int& GetArmorGrowth() { return heroGrowth.armorGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getMagicResistGrowth() { return heroGrowth.magicResistGrowth; }
+		int& GetMagicResistGrowth() { return heroGrowth.magicResistGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getAttackGrowth() { return heroGrowth.attackGrowth; }
+		int& GetAttackGrowth() { return heroGrowth.attackGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getAttackSpeedGrowth() { return heroGrowth.attackSpeedGrowth; }
+		float& GetAttackSpeedGrowth() { return heroGrowth.attackSpeedGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getExperienceCarriedGrowth() { return heroGrowth.experienceCarriedGrowth; }
+		int& GetExperienceCarriedGrowth() { return heroGrowth.experienceCarriedGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getResetTimeGrowth() { return heroGrowth.resetTimeGrowth; }
+		float& GetResetTimeGrowth() { return heroGrowth.resetTimeGrowth; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getResetTime() { return heroProperty.resetTime; }
+		float& GetResetTime() { return heroProperty.resetTime; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getStrikeRate() { return heroProperty.strikeRate; }
+		float& GetStrikeRate() { return heroProperty.strikeRate; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getStrikeDamage() { return heroProperty.strikeDamage; }
+		float& GetStrikeDamage() { return heroProperty.strikeDamage; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		bool& getBIsInjured() { return heroProperty.bIsInjured; }
+		bool& GetbIsInjured() { return heroProperty.bIsInjured; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getRelativeArmorPenetration() { return heroProperty.relativeArmorPenetration; }
+		float& GetRelativeArmorPenetration() { return heroProperty.relativeArmorPenetration; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getRelativeMagicResistPenetration() { return heroProperty.relativeMagicResistPenetration; }
+		float& GetRelativeMagicResistPenetration() { return heroProperty.relativeMagicResistPenetration; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getAbsoluteMagicResistPenetration() { return heroProperty.absoluteMagicResistPenetration; }
+		int& GetAbsoluteMagicResistPenetration() { return heroProperty.absoluteMagicResistPenetration; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		int& getAbsoluteArmorPentration() { return heroProperty.absoluteArmorPentration; }
+		int& GetAbsoluteArmorPentration() { return heroProperty.absoluteArmorPentration; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& getLifeSteal() { return heroProperty.lifeSteal; }
+		float& GetLifeSteal() { return heroProperty.lifeSteal; }
 };

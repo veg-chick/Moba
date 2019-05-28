@@ -26,7 +26,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		SoldierRoad& getRoad();
+		SoldierRoad& GetRoad();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignSoldierValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue,SoldierRoad aRoad);

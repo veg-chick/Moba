@@ -50,6 +50,7 @@ void AMOBABaseCharacter::applyDamage(AActor* damagedActor, DamageType damageType
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
 		if (damageType == real) {
+			UE_LOG(LogTemp, Warning, TEXT("Real Damage Applyed!"));
 			myHp = FMath::Clamp(myHp - damage, 0.0f, myMaxHp);
 		}
 
@@ -135,10 +136,10 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 	auto otherActor = Cast<AMOBABaseActor>(damagedActor);
 	if (otherActor) {
 		bool can = myActor->baseProperty.bAbleToAttack;
-		bool canBe = otherActor->getBCanBeAttacked();
+		bool canBe = otherActor->GetbCanBeAttacked();
 
 		auto causerCamp = myActor->baseProperty.baseCamp;
-		auto damagedCamp = otherActor->getCamp();
+		auto damagedCamp = otherActor->GetCamp();
 
 		if (causerCamp != damagedCamp) {
 			if (can && canBe) {
@@ -150,10 +151,10 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 	auto otherCharacter = Cast<AMOBABaseCharacter>(damagedActor);
 	if (otherCharacter) {
 		bool can = myActor->baseProperty.bAbleToAttack;
-		bool canBe = otherCharacter->getBCanBeAttacked();
+		bool canBe = otherCharacter->GetbCanBeAttacked();
 
 		auto causerCamp = myActor->baseProperty.baseCamp;
-		auto damagedCamp = otherCharacter->getCamp();
+		auto damagedCamp = otherCharacter->GetCamp();
 
 		if (causerCamp != damagedCamp) {
 			if (can && canBe) {

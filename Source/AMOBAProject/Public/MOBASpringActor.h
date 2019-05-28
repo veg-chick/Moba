@@ -30,7 +30,7 @@ public:
 		void assignSpringCampForAPI(Camp aCamp);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		Camp& getCamp() { return springCamp; };
+		Camp& GetCamp() { return springCamp; };
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

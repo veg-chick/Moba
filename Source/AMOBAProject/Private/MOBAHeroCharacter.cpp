@@ -97,14 +97,14 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 {
 	float const Distance = FVector::Dist(BeAttackedActor->GetActorLocation(), this->GetActorLocation());
 	UE_LOG(LogTemp, Warning, TEXT("Attack To Actor Succeed!"));
-	if (Distance > this->getAttackRange()) return;
+	if (Distance > this->GetAttackRange()) return;
 }
 
 void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter)
 {
 	float const Distance = FVector::Dist(BeAttackedCharacter->GetActorLocation(), this->GetActorLocation());
 	UE_LOG(LogTemp, Warning, TEXT("Attack To Character Succeed!"));
-	if (Distance > this->getAttackRange()) return;
+	if (Distance > this->GetAttackRange()) return;
 }
 
 void AMOBAHeroCharacter::resetHero()
@@ -124,7 +124,6 @@ void AMOBAHeroCharacter::resetHero()
 
 	float resetTime = this->heroProperty.resetTime;
 	auto myTimeHanlde = timeHandles.resetTimer;
-
 	GetWorldTimerManager().SetTimer(myTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
 
 	//Set the move speed to before
