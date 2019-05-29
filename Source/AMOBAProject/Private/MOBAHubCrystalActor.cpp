@@ -3,6 +3,7 @@
 
 #include "Public/MOBAHubCrystalActor.h"
 #include "Components/StaticMeshComponent.h"
+#include "Public/MOBAGameMode.h"
 #include "Components/SphereComponent.h"
 
 AMOBAHubCrystalActor::AMOBAHubCrystalActor() {
@@ -30,4 +31,14 @@ void AMOBAHubCrystalActor::assignHubCrystalValueForAPI(FBaseActorProperty aBaseP
 
 	assignBaseValueForAPI(aBaseProperty, aBaseValue);
 
+}
+
+void AMOBAHubCrystalActor::EndTheGame(Camp winner)
+{	
+	auto MyGameMode = Cast<AMOBAGameMode>(GetWorld()->GetAuthGameMode());
+	if (MyGameMode)
+	{
+		MyGameMode->GameOver(winner);
+	}
+	
 }

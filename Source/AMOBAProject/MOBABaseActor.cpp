@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MOBABaseActor.h"
 #include "Math/UnrealMathUtility.h"
+#include "Public/MOBAHubCrystalActor.h"
 #include "Public/MOBABaseCharacter.h"
+
 
 void AMOBABaseActor::setValue() {
 
@@ -98,6 +99,23 @@ void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor) {
 	{
 		this->GetbIsBroken()= true;
 		this->GetbCanBeAttacked() = false;
+
+		auto MayBeHub = Cast<AMOBAHubCrystalActor>(DeadActor);
+		if (MayBeHub)
+		{
+			auto Loser = MayBeHub->GetCamp();
+			if (Loser == Camp::blue)
+			{
+				MayBeHub->EndTheGame(Camp::red);
+				return;
+			}
+			else
+			{
+				MayBeHub->EndTheGame(Camp::blue);
+				return;
+			}
+		}
+
 	}
 }
 

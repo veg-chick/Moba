@@ -135,6 +135,8 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 
 		DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+		this->GetbCanBeAttacked() = false;
+		this->GetbAbleToAttack() = false;
 
 		auto mayBeHero = Cast<AMOBAHeroCharacter>(DeadCharacter);
 

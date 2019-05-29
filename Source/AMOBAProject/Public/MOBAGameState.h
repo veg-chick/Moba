@@ -6,6 +6,8 @@
 #include "GameFramework/GameState.h"
 #include "MOBAGameState.generated.h"
 
+
+enum class Camp : uint8;
 /**
  * 
  */
@@ -13,5 +15,9 @@ UCLASS()
 class AMOBAPROJECT_API AMOBAGameState : public AGameState
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiCastOnGameOver(Camp SuccessCamp);
 	
 };
