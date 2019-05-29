@@ -158,6 +158,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerMoveToLocation(const FVector DestLocation, float Speed);
+	
+
 public:
 	virtual void Tick(float DeltaSeconds) override;
 
