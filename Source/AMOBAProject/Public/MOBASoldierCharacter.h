@@ -26,9 +26,15 @@ class AMOBAPROJECT_API AMOBASoldierCharacter : public AMOBABaseCharacter
 public:
 	AMOBASoldierCharacter();
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+	class UBehaviorTree* BehaviorTree;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		SoldierRoad road;
+
+	
+
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
