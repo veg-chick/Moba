@@ -81,5 +81,6 @@ void AMOBAGameMode::StartPlay()
 
 void AMOBAGameMode::GameOver(Camp SuccessCamp)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
 	GetGameState<AMOBAGameState>()->MultiCastOnGameOver(SuccessCamp);
 }

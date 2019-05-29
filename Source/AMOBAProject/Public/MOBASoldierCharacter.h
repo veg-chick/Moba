@@ -30,9 +30,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		SoldierRoad road;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		bool bIsStrengthened;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		SoldierRoad& GetRoad();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbIsStrengthened() { return bIsStrengthened; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignSoldierValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, SoldierRoad aRoad);

@@ -40,4 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignHubCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void EndTheGame(Camp winner);
+
 };

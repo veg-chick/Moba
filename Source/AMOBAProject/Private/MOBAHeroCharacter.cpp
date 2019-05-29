@@ -12,6 +12,7 @@
 #include "Materials/Material.h"
 #include "Math/UnrealMathUtility.h"
 #include "Math/Vector.h"
+#include "Math/RandomStream.h"
 #include "Engine/World.h"
 #include "MOBAPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
@@ -114,6 +115,18 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	else
 	{
 		auto MyAttackStrength = this->GetAttackStrength();
+		//Strike
+		FRandomStream MyRandomStream;
+		auto MyStrikeRate = this->GetStrikeRate();
+		auto MyStrikeDamage = this->GetStrikeDamage();
+		MyRandomStream.GenerateNewSeed();
+		auto RandomResult = MyRandomStream.GetFraction();
+		if (RandomResult <= MyStrikeRate && RandomResult >= 0.0f)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Strike!"));
+			MyAttackStrength *= MyStrikeDamage;
+		}
+
 		BeAttackedCharacter->ReceiveDamageFromCharacter(BeAttackedCharacter, DamageType::physical, MyAttackStrength, this);
 
 	}
@@ -133,6 +146,7 @@ void AMOBAHeroCharacter::resetHero()
 	myMovementComp->MaxAcceleration = 0.0f;
 	auto  maxWalkSpeedBefore = myMovementComp->MaxWalkSpeed;
 	myMovementComp->MaxWalkSpeed = 0.0f;
+	//Prohibition of Rotation
 
 	float resetTime = this->heroProperty.resetTime;
 	auto myTimeHanlde = timeHandles.ResetTimer;
@@ -179,7 +193,9 @@ void AMOBAHeroCharacter::resetHeroHandle()
 	this->baseProperty.hp = this->baseProperty.maxHp;
 	this->baseProperty.mp = this->baseProperty.maxMp;
 	this->baseProperty.bAbleToAttack = true;
+	this->baseProperty.bCanBeAttacked = true;
 	//Allow release skills
+
 
 	this->SetActorLocation(birthLocation);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
