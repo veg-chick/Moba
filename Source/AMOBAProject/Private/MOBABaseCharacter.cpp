@@ -8,26 +8,30 @@
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
-AMOBABaseCharacter::AMOBABaseCharacter(){
+AMOBABaseCharacter::AMOBABaseCharacter()
+{
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
 // Called when the game starts or when spawned
-void AMOBABaseCharacter::BeginPlay(){
+void AMOBABaseCharacter::BeginPlay()
+{
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AMOBABaseCharacter::Tick(float DeltaTime){
+void AMOBABaseCharacter::Tick(float DeltaTime)
+{
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void AMOBABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){
+void AMOBABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
@@ -95,12 +99,14 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
-		if (Type == DamageType::real) {
+		if (Type == DamageType::real) 
+		{
 			UE_LOG(LogTemp, Warning, TEXT("Real Damage Applyed!"));
 			myHp = FMath::Clamp(myHp - Damage, 0.0f, myMaxHp);
 		}
 
-		if (Type == DamageType::physical) {
+		if (Type == DamageType::physical) 
+		{
 
 			float tDamage = Damage * physicalPercent;
 
@@ -108,7 +114,8 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 
 		}
 
-		if (Type == DamageType::magic) {
+		if (Type == DamageType::magic)
+		{
 
 			float tDamage = Damage * magicPercent;
 
@@ -116,12 +123,26 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 
 		}
 
-		if (Type == DamageType::treat) {
+		if (Type == DamageType::treat)
+		{
 			myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
 		}
 
-		if (myHp <= 0.0f) {
-			
+		if (myHp <= 0.0f) 
+		{
+			auto MayBeAHero = Cast<AMOBAHeroCharacter>(DamageCauser);
+			if (MayBeAHero)
+			{
+				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
+				MayBeAHero->GetExperience() += DamagedActor->GetExperienceValue();
+			}
+			DeadHandle(DamagedActor);
+		}
+
+		auto RecallingHero = Cast<AMOBAHeroCharacter>(DamagedActor);
+		if (RecallingHero)
+		{
+			RecallingHero->GetbRecallSucceed() = false;
 		}
 
 	}
@@ -140,14 +161,15 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 
 		auto mayBeHero = Cast<AMOBAHeroCharacter>(DeadCharacter);
 
-		if (mayBeHero) {
+		if (mayBeHero) 
+		{
 			mayBeHero->resetHero();
-		}else {
+		}else 
+		{
 			DeadCharacter->SetLifeSpan(10.0f);
 		}
 
 	}
-
 
 }
 
@@ -177,7 +199,8 @@ void AMOBABaseCharacter::attack(AActor* damagedActor, DamageType damageType, flo
 
 }*/
 
-bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser){
+bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser)
+{
 	auto myActor = Cast<AMOBABaseCharacter>(damageCauser);
 
 	auto otherActor = Cast<AMOBABaseActor>(damagedActor);
@@ -215,14 +238,14 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 	return false;
 }
 
-void AMOBABaseCharacter::setValue(){
+void AMOBABaseCharacter::setValue()
+{
 
 }
 
-void AMOBABaseCharacter::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
-
+void AMOBABaseCharacter::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue)
+{
 	this->baseProperty = aBaseProperty;
 	this->baseValue = aBaseValue;
-
 }
 

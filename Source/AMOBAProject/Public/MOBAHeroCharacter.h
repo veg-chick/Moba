@@ -38,6 +38,12 @@ struct FHeroProperty {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float lifeSteal;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float Gold;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bRecallSucceed;
+
 };
 
 USTRUCT(BlueprintType)
@@ -89,12 +95,9 @@ struct FTimerHandles {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle ResetTimer;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
-		FTimerHandle HpRecoveryTimer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
-		FTimerHandle MpRecoveryTimer;
+		FTimerHandle AttackTimer;
 
 };
 
@@ -123,9 +126,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
-		FVector RecallLocation;
 
 protected:
 
@@ -170,6 +170,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetAttackTimer();
+
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerMoveToLocation(const FVector DestLocation, float Speed);
 
@@ -195,6 +198,7 @@ public:
 	void AttackToAActor(AMOBABaseActor* BeAttackedActor);
 
 	void AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter);
+
 
 protected:
 	/** Top down camera */
@@ -267,4 +271,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetLifeSteal() { return heroProperty.lifeSteal; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetGold() { return heroProperty.Gold; }
+
+	UFUNCTION(BlueprintCallable,Category="MyMOBA")
+		bool& GetbRecallSucceed() { return heroProperty.bRecallSucceed; }
+
 };
