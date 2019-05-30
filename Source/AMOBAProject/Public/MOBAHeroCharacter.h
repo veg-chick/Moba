@@ -90,6 +90,12 @@ struct FTimerHandles {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle ResetTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle HpRecoveryTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle MpRecoveryTimer;
+
 };
 
 
@@ -150,6 +156,12 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void reCallHandle();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HpRecoveryHandle();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void MpRecoveryHandle();
+	
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

@@ -266,6 +266,22 @@ void AMOBAHeroCharacter::reCallHandle()
 	}
 }
 
+void AMOBAHeroCharacter::HpRecoveryHandle()
+{
+	if (this->GetHp() != this->GetMaxHp())
+	{
+		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery(), 0.0f, this->GetMaxHp());
+	}
+}
+
+void AMOBAHeroCharacter::MpRecoveryHandle()
+{
+	if (this->GetMp() != this->GetMaxMp())
+	{
+		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
+	}
+}
+
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {
 
 	assignBaseValueForAPI(aBaseProperty, aBaseValue);
@@ -273,3 +289,5 @@ void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty,
 	this->heroGrowth = aHeroGrowth;
 
 }
+
+//void AMOBAHeroCharacter::
