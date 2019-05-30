@@ -78,6 +78,12 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+
+	HpRecoveryHandle();
+	if (this->GetBHaveMp())
+	{
+		MpRecoveryHandle();
+	}
 }
 
 void AMOBAHeroCharacter::ServerMoveToLocation_Implementation(const FVector DestLocation, float Speed)
@@ -100,6 +106,7 @@ bool AMOBAHeroCharacter::ServerMoveToLocation_Validate(const FVector DestLocatio
 
 void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
 {
+	this->GetbRecallSucceed() = false;
 	ServerMoveToLocation(DestLocation, Speed);
 }
 
@@ -110,6 +117,7 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 	if (Distance > this->GetAttackRange()) return;
 	else
 	{
+		this->GetbRecallSucceed() = false;
 		auto MyAttackStrength = this->GetAttackStrength();
 		BeAttackedActor->ReceiveDamageFromCharacter(BeAttackedActor, DamageType::physical, MyAttackStrength, this);
 	}
@@ -123,6 +131,7 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	if (Distance > this->GetAttackRange()) return;
 	else
 	{
+		this->GetbRecallSucceed() = false;
 		auto MyAttackStrength = this->GetAttackStrength();
 		//Strike
 		FRandomStream MyRandomStream;
@@ -167,6 +176,10 @@ void AMOBAHeroCharacter::resetHero()
 
 }
 
+void AMOBAHeroCharacter::ResetAttackTimer()
+{
+	this->GetbAbleToAttack() = true;
+}
 
 void AMOBAHeroCharacter::BeginPlay()
 {
@@ -194,7 +207,7 @@ void AMOBAHeroCharacter::resetESkill()
 
 void AMOBAHeroCharacter::resetRSkill()
 {
-	
+
 }
 
 void AMOBAHeroCharacter::resetHeroHandle()
@@ -246,9 +259,9 @@ void AMOBAHeroCharacter::reCall()
 
 	auto& myTimeHandle = this->timeHandles.ResetTimer;
 
-	RecallLocation = GetActorLocation();
-
 	GetWorldTimerManager().ClearTimer(myTimeHandle);
+
+	this->GetbRecallSucceed() = true;
 
 	GetWorldTimerManager().SetTimer(myTimeHandle, this, &AMOBAHeroCharacter::reCallHandle, 8.0f);
 
@@ -256,13 +269,9 @@ void AMOBAHeroCharacter::reCall()
 
 void AMOBAHeroCharacter::reCallHandle()
 {
-	if (GetActorLocation() == RecallLocation)
+	if (this->GetbRecallSucceed())
 	{
 		SetActorLocation(birthLocation);
-	}
-	else
-	{
-		GetWorldTimerManager().ClearTimer(timeHandles.ResetTimer);
 	}
 }
 
@@ -270,7 +279,7 @@ void AMOBAHeroCharacter::HpRecoveryHandle()
 {
 	if (this->GetHp() != this->GetMaxHp())
 	{
-		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery(), 0.0f, this->GetMaxHp());
+		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery() / 60.0f, 0.0f, this->GetMaxHp());
 	}
 }
 
@@ -278,7 +287,7 @@ void AMOBAHeroCharacter::MpRecoveryHandle()
 {
 	if (this->GetMp() != this->GetMaxMp())
 	{
-		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
+		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery() / 60.0f, 0.0f, this->GetMaxMp());
 	}
 }
 
@@ -290,4 +299,3 @@ void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty,
 
 }
 
-//void AMOBAHeroCharacter::

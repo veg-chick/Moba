@@ -3,6 +3,7 @@
 #include "MOBABaseActor.h"
 #include "Math/UnrealMathUtility.h"
 #include "Public/MOBAHubCrystalActor.h"
+#include "Public/MOBAHeroCharacter.h"
 #include "Public/MOBABaseCharacter.h"
 
 
@@ -64,11 +65,13 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
-		if (Type == DamageType::real) {
+		if (Type == DamageType::real) 
+		{
 			myHp = FMath::Clamp(myHp - Damage, 0.0f, myMaxHp);
 		}
 
-		if (Type == DamageType::physical) {
+		if (Type == DamageType::physical) 
+		{
 
 			float tDamage = Damage * physicalPercent;
 
@@ -76,7 +79,8 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 
 		}
 
-		if (Type == DamageType::magic) {
+		if (Type == DamageType::magic) 
+		{
 
 			float tDamage = Damage * magicPercent;
 
@@ -84,11 +88,19 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 
 		}
 
-		if (Type == DamageType::treat) {
+		if (Type == DamageType::treat)
+		{
 			myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
 		}
 
-		if (myHp == 0.0f) {
+		if (myHp == 0.0f)
+		{
+			auto MayBeAHero = Cast<AMOBAHeroCharacter>(DamageCauser);
+			if (MayBeAHero)
+			{
+				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
+				MayBeAHero->GetExperience() += DamagedActor->GetExperienceValue();
+			}
 			DeadHandle(DamagedActor);
 		}
 	}
