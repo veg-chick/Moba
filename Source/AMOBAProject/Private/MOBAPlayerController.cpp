@@ -11,6 +11,8 @@ AMOBAPlayerController::AMOBAPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+
+	SetReplicates(true);
 }
 
 void AMOBAPlayerController::PlayerTick(float DeltaTime)
@@ -55,12 +57,19 @@ void AMOBAPlayerController::AttackToMouseCursor()
 
 	AMOBAHeroCharacter* MyCharacter = Cast<AMOBAHeroCharacter>(this->GetCharacter());
 
-	if (BeAttackedCharacter && BeAttackedCharacter->GetCamp() != MyCharacter->GetCamp() && BeAttackedCharacter->GetbCanBeAttacked()) {
-		MyCharacter->AttackToACharacter(BeAttackedCharacter);
+	if (BeAttackedCharacter && BeAttackedCharacter->GetCamp() != MyCharacter->GetCamp()) 
+	{
+		if (BeAttackedCharacter->GetbCanBeAttacked() && MyCharacter->GetbAbleToAttack()) 
+		{
+			MyCharacter->AttackToACharacter(BeAttackedCharacter);
+		}
 	}
-	else if (BeAttackedActor && BeAttackedActor->GetCamp() != MyCharacter->GetCamp() && BeAttackedActor->GetbCanBeAttacked()) {
-		MyCharacter->AttackToAActor(BeAttackedActor);
+	else if (BeAttackedActor && BeAttackedActor->GetCamp() != MyCharacter->GetCamp()) 
+	{
+		if (BeAttackedActor->GetbCanBeAttacked() && MyCharacter->GetbAbleToAttack()) 
+		{
+			MyCharacter->AttackToAActor(BeAttackedActor);
+		}
 	}
-
 }
 

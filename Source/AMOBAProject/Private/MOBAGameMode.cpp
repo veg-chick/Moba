@@ -17,6 +17,7 @@ AMOBAGameMode::AMOBAGameMode()
 
 	PlayerControllerClass = AMOBAPlayerController::StaticClass();
 	PlayerStateClass = AMOBAPlayerState::StaticClass();
+	GameStateClass = AMOBAGameState::StaticClass();
 
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/PushContent/Blueprint/BP_MOBAHeroCharacter"));
@@ -81,6 +82,10 @@ void AMOBAGameMode::StartPlay()
 
 void AMOBAGameMode::GameOver(Camp SuccessCamp)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
-	GetGameState<AMOBAGameState>()->MultiCastOnGameOver(SuccessCamp);
+	AMOBAGameState* GS = GetGameState<AMOBAGameState>();
+	if (GS)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
+		GS->MultiCastOnGameOver(SuccessCamp);
+	}
 }

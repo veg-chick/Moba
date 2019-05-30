@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Public/MOBAGameMode.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHubCrystalActor::AMOBAHubCrystalActor() {
 	RootComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootComp"));
@@ -35,10 +36,10 @@ void AMOBAHubCrystalActor::assignHubCrystalValueForAPI(FBaseActorProperty aBaseP
 
 void AMOBAHubCrystalActor::EndTheGame(Camp winner)
 {	
-	auto MyGameMode = Cast<AMOBAGameMode>(GetWorld()->GetAuthGameMode());
-	if (MyGameMode)
+	AMOBAGameMode* GM = Cast<AMOBAGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (GM)
 	{
-		MyGameMode->GameOver(winner);
+		GM->GameOver(winner);
 	}
 	
 }

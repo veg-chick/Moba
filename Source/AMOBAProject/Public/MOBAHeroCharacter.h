@@ -172,7 +172,12 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerMoveToLocation(const FVector DestLocation, float Speed);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerAttackToActor(AMOBABaseActor* BeAttackedActor);
 	
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
 
 public:
 	virtual void Tick(float DeltaSeconds) override;

@@ -80,6 +80,11 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 	}
 }
 
+void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
+{
+	ServerMoveToLocation(DestLocation, Speed);
+}
+
 void AMOBAHeroCharacter::ServerMoveToLocation_Implementation(const FVector DestLocation, float Speed)
 {
 	float const Distance = FVector::Dist(DestLocation, GetActorLocation());
@@ -98,10 +103,6 @@ bool AMOBAHeroCharacter::ServerMoveToLocation_Validate(const FVector DestLocatio
 	return true;
 }
 
-void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
-{
-	ServerMoveToLocation(DestLocation, Speed);
-}
 
 void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 {
@@ -110,11 +111,22 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 	if (Distance > this->GetAttackRange()) return;
 	else
 	{
-		auto MyAttackStrength = this->GetAttackStrength();
-		BeAttackedActor->ReceiveDamageFromCharacter(BeAttackedActor, DamageType::physical, MyAttackStrength, this);
+		ServerAttackToActor(BeAttackedActor);
 	}
 
 }
+
+void AMOBAHeroCharacter::ServerAttackToActor_Implementation(AMOBABaseActor* BeAttackedActor)
+{
+	auto MyAttackStrength = this->GetAttackStrength();
+	BeAttackedActor->ReceiveDamageFromCharacter(BeAttackedActor, DamageType::physical, MyAttackStrength, this);
+}
+
+bool AMOBAHeroCharacter::ServerAttackToActor_Validate(AMOBABaseActor* BeAttackedActor)
+{
+	return true;
+}
+
 
 void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter)
 {
@@ -123,23 +135,33 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	if (Distance > this->GetAttackRange()) return;
 	else
 	{
-		auto MyAttackStrength = this->GetAttackStrength();
-		//Strike
-		FRandomStream MyRandomStream;
-		auto MyStrikeRate = this->GetStrikeRate();
-		auto MyStrikeDamage = this->GetStrikeDamage();
-		MyRandomStream.GenerateNewSeed();
-		auto RandomResult = MyRandomStream.GetFraction();
-		if (RandomResult <= MyStrikeRate && RandomResult >= 0.0f)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Strike!"));
-			MyAttackStrength *= MyStrikeDamage;
-		}
-
-		BeAttackedCharacter->ReceiveDamageFromCharacter(BeAttackedCharacter, DamageType::physical, MyAttackStrength, this);
-
+		ServerAttackToCharacter(BeAttackedCharacter);
 	}
 }
+
+void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharacter* BeAttackedCharacter)
+{
+	auto MyAttackStrength = this->GetAttackStrength();
+	//Strike
+	FRandomStream MyRandomStream;
+	auto MyStrikeRate = this->GetStrikeRate();
+	auto MyStrikeDamage = this->GetStrikeDamage();
+	MyRandomStream.GenerateNewSeed();
+	auto RandomResult = MyRandomStream.GetFraction();
+	if (RandomResult <= MyStrikeRate && RandomResult >= 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Strike!"));
+		MyAttackStrength *= MyStrikeDamage;
+	}
+
+	BeAttackedCharacter->ReceiveDamageFromCharacter(BeAttackedCharacter, DamageType::physical, MyAttackStrength, this);
+}
+
+bool AMOBAHeroCharacter::ServerAttackToCharacter_Validate(AMOBABaseCharacter* BeAttackedCharacter)
+{
+	return true;
+}
+
 
 void AMOBAHeroCharacter::resetHero()
 {
