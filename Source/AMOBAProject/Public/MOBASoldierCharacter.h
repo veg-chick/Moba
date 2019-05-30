@@ -43,4 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignSoldierValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, SoldierRoad aRoad);
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ApplyCamp(Camp Apply_camp) { GetCamp() = Apply_camp; };
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ApplyRoad(SoldierRoad Apply_road) { GetRoad() = Apply_road; };
 };

@@ -88,8 +88,10 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 
 void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
 {
+	this->GetbRecallSucceed() = false;
 	ServerMoveToLocation(DestLocation, Speed);
 }
+
 
 void AMOBAHeroCharacter::ServerMoveToLocation_Implementation(const FVector DestLocation, float Speed)
 {
@@ -107,12 +109,6 @@ void AMOBAHeroCharacter::ServerMoveToLocation_Implementation(const FVector DestL
 bool AMOBAHeroCharacter::ServerMoveToLocation_Validate(const FVector DestLocation, float Speed)
 {
 	return true;
-}
-
-void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
-{
-	this->GetbRecallSucceed() = false;
-	ServerMoveToLocation(DestLocation, Speed);
 }
 
 void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)

@@ -10,6 +10,9 @@
 #include "MOBABaseActor.h"
 #include "GameFramework/GameModeBase.h"
 #include "MOBAGameState.h"
+#include "MOBACrystalActor.h"
+#include "Kismet/GameplayStatics.h"
+#include "EngineUtils.h"
 
 
 AMOBAGameMode::AMOBAGameMode()
@@ -36,7 +39,7 @@ void AMOBAGameMode::StartWave()
 
 void AMOBAGameMode::SpawnSoldierTimerElapsed()
 {
-
+	
 	int32 Soldiertype;
 
 	if (NumberOfSoldierToSpawn > 4) Soldiertype = 0;
@@ -46,6 +49,11 @@ void AMOBAGameMode::SpawnSoldierTimerElapsed()
 
 	NumberOfSoldierToSpawn--;
 
+// 	FVector Location;
+// 	for (TActorIterator<AMOBACrystalActor>It(GetWorld()); It; It++) 
+// 	{
+// 		SpawnNewSoldier(Soldiertype, It->GetActorLocation(), It->GetCamp());
+// 	}
 
 	SpawnNewSoldier(Soldiertype);
 
@@ -56,6 +64,7 @@ void AMOBAGameMode::SpawnSoldierTimerElapsed()
 
 void AMOBAGameMode::EndWave()
 {
+	
 	GetWorldTimerManager().ClearTimer(TimerHandle_SoldierSpawner);
 
 	TimeBetweenWaves = 15.0f;
@@ -75,7 +84,7 @@ void AMOBAGameMode::StartPlay()
 {
 	Super::StartPlay();
 
-	TimeBetweenWaves = 60.0f;
+	TimeBetweenWaves = 30.0f;
 
 	PrepareForNextWave();
 }
