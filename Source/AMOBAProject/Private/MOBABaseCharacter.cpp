@@ -136,7 +136,7 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
 				MayBeAHero->GetExperience() += DamagedActor->GetExperienceValue();
 			}
-			DeadHandle(DamagedActor);
+			DamagedActor->DeadHandle(DamagedActor);
 		}
 
 		auto RecallingHero = Cast<AMOBAHeroCharacter>(DamagedActor);

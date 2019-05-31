@@ -44,6 +44,7 @@ struct FHeroProperty {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bRecallSucceed;
 
+
 };
 
 USTRUCT(BlueprintType)
@@ -99,6 +100,46 @@ struct FTimerHandles {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle AttackTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle HpRecoveryTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle MpRecoveryTimer;
+
+};
+
+USTRUCT(BlueprintType)
+struct FSkillProperty
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bCanQ;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bCanW;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bCanE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bCanR;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float CDofQ;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float CDofW;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float CDofE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float CDofR;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bCanReleaseSkills;
+
 };
 
 
@@ -124,6 +165,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandles timeHandles;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FSkillProperty SkillProperty;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
 
@@ -131,6 +175,18 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void BeginPlay()override;
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		virtual void ReleaseQ();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		virtual void ReleaseW();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		virtual void ReleaseE();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		virtual void ReleaseR();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetQSkill();
@@ -275,7 +331,34 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetGold() { return heroProperty.Gold; }
 
-	UFUNCTION(BlueprintCallable,Category="MyMOBA")
+	UFUNCTION(BlueprintCallable, Category="MyMOBA")
 		bool& GetbRecallSucceed() { return heroProperty.bRecallSucceed; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbCanQ() { return SkillProperty.bCanQ; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbCanW() { return SkillProperty.bCanW; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbCanE() { return SkillProperty.bCanE; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbCanR() { return SkillProperty.bCanR; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetCDofQ() { return SkillProperty.CDofQ; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetCDofW() { return SkillProperty.CDofW; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetCDofE() { return SkillProperty.CDofE; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetCDofR() { return SkillProperty.CDofR; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbCanReleaseSkills() { return SkillProperty.bCanReleaseSkills; }
 
 };
