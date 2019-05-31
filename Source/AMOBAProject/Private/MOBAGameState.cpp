@@ -10,8 +10,9 @@
 
 void AMOBAGameState::MultiCastOnGameOver_Implementation(Camp SuccessCamp)
 {
-	for (auto It = GetWorld()->GetPlayerControllerIterator(); It; It++)
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("MultiGame Over!"));
 		AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(It->Get());
 		if (PC && PC->IsLocalController())
 		{
@@ -19,9 +20,7 @@ void AMOBAGameState::MultiCastOnGameOver_Implementation(Camp SuccessCamp)
 			AMOBAHeroCharacter* MyCharacter = Cast<AMOBAHeroCharacter>(PC->GetCharacter());
 			if (MyCharacter) 
 			{
-				UE_LOG(LogTemp, Warning, TEXT("MultiGame Over!"));
 				MyCharacter->DisableInput(PC);
-				MyCharacter->InputComponent = nullptr;
 			}
 		}
 	}

@@ -23,7 +23,8 @@ protected:
 		int32 NumberOfSoldierToSpawn;
 
 	//The Time Interval of Spawning Waves
-	float TimeBetweenWaves;
+	UPROPERTY(BlueprintReadWrite, Category = "GameMode")
+		float TimeBetweenWaves;
 	
 protected:
 	
