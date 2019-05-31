@@ -39,25 +39,28 @@ void AMOBAGameMode::StartWave()
 
 void AMOBAGameMode::SpawnSoldierTimerElapsed()
 {
-	
-	int32 Soldiertype;
-
-	if (NumberOfSoldierToSpawn > 4) Soldiertype = 0;
-	else if (NumberOfSoldierToSpawn == 4) Soldiertype = 2;
-	else Soldiertype = 1;
-
 
 	NumberOfSoldierToSpawn--;
 
-// 	FVector Location;
-// 	for (TActorIterator<AMOBACrystalActor>It(GetWorld()); It; It++) 
-// 	{
-// 		SpawnNewSoldier(Soldiertype, It->GetActorLocation(), It->GetCamp());
-// 	}
+	int32 Soldiertype;
+
+	if (NumberOfSoldierToSpawn > 3) Soldiertype = 0;
+	else if (NumberOfSoldierToSpawn == 3) Soldiertype = 2;
+	else Soldiertype = 1;
+
+
+	// 	FVector Location;
+	// 	for (TActorIterator<AMOBACrystalActor>It(GetWorld()); It; It++) 
+	// 	{
+	// 		SpawnNewSoldier(Soldiertype, It->GetActorLocation(), It->GetCamp());
+	// 	}
 
 	SpawnNewSoldier(Soldiertype);
 
-	if (NumberOfSoldierToSpawn <= 0) {
+	GetWorldTimerManager().SetTimer(TimerHandle_SoldierSpawner, this, &AMOBAGameMode::SpawnSoldierTimerElapsed, 5.0f, true, 0.0f);
+
+	if (NumberOfSoldierToSpawn <= 0)
+	{
 		EndWave();
 	}
 }
@@ -84,7 +87,7 @@ void AMOBAGameMode::StartPlay()
 {
 	Super::StartPlay();
 
-	TimeBetweenWaves = 30.0f;
+	TimeBetweenWaves = 5.0f;
 
 	PrepareForNextWave();
 }
