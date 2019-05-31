@@ -79,11 +79,6 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 		}
 	}
 
-	HpRecoveryHandle();
-	if (this->GetBHaveMp())
-	{
-		MpRecoveryHandle();
-	}
 }
 
 void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
@@ -119,8 +114,12 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 	else
 	{
 		this->GetbRecallSucceed() = false;
+		this->GetbAbleToAttack() = false;
 		ServerAttackToActor(BeAttackedActor);
-		//reset timer
+		float AttackCDTime = 1.0f / this->GetAttackSpeed();
+		auto MyTimeHanlde = timeHandles.AttackTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 	}
 
 }
@@ -145,8 +144,12 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	else
 	{
 		this->GetbRecallSucceed() = false;
+		this->GetbAbleToAttack() = false;
 		ServerAttackToCharacter(BeAttackedCharacter);
-		//reset timer
+		float AttackCDTime = 1.0f / this->GetAttackSpeed();
+		auto MyTimeHanlde = timeHandles.AttackTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 	}
 }
 
@@ -177,9 +180,8 @@ bool AMOBAHeroCharacter::ServerAttackToCharacter_Validate(AMOBABaseCharacter* Be
 void AMOBAHeroCharacter::resetHero()
 {
 	//No need to disable player input
-	//DetachFromControllerPendingDestroy();
 
-	//Prohibition of release Skills
+	this->SkillProperty.bCanReleaseSkills = false;
 	this->baseProperty.bAbleToAttack = false;
 
 	auto myMovementComp = GetCharacterMovement();
@@ -191,8 +193,9 @@ void AMOBAHeroCharacter::resetHero()
 	//Prohibition of Rotation
 
 	float resetTime = this->heroProperty.resetTime;
-	auto myTimeHanlde = timeHandles.ResetTimer;
-	GetWorldTimerManager().SetTimer(myTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
+	auto MyTimeHanlde = timeHandles.ResetTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
 
 	//Set the move speed to before
 	myMovementComp->MaxAcceleration = accelerationBefore;
@@ -212,26 +215,48 @@ void AMOBAHeroCharacter::BeginPlay()
 
 	birthLocation = this->GetActorLocation();
 
+	this->HpRecoveryHandle();
+	if (this->GetBHaveMp())
+	{
+		this->MpRecoveryHandle();
+	}
+
+}
+
+void AMOBAHeroCharacter::ReleaseQ()
+{
+}
+
+void AMOBAHeroCharacter::ReleaseW()
+{
+}
+
+void AMOBAHeroCharacter::ReleaseE()
+{
+}
+
+void AMOBAHeroCharacter::ReleaseR()
+{
 }
 
 void AMOBAHeroCharacter::resetQSkill()
 {
-
+	this->SkillProperty.bCanQ = true;
 }
 
 void AMOBAHeroCharacter::resetWSkill()
 {
-
+	this->SkillProperty.bCanW = true;
 }
 
 void AMOBAHeroCharacter::resetESkill()
 {
-
+	this->SkillProperty.bCanE = true;
 }
 
 void AMOBAHeroCharacter::resetRSkill()
 {
-
+	this->SkillProperty.bCanR = true;
 }
 
 void AMOBAHeroCharacter::resetHeroHandle()
@@ -241,7 +266,7 @@ void AMOBAHeroCharacter::resetHeroHandle()
 	this->baseProperty.mp = this->baseProperty.maxMp;
 	this->baseProperty.bAbleToAttack = true;
 	this->baseProperty.bCanBeAttacked = true;
-	//Allow release skills
+	this->SkillProperty.bCanReleaseSkills = true;
 
 
 	this->SetActorLocation(birthLocation);
@@ -301,17 +326,27 @@ void AMOBAHeroCharacter::reCallHandle()
 
 void AMOBAHeroCharacter::HpRecoveryHandle()
 {
+	auto MyTimeHanlde = timeHandles.HpRecoveryTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::HpRecoveryHandle, 5.0f);
+
 	if (this->GetHp() != this->GetMaxHp())
 	{
-		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery() / 60.0f, 0.0f, this->GetMaxHp());
+		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery() * 5.0f, 0.0f, this->GetMaxHp());
 	}
 }
 
 void AMOBAHeroCharacter::MpRecoveryHandle()
 {
+
+	auto MyTimeHanlde = timeHandles.MpRecoveryTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::MpRecoveryHandle, 5.0f);
+
+
 	if (this->GetMp() != this->GetMaxMp())
 	{
-		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery() / 60.0f, 0.0f, this->GetMaxMp());
+		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery() * 5.0f, 0.0f, this->GetMaxMp());
 	}
 }
 
