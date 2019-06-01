@@ -32,13 +32,16 @@ AMOBAGameMode::AMOBAGameMode()
 
 void AMOBAGameMode::StartWave()
 {
+	//UE_LOG(LogTemp, Warning, TEXT("Start Wave!"))
 	NumberOfSoldierToSpawn = 7;
 
-	GetWorldTimerManager().SetTimer(TimerHandle_SoldierSpawner, this, &AMOBAGameMode::SpawnSoldierTimerElapsed, 1.0f, true, 0.0f);
+	GetWorldTimerManager().SetTimer(TimerHandle_SoldierSpawner, this, &AMOBAGameMode::SpawnSoldierTimerElapsed, 1.0f);
 }
 
 void AMOBAGameMode::SpawnSoldierTimerElapsed()
 {
+
+	//UE_LOG(LogTemp, Warning, TEXT("Spawn A New Soldier!"));
 
 	NumberOfSoldierToSpawn--;
 
@@ -46,7 +49,7 @@ void AMOBAGameMode::SpawnSoldierTimerElapsed()
 
 	if (NumberOfSoldierToSpawn > 3) Soldiertype = 0;
 	else if (NumberOfSoldierToSpawn == 3) Soldiertype = 2;
-	else Soldiertype = 1;
+	else if(NumberOfSoldierToSpawn < 3) Soldiertype = 1;
 
 
 	// 	FVector Location;
@@ -57,7 +60,7 @@ void AMOBAGameMode::SpawnSoldierTimerElapsed()
 
 	SpawnNewSoldier(Soldiertype);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_SoldierSpawner, this, &AMOBAGameMode::SpawnSoldierTimerElapsed, 5.0f, true, 0.0f);
+	GetWorldTimerManager().SetTimer(TimerHandle_SoldierSpawner, this, &AMOBAGameMode::SpawnSoldierTimerElapsed, 1.0f);
 
 	if (NumberOfSoldierToSpawn <= 0)
 	{
@@ -94,10 +97,22 @@ void AMOBAGameMode::StartPlay()
 
 void AMOBAGameMode::GameOver(Camp SuccessCamp)
 {
-	AMOBAGameState* GS = GetGameState<AMOBAGameState>();
-	if (GS)
+// 	AMOBAGameState* GS = GetGameState<AMOBAGameState>();
+// 	if (GS)
+// 	{
+// 		GS->MultiCastOnGameOver(SuccessCamp);
+// 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
+
+	APawn* MyPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (MyPawn) 
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
-		GS->MultiCastOnGameOver(SuccessCamp);
+		AController* PC = MyPawn->GetController();
+		if (PC) 
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
+			PC->DisableInput(Cast<APlayerController>(PC));
+		}
 	}
 }
