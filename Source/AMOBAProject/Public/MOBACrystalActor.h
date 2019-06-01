@@ -12,9 +12,9 @@ class USphereComponent;
 UENUM(BlueprintType)
 enum class CrystalRoad : uint8
 {
-	crystalTop UMETA(DisplayName="crystalTop"),
-	crystalMid UMETA(DisplayName="crystalMid"),
-	crystalDown UMETA(DisplayName="crystalDown")
+	crystalTop UMETA(DisplayName = "crystalTop"),
+	crystalMid UMETA(DisplayName = "crystalMid"),
+	crystalDown UMETA(DisplayName = "crystalDown")
 };
 
 /**
@@ -57,5 +57,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void StrengthTheSoldier();
 
 };

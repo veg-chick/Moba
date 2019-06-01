@@ -113,6 +113,7 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 	if (Distance > this->GetAttackRange()) return;
 	else
 	{
+		this->GetbIsAttacking() = true;
 		this->GetbRecallSucceed() = false;
 		this->GetbAbleToAttack() = false;
 		ServerAttackToActor(BeAttackedActor);
@@ -120,6 +121,7 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 		auto MyTimeHanlde = timeHandles.AttackTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
+		this->GetbIsAttacking() = false;
 	}
 
 }
@@ -143,6 +145,7 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	if (Distance > this->GetAttackRange()) return;
 	else
 	{
+		this->GetbIsAttacking() = true;
 		this->GetbRecallSucceed() = false;
 		this->GetbAbleToAttack() = false;
 		ServerAttackToCharacter(BeAttackedCharacter);
@@ -150,6 +153,7 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 		auto MyTimeHanlde = timeHandles.AttackTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
+		this->GetbIsAttacking() = false;
 	}
 }
 
@@ -179,6 +183,8 @@ bool AMOBAHeroCharacter::ServerAttackToCharacter_Validate(AMOBABaseCharacter* Be
 
 void AMOBAHeroCharacter::resetHero()
 {
+	this->GetGoldValue() = 300.0f;
+	this->GetCombKillNumber() = 0.0f;
 	//No need to disable player input
 
 	this->SkillProperty.bCanReleaseSkills = false;
@@ -201,6 +207,27 @@ void AMOBAHeroCharacter::resetHero()
 	myMovementComp->MaxAcceleration = accelerationBefore;
 	myMovementComp->MaxWalkSpeed = maxWalkSpeedBefore;
 
+}
+
+void AMOBAHeroCharacter::AddCombKillNumber()
+{
+	this->GetCombKillNumber() += 1.0f;
+	if (GetCombKillNumber() <= 8.0f)
+	{
+		this->GetGoldValue() += 50.0f;
+	}
+}
+
+void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
+{
+	this->GetExperienceValue() += ExperienceValue;
+	auto MyExperience = this->GetExperience();
+
+	//If the empirical value meets the requirements of the upgrade
+	if (0)
+	{
+		levelUp();
+	}
 }
 
 void AMOBAHeroCharacter::ResetAttackTimer()

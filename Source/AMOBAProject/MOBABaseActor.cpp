@@ -4,6 +4,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Public/MOBAHubCrystalActor.h"
 #include "Public/MOBAHeroCharacter.h"
+#include "Public/MOBASoldierCharacter.h"
 #include "Public/MOBABaseCharacter.h"
 
 
@@ -98,8 +99,13 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 			auto MayBeAHero = Cast<AMOBAHeroCharacter>(DamageCauser);
 			if (MayBeAHero)
 			{
+				auto MayBeSoldier = Cast<AMOBASoldierCharacter>(DamagedActor);
+				if (DamagedActor)
+				{
+					MayBeAHero->GetSoldierKillNumber() += 1.0f;
+				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
-				MayBeAHero->GetExperience() += DamagedActor->GetExperienceValue();
+				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());
 			}
 			DeadHandle(DamagedActor);
 		}

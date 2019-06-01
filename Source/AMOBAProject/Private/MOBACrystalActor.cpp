@@ -53,3 +53,9 @@ void AMOBACrystalActor::assignCrystalValueForAPI(FBaseActorProperty aBasePropert
 	this->road = aRoad;
 
 }
+
+void AMOBACrystalActor::StrengthTheSoldier()
+{
+	//Strengthen the hostile camp, the soldiers who correspond to the road.
+}
+

@@ -10,7 +10,7 @@
 // Sets default values
 AMOBABaseCharacter::AMOBABaseCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -19,7 +19,7 @@ AMOBABaseCharacter::AMOBABaseCharacter()
 void AMOBABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -39,7 +39,7 @@ void AMOBABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageType Type, float Damage, AActor* DamageCauser)
 {
 
-	if (DamagedActor) 
+	if (DamagedActor)
 	{
 
 		auto& myHp = DamagedActor->baseProperty.hp;
@@ -87,7 +87,7 @@ void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageTyp
 void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedActor, DamageType Type, float Damage, AMOBABaseCharacter* DamageCauser)
 {
 
-	if (DamagedActor) 
+	if (DamagedActor)
 	{
 
 		auto& myHp = DamagedActor->baseProperty.hp;
@@ -99,13 +99,13 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
-		if (Type == DamageType::real) 
+		if (Type == DamageType::real)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Real Damage Applyed!"));
 			myHp = FMath::Clamp(myHp - Damage, 0.0f, myMaxHp);
 		}
 
-		if (Type == DamageType::physical) 
+		if (Type == DamageType::physical)
 		{
 
 			float tDamage = Damage * physicalPercent;
@@ -125,16 +125,35 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 
 		if (Type == DamageType::treat)
 		{
-			myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
+			auto MayBeAHero = Cast<AMOBAHeroCharacter>(DamagedActor);
+			if (MayBeAHero)
+			{
+				if (MayBeAHero->GetbIsInjured())
+				{
+					myHp = FMath::Clamp(myHp + Damage * 0.5f, 0.0f, myMaxHp);
+				}
+			}
+			else
+			{
+				myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
+			}
+
+
 		}
 
-		if (myHp <= 0.0f) 
+		if (myHp <= 0.0f)
 		{
 			auto MayBeAHero = Cast<AMOBAHeroCharacter>(DamageCauser);
 			if (MayBeAHero)
 			{
+				auto MayBeKilledHero = Cast<AMOBAHeroCharacter>(DamagedActor);
+				if (MayBeKilledHero)
+				{
+					MayBeAHero->GetKillNumber() += 1.0f;
+					MayBeAHero->AddCombKillNumber();
+				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
-				MayBeAHero->GetExperience() += DamagedActor->GetExperienceValue();
+				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());
 			}
 			DamagedActor->DeadHandle(DamagedActor);
 		}
@@ -150,7 +169,7 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 
 void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 {
-	if (DeadCharacter) 
+	if (DeadCharacter)
 	{
 		DeadCharacter->GetMovementComponent()->StopMovementImmediately();
 
@@ -161,10 +180,11 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 
 		auto mayBeHero = Cast<AMOBAHeroCharacter>(DeadCharacter);
 
-		if (mayBeHero) 
+		if (mayBeHero)
 		{
 			mayBeHero->resetHero();
-		}else 
+		}
+		else
 		{
 			DeadCharacter->SetLifeSpan(10.0f);
 		}
