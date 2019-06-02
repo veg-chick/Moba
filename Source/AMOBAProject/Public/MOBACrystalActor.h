@@ -9,6 +9,8 @@
 class UStaticMeshComponent;
 class USphereComponent;
 
+class AMOBATowerCharacter;
+
 UENUM(BlueprintType)
 enum class CrystalRoad : uint8
 {
@@ -50,6 +52,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		USphereComponent* ClickComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		AMOBATowerCharacter* CrystalPointer;
+
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -59,6 +64,5 @@ public:
 		void assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void StrengthTheSoldier();
-
+		void CrystalDeadHandle();
 };

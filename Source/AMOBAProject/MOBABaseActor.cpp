@@ -5,6 +5,7 @@
 #include "Public/MOBAHubCrystalActor.h"
 #include "Public/MOBAHeroCharacter.h"
 #include "Public/MOBASoldierCharacter.h"
+#include "Public/MOBACrystalActor.h"
 #include "Public/MOBABaseCharacter.h"
 
 
@@ -117,6 +118,14 @@ void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor) {
 	{
 		this->GetbIsBroken()= true;
 		this->GetbCanBeAttacked() = false;
+
+		auto MayBeCrystal = Cast<AMOBACrystalActor>(DeadActor);
+		if (MayBeCrystal)
+		{
+			MayBeCrystal->CrystalDeadHandle();
+			return;
+		}
+
 
 		auto MayBeHub = Cast<AMOBAHubCrystalActor>(DeadActor);
 		if (MayBeHub)

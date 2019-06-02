@@ -3,6 +3,7 @@
 
 #include "Public/MOBABaseCharacter.h"
 #include "Public/MOBAHeroCharacter.h"
+#include "Public/MOBATowerCharacter.h"
 #include "Engine/Classes/GameFramework/Character.h"
 #include "Engine/Classes/GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -173,19 +174,25 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 	{
 		DeadCharacter->GetMovementComponent()->StopMovementImmediately();
 
-		DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 		this->GetbCanBeAttacked() = false;
 		this->GetbAbleToAttack() = false;
 
 		auto mayBeHero = Cast<AMOBAHeroCharacter>(DeadCharacter);
-
 		if (mayBeHero)
 		{
+			DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			mayBeHero->resetHero();
 		}
 		else
 		{
+			auto MayBeTower = Cast<AMOBATowerCharacter>(DeadCharacter);
+			if (MayBeTower)
+			{
+				MayBeTower->TowerDeadHandle();
+				return;
+			}
+
+			DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			DeadCharacter->SetLifeSpan(10.0f);
 		}
 
@@ -193,31 +200,6 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 
 }
 
-/*
-void AMOBABaseCharacter::attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser){
-
-	if (canAttack(damagedActor, damageType, damage, damageCauser)) {
-
-		auto otherActor = Cast<AMOBABaseActor>(damagedActor);
-
-		if (otherActor) {
-
-			otherActor->applyDamage(damagedActor, damageType, damage, damageCauser);
-
-		}
-
-		auto otherCharacter = Cast<AMOBABaseCharacter>(damagedActor);
-
-		if (otherCharacter) {
-
-			otherCharacter->applyDamage(damagedActor, damageType, damage, damageCauser);
-
-		}
-
-
-	}
-
-}*/
 
 bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser)
 {
