@@ -40,3 +40,19 @@ void AMOBAWildCharacter::BeginPlay()
 
 	birthLocation = GetActorLocation();
 }
+
+void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAttack)
+{
+	//函数功能：对一个character攻击一次 (Soldier,Hero)
+	//不需要判断距离，已经移动到攻击范围内
+	//简单a一下就好
+}
+
+
+
+AMOBABaseCharacter & AMOBAWildCharacter::GetAttacker()
+{
+
+	//函数功能：先判断自身是否被攻击，若自身被攻击，则返回攻击者
+	// TODO: 在此处插入 return 语句
+}

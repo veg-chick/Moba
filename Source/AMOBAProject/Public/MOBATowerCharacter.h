@@ -55,6 +55,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType);
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool IsEnemyHeroAttackingMyHero(AMOBABaseCharacter* EnemyHero);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		UStaticMeshComponent* RootComp;
@@ -70,5 +76,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		USphereComponent* ClickComp;
+
+
 
 };

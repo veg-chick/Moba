@@ -48,4 +48,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ApplyRoad(SoldierRoad Apply_road) { GetRoad() = Apply_road; };
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AttackToActorOnce(AMOBABaseActor* TargetToAttack);
+
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool IsEnemyHeroAttackingMyHero(AMOBABaseCharacter* EnemyHero);
+
+
+
+
 };

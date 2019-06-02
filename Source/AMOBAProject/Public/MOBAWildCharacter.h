@@ -21,6 +21,12 @@ public:
 
 	AMOBAWildCharacter();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
+
+	
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		AMOBABaseCharacter& GetAttacker();
 
 protected:
 
@@ -39,5 +45,7 @@ protected:
 	FVector birthLocation;
 
 	virtual void BeginPlay() override;
+
+	
 
 };
