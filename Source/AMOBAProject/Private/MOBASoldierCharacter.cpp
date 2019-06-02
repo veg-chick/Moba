@@ -2,6 +2,8 @@
 
 
 #include "Public/MOBASoldierCharacter.h"
+#include "Math/UnrealMathUtility.h"
+#include "Public/MOBAHeroCharacter.h"
 
 AMOBASoldierCharacter::AMOBASoldierCharacter()
 {
@@ -20,29 +22,46 @@ void AMOBASoldierCharacter::assignSoldierValueForAPI(FBaseActorProperty aBasePro
 
 }
 
-void AMOBASoldierCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAttack)
+void AMOBASoldierCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack)
 {
-	//函数功能：对一个character攻击一次 (Soldier,Hero,Tower)
-	//不需要判断距离，已经移动到攻击范围内
-	//简单a一下就好
-
+	if (this->GetbAbleToAttack())
+	{
+		auto MyAttackStrength = this->GetAttackStrength();
+		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+		this->GetbAbleToAttack() = false;
+		auto MyTimeHandle = this->AttackTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		auto AttackCDTime = 1.0f / GetAttackSpeed();
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+	}
 }
 
 void AMOBASoldierCharacter::AttackToActorOnce(AMOBABaseActor * TargetToAttack)
 {
-	//函数功能：对一个actor攻击一次(HubCrystal,Crystal)
-	//不需要判断距离，已经移动到攻击范围内
-	//简单a一下就好
-
+	if (this->GetbAbleToAttack())
+	{
+		auto MyAttackStrength = this->GetAttackStrength();
+		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+		this->GetbAbleToAttack() = false;
+		auto MyTimeHandle = this->AttackTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		auto AttackCDTime = 1.0f / GetAttackSpeed();
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+	}
 }
 
 
 
-bool AMOBASoldierCharacter::IsEnemyHeroAttackingMyHero(AMOBABaseCharacter * EnemyHero)
+bool AMOBASoldierCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter * EnemyHero)
 {
-	//传入一个敌方hero，如果这个敌方hero攻击了我方hero，返回true
+	if (EnemyHero->GetbIsAttackingHero())
+		return true;
+	return false;
+}
 
-	// TODO: 在此处插入 return 语句
+void AMOBASoldierCharacter::ResetTimer()
+{
+	this->GetbAbleToAttack() = true;
 }
 
 

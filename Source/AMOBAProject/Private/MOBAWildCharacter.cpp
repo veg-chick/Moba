@@ -11,8 +11,9 @@ AMOBAWildCharacter::AMOBAWildCharacter()
 	
 }
 
-void AMOBAWildCharacter::quickRecovery()
+void AMOBAWildCharacter::QuickRecovery()
 {
+	this->GetbIsBeingAttacked() = false;
 
 	auto myMaxHp = this->baseProperty.maxHp;
 	auto& myHp = this->baseProperty.hp;
@@ -25,7 +26,10 @@ void AMOBAWildCharacter::resetWild()
 {
 	//Move Back To Birth Location 
 
-	quickRecovery();
+	QuickRecovery();
+
+	this->GetbIsBeingAttacked() = false;
+
 }
 
 void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
@@ -41,18 +45,32 @@ void AMOBAWildCharacter::BeginPlay()
 	birthLocation = GetActorLocation();
 }
 
+void AMOBAWildCharacter::ResetTimer()
+{
+	this->GetbAbleToAttack() = true;
+}
+
 void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAttack)
 {
-	//函数功能：对一个character攻击一次 (Soldier,Hero)
-	//不需要判断距离，已经移动到攻击范围内
-	//简单a一下就好
+	if (this->GetbAbleToAttack())
+	{
+		auto MyAttackStrength = this->GetAttackStrength();
+		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+		this->GetbAbleToAttack() = false;
+		auto MyTimeHandle = this->AttackTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		auto AttackCDTime = 1.0f / GetAttackSpeed();
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetTimer, AttackCDTime);
+	}
 }
 
 
 
-AMOBABaseCharacter & AMOBAWildCharacter::GetAttacker()
+AMOBABaseCharacter* AMOBAWildCharacter::GetAttacker()
 {
-
-	//函数功能：先判断自身是否被攻击，若自身被攻击，则返回攻击者
-	// TODO: 在此处插入 return 语句
+	if (GetbIsBeingAttacked())
+	{
+		return Attacker;
+	}
+	return nullptr;
 }

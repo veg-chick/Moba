@@ -8,9 +8,11 @@
 
 class UStaticMeshComponent;
 class USphereComponent;
+struct FTimerHandle;
 
 class AMOBACrystalActor;
 class AMOBAHubCrystalActor;
+class AMOBAHeroCharacter;
 
 UENUM(BlueprintType)
 enum class TowerRoad : uint8
@@ -57,6 +59,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		AMOBAHubCrystalActor* TowerPointerToHub;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandle AttackTimer;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerRoad& GetRoad();
@@ -68,11 +73,10 @@ public:
 		void assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-
 		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		bool IsEnemyHeroAttackingMyHero(AMOBABaseCharacter* EnemyHero);
+		bool IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero);
 
 		void TowerDeadHandle();
 
@@ -99,5 +103,8 @@ protected:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetTimer();
 
 };

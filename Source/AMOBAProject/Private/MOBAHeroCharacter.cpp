@@ -148,7 +148,15 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 		this->GetbIsAttacking() = true;
 		this->GetbRecallSucceed() = false;
 		this->GetbAbleToAttack() = false;
+
+		auto MayBeAttackingHero = Cast<AMOBAHeroCharacter>(BeAttackedCharacter);
+		if (MayBeAttackingHero)
+		{
+			this->GetbIsAttackingHero() = true;
+		}
+
 		ServerAttackToCharacter(BeAttackedCharacter);
+
 		float AttackCDTime = 1.0f / this->GetAttackSpeed();
 		auto MyTimeHanlde = timeHandles.AttackTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
@@ -233,6 +241,7 @@ void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 void AMOBAHeroCharacter::ResetAttackTimer()
 {
 	this->GetbAbleToAttack() = true;
+	this->GetbIsAttackingHero() = false;
 }
 
 void AMOBAHeroCharacter::BeginPlay()

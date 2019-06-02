@@ -6,6 +6,10 @@
 #include "MOBABaseCharacter.h"
 #include "MOBASoldierCharacter.generated.h"
 
+struct FTimerHandle;
+
+class AMOBAHeroCharacter;
+
 UENUM(BlueprintType)
 enum class SoldierRoad : uint8
 {
@@ -33,6 +37,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		bool bIsStrengthened;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandle AttackTimer;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		SoldierRoad& GetRoad();
@@ -55,11 +62,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AttackToActorOnce(AMOBABaseActor* TargetToAttack);
 
-
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		bool IsEnemyHeroAttackingMyHero(AMOBABaseCharacter* EnemyHero);
+		bool IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero);
 
-
-
+protected:
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetTimer();
 
 };

@@ -186,6 +186,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FSkillProperty SkillProperty;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		bool bIsAttackingHero;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
 
@@ -404,5 +407,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetSoldierKillNumber() { return ScoreBoard.SoldierKillNumber; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbIsAttackingHero() { return bIsAttackingHero; }
 
 };

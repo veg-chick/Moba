@@ -23,18 +23,22 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
-
 	
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		AMOBABaseCharacter& GetAttacker();
+		AMOBABaseCharacter* GetAttacker();
+
+
 
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandle wildResetTimeHanlde;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandle AttackTimer;
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void quickRecovery();
+		void QuickRecovery();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetWild();
@@ -46,6 +50,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetTimer();
 
 };

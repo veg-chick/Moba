@@ -51,6 +51,8 @@ struct FBaseActorProperty {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
 		bool bCanBeAttacked;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		bool bIsBeingAttacked;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
 		bool bIsRemote;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
 		float attackRange;
@@ -127,9 +129,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void DeadHandle(AMOBABaseActor* DeadActor);
-
-	//UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		//void attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);

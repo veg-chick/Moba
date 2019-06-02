@@ -4,6 +4,8 @@
 #include "MOBATowerCharacter.h"
 #include "Public/MOBAHubCrystalActor.h"
 #include "Public/MOBACrystalActor.h"
+#include "Public/MOBAHeroCharacter.h"
+#include "Math/UnrealMathUtility.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 
@@ -47,15 +49,26 @@ void AMOBATowerCharacter::assignTowerValueForAPI(FBaseActorProperty aBasePropert
 
 void AMOBATowerCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAttack)
 {
-	//函数功能：对一个character攻击一次 (Soldier,Hero)
-	//不需要判断距离，已经移动到攻击范围内
-	//简单a一下就好
+
+	if (this->GetbAbleToAttack())
+	{
+		auto MyAttackStrength = this->GetAttackStrength();
+		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+		this->GetbAbleToAttack() = false;
+		auto MyTimeHandle = this->AttackTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		auto AttackCDTime = 1.0f / GetAttackSpeed();
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBATowerCharacter::ResetTimer, AttackCDTime);
+	}
 }
 
-bool AMOBATowerCharacter::IsEnemyHeroAttackingMyHero(AMOBABaseCharacter * EnemyHero)
+bool AMOBATowerCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero)
 {
-	//传入一个敌方hero，若敌方hero攻击了我方hero，则return true
+	if (EnemyHero->GetbIsAttackingHero())
+		return true;
 	return false;
+}
+
 
 void AMOBATowerCharacter::TowerDeadHandle()
 {
@@ -87,4 +100,9 @@ void AMOBATowerCharacter::BeginPlay()
 	}
 
 
+}
+
+void AMOBATowerCharacter::ResetTimer()
+{
+	this->GetbAbleToAttack() = true;
 }

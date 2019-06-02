@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FBaseActorValue baseValue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		AMOBABaseCharacter* Attacker;
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void DeadHandle(AMOBABaseCharacter* DeadCharacter);
 
@@ -132,5 +135,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetExperienceValue() { return baseValue.experienceValue; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbIsBeingAttacked() { return baseProperty.bIsBeingAttacked; }
 
 };

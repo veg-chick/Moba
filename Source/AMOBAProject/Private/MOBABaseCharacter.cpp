@@ -90,6 +90,8 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 
 	if (DamagedActor)
 	{
+		Attacker = DamageCauser;
+		DamagedActor->GetbIsBeingAttacked() = true;
 
 		auto& myHp = DamagedActor->baseProperty.hp;
 
