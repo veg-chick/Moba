@@ -9,12 +9,14 @@
 class UStaticMeshComponent;
 class USphereComponent;
 
+class AMOBATowerCharacter;
+
 UENUM(BlueprintType)
 enum class CrystalRoad : uint8
 {
-	crystalTop UMETA(DisplayName="crystalTop"),
-	crystalMid UMETA(DisplayName="crystalMid"),
-	crystalDown UMETA(DisplayName="crystalDown")
+	crystalTop UMETA(DisplayName = "crystalTop"),
+	crystalMid UMETA(DisplayName = "crystalMid"),
+	crystalDown UMETA(DisplayName = "crystalDown")
 };
 
 /**
@@ -50,6 +52,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		USphereComponent* ClickComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		AMOBATowerCharacter* CrystalPointer;
+
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -58,4 +63,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void CrystalDeadHandle();
 };

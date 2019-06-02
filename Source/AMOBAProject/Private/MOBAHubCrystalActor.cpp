@@ -22,6 +22,8 @@ AMOBAHubCrystalActor::AMOBAHubCrystalActor() {
 
 	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
 	ClickComp->SetupAttachment(RootComp);
+
+	this->GetbCanBeAttacked() = false;
 }
 
 AMOBAHubCrystalActor::AMOBAHubCrystalActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {

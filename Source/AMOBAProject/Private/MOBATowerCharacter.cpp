@@ -2,6 +2,8 @@
 
 
 #include "MOBATowerCharacter.h"
+#include "Public/MOBAHubCrystalActor.h"
+#include "Public/MOBACrystalActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 
@@ -25,12 +27,12 @@ AMOBATowerCharacter::AMOBATowerCharacter()
 	ClickComp->SetupAttachment(RootComp);
 }
 
-TowerRoad& AMOBATowerCharacter::getRoad()
+TowerRoad& AMOBATowerCharacter::GetRoad()
 {
 	return road;
 }
 
-TowerType& AMOBATowerCharacter::getTowerType()
+TowerType& AMOBATowerCharacter::GetTowerType()
 {
 	return towerType;
 }
@@ -41,6 +43,7 @@ void AMOBATowerCharacter::assignTowerValueForAPI(FBaseActorProperty aBasePropert
 	this->road = aRoad;
 	this->towerType = aTowerType;
 }
+
 
 void AMOBATowerCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAttack)
 {
@@ -53,4 +56,35 @@ bool AMOBATowerCharacter::IsEnemyHeroAttackingMyHero(AMOBABaseCharacter * EnemyH
 {
 	//传入一个敌方hero，若敌方hero攻击了我方hero，则return true
 	return false;
+
+void AMOBATowerCharacter::TowerDeadHandle()
+{
+	
+	if (GetTowerType() == TowerType::hub)
+	{
+		TowerPointerToHub->GetbCanBeAttacked() = true;
+	}
+	else if (GetTowerType() == TowerType::highland)
+	{
+		TowerPointerToCrystal->GetbCanBeAttacked() = true;
+	}
+	else
+	{
+		TowerPointerToTower->GetbCanBeAttacked() = true;
+	}
+}
+
+void AMOBATowerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	if (GetTowerType() == TowerType::outter)
+	{
+		GetbCanBeAttacked() = true;
+	}
+	else
+	{
+		GetbCanBeAttacked() = false;
+	}
+
+
 }

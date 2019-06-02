@@ -2,6 +2,7 @@
 
 
 #include "Public/MOBACrystalActor.h"
+#include "Public/MOBATowerCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 
@@ -39,6 +40,8 @@ AMOBACrystalActor::AMOBACrystalActor() {
 
 	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
 	ClickComp->SetupAttachment(RootComp);
+
+	this->GetbCanBeAttacked() = false;
 }
 
 
@@ -53,3 +56,10 @@ void AMOBACrystalActor::assignCrystalValueForAPI(FBaseActorProperty aBasePropert
 	this->road = aRoad;
 
 }
+
+void AMOBACrystalActor::CrystalDeadHandle()
+{
+	CrystalPointer->GetbCanBeAttacked() = true;
+}
+
+

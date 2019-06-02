@@ -23,6 +23,8 @@ void AMOBASpringActor::BeginPlay()
 void AMOBASpringActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	//Detect if there is an overlapping AMOBABaseCharacter
 
 }
 
@@ -56,6 +58,18 @@ void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)
 				who->ApplyDamage(who, DamageType::real, 1000.0f, this);
 			}
 		}
+	}
+}
+
+void AMOBASpringActor::OverlapHandle(AMOBABaseCharacter* who)
+{
+	if (this->GetCamp() == who->GetCamp())
+	{
+		FriendHandle(who);
+	}
+	else
+	{
+		EnemyHandle(who);
 	}
 }
 

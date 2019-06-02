@@ -36,6 +36,10 @@ public:
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void FriendHandle(AMOBABaseCharacter* who);
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void EnemyHandle(AMOBABaseCharacter* who);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void OverlapHandle(AMOBABaseCharacter* who);
 };

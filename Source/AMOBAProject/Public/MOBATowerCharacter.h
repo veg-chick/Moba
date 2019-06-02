@@ -9,6 +9,9 @@
 class UStaticMeshComponent;
 class USphereComponent;
 
+class AMOBACrystalActor;
+class AMOBAHubCrystalActor;
+
 UENUM(BlueprintType)
 enum class TowerRoad : uint8
 {
@@ -45,21 +48,34 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		TowerType towerType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		AMOBATowerCharacter* TowerPointerToTower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		AMOBACrystalActor* TowerPointerToCrystal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		AMOBAHubCrystalActor* TowerPointerToHub;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		TowerRoad& getRoad();
+		TowerRoad& GetRoad();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		TowerType& getTowerType();
+		TowerType& GetTowerType();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignTowerValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, TowerRoad aRoad, TowerType aTowerType);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+
 		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool IsEnemyHeroAttackingMyHero(AMOBABaseCharacter* EnemyHero);
+
+		void TowerDeadHandle();
+
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -78,5 +94,10 @@ protected:
 		USphereComponent* ClickComp;
 
 
+
+
+
+protected:
+	virtual void BeginPlay() override;
 
 };
