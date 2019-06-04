@@ -45,6 +45,8 @@ struct FBaseActorProperty {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
 		float moveSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
+		bool bCanMove;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
 		bool bAbleToAttack;
@@ -224,5 +226,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsBroken() { return bIsBroken; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbCanMove() { return baseProperty.bCanMove; }
 
 };

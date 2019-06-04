@@ -139,4 +139,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsBeingAttacked() { return baseProperty.bIsBeingAttacked; }
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbCanMove() { return baseProperty.bCanMove; }
+
 };

@@ -193,27 +193,13 @@ void AMOBAHeroCharacter::resetHero()
 {
 	this->GetGoldValue() = 300.0f;
 	this->GetCombKillNumber() = 0.0f;
-	//No need to disable player input
 
-	this->SkillProperty.bCanReleaseSkills = false;
-	this->baseProperty.bAbleToAttack = false;
-
-	auto myMovementComp = GetCharacterMovement();
-	//Set the move speed to 0
-	auto accelerationBefore = myMovementComp->MaxAcceleration;
-	myMovementComp->MaxAcceleration = 0.0f;
-	auto  maxWalkSpeedBefore = myMovementComp->MaxWalkSpeed;
-	myMovementComp->MaxWalkSpeed = 0.0f;
-	//Prohibition of Rotation
+	this->ChangeState(State::Dead);
 
 	float resetTime = this->heroProperty.resetTime;
 	auto MyTimeHanlde = timeHandles.ResetTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
-
-	//Set the move speed to before
-	myMovementComp->MaxAcceleration = accelerationBefore;
-	myMovementComp->MaxWalkSpeed = maxWalkSpeedBefore;
 
 }
 
@@ -229,10 +215,10 @@ void AMOBAHeroCharacter::AddCombKillNumber()
 void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 {
 	this->GetExperienceValue() += ExperienceValue;
-	auto MyExperience = this->GetExperience();
+	auto MyExperienceJudge = this->GetExperience() / 100.0f;
+	auto MyLevel = this->GetLevel();
 
-	//If the empirical value meets the requirements of the upgrade
-	if (0)
+	if (MyExperienceJudge > MyLevel)
 	{
 		levelUp();
 	}
@@ -300,10 +286,7 @@ void AMOBAHeroCharacter::resetHeroHandle()
 
 	this->baseProperty.hp = this->baseProperty.maxHp;
 	this->baseProperty.mp = this->baseProperty.maxMp;
-	this->baseProperty.bAbleToAttack = true;
-	this->baseProperty.bCanBeAttacked = true;
-	this->SkillProperty.bCanReleaseSkills = true;
-
+	this->ChangeState(State::Dead, true);
 
 	this->SetActorLocation(birthLocation);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -313,7 +296,8 @@ void AMOBAHeroCharacter::resetHeroHandle()
 void AMOBAHeroCharacter::levelUp()
 {
 	auto& myPro = this->baseProperty;
-	if (myPro.level < myPro.maxLevel) {
+	if (myPro.level < myPro.maxLevel)
+	{
 		auto& heroPro = this->heroProperty;
 		auto myGro = this->heroGrowth;
 
@@ -384,6 +368,71 @@ void AMOBAHeroCharacter::MpRecoveryHandle()
 	{
 		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery() * 5.0f, 0.0f, this->GetMaxMp());
 	}
+}
+
+void AMOBAHeroCharacter::ChangeState(State TargetState, bool IsCanceling)
+{
+	if (!IsCanceling)
+	{
+		this->GetHeroState() = TargetState;
+	}
+	else
+	{
+		if (this->GetHeroState() == TargetState)
+		{
+			this->GetHeroState() = State::Normal;
+		}
+	}
+
+	if (TargetState == State::Imprison)
+	{
+		this->GetbRecallSucceed() = false;
+		this->GetbCanMove() = (false ^ IsCanceling);
+	}
+	if (TargetState == State::Silence)
+	{
+		this->GetbRecallSucceed() = false;
+		this->GetbCanReleaseSkills() = (false ^ IsCanceling);
+	}
+	if (TargetState == State::Stun)
+	{
+		this->GetbRecallSucceed() = false;
+		this->GetbAbleToAttack() = (false ^ IsCanceling);
+		this->GetbCanMove() = (false ^ IsCanceling);
+		this->GetbCanReleaseSkills() = (false ^ IsCanceling);
+	}
+	if (TargetState == State::Dead)
+	{
+		this->GetbRecallSucceed() = false;
+		this->GetbAbleToAttack() = (false ^ IsCanceling);
+		this->GetbCanMove() = (false ^ IsCanceling);
+		this->GetbCanReleaseSkills() = (false ^ IsCanceling);
+		this->GetbCanBeAttacked() = (false ^ IsCanceling);
+	}
+}
+
+void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
+{
+	ChangeState(TargetState);
+	if(TargetState== State::Stun)
+	{
+		FTimerHandle& MyTimeHandle = timeHandles.StunTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetStunState, Time);
+	}
+	if (TargetState == State::Silence)
+	{
+		FTimerHandle& MyTimeHandle = timeHandles.SilenceTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetSilenceState, Time);
+	}
+	if (TargetState == State::Imprison)
+	{
+		FTimerHandle& MyTimeHandle = timeHandles.ImprisonTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetImprisonState, Time);
+	}
+	
 }
 
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {

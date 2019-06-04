@@ -9,6 +9,17 @@
 struct FTimerHandle;
 struct FVector;
 
+UENUM(BlueprintType)
+enum class State : uint8
+{
+	Normal UMETA(DisplayName = "Normal"),
+	Stun UMETA(DisplayName = "Stun"),
+	Silence UMETA(DisplayName = "Silence"),
+	Imprison UMETA(DisplayName = "Imprison"),
+	Dead UMETA(DisplayName = "Dead")
+};
+
+
 USTRUCT(BlueprintType)
 struct FHeroProperty {
 
@@ -46,7 +57,7 @@ struct FHeroProperty {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bIsAttacking;
-
+	
 
 };
 
@@ -108,6 +119,13 @@ struct FTimerHandles {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle MpRecoveryTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle StunTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle SilenceTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle ImprisonTimer;
 
 };
 
@@ -195,21 +213,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FScoreBoard ScoreBoard;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+		State HeroState;
+
 protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void BeginPlay()override;
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void ReleaseQ();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void ReleaseW();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void ReleaseE();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void ReleaseR();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -242,7 +259,20 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void MpRecoveryHandle();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ChangeState(State TargetState, bool IsCanceling = false);
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ExceptionState(State TargetState, float Time);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetStunState() { ChangeState(State::Stun, true); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetSilenceState() { ChangeState(State::Silence, true); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetImprisonState() { ChangeState(State::Imprison, true); }
 
 public:
 
@@ -411,4 +441,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsAttackingHero() { return bIsAttackingHero; }
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		State& GetHeroState() { return HeroState; }
 };
