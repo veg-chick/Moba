@@ -96,7 +96,7 @@ void AMOBAHeroCharacter::ServerMoveToLocation_Implementation(const FVector DestL
 	float const Distance = FVector::Dist(DestLocation, GetActorLocation());
 
 	// We need to issue move command only if far enough in order for walk animation to play correctly
-	if ((Distance > 120.0f))
+	if (Distance > 120.0f && this->GetbCanMove())
 	{
 		this->GetCharacterMovement()->MaxWalkSpeed = Speed;
 		AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
