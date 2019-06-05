@@ -65,4 +65,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void CrystalDeadHandle();
+
+	void SetValue();
+
 };

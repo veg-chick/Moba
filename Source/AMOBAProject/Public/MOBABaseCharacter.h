@@ -47,9 +47,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void setValue();
-
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageType Type, float Damage, AActor* DamageCauser);
@@ -141,5 +138,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbCanMove() { return baseProperty.bCanMove; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool& GetbIsAttacking() { return baseProperty.bIsAttacking; }
 
 };

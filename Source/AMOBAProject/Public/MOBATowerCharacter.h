@@ -107,4 +107,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetTimer();
 
+	void SetValue();
+
 };

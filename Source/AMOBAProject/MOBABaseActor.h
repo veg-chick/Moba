@@ -77,6 +77,9 @@ struct FBaseActorProperty {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ActorBaseProperty")
 		float experience;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		bool bIsAttacking;
+
 };
 
 UENUM(BlueprintType)
@@ -134,9 +137,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void setValue();
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

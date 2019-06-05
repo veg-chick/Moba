@@ -242,10 +242,6 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 	return false;
 }
 
-void AMOBABaseCharacter::setValue()
-{
-
-}
 
 void AMOBABaseCharacter::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue)
 {

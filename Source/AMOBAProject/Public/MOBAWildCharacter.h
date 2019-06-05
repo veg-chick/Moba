@@ -53,4 +53,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetTimer();
 
+	void SetValue();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void WildLevelUp();
+
 };

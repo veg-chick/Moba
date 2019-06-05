@@ -60,6 +60,9 @@ AMOBAHeroCharacter::AMOBAHeroCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	this->SetValue();
+
 }
 
 void AMOBAHeroCharacter::Tick(float DeltaSeconds)
@@ -259,6 +262,48 @@ void AMOBAHeroCharacter::ReleaseE()
 
 void AMOBAHeroCharacter::ReleaseR()
 {
+}
+
+void AMOBAHeroCharacter::SetValue()
+{
+	baseProperty.hp = 500.0f;
+	baseProperty.maxHp = 500.0f;
+	baseProperty.mp = 300.0f;
+	baseProperty.maxMp = 300.0f;
+	baseProperty.attackStrength = 60.0f;
+	baseProperty.attackSpeed = 0.8f;
+	baseProperty.mpRecovery = 1.0f;
+	baseProperty.hpRecovery = 1.0f;
+	baseProperty.armor = 50.0f;
+	baseProperty.magicResist = 30.0f;
+	baseProperty.level = 1.0f;
+	baseProperty.maxLevel = 18.0f;
+	baseProperty.maxAttackSpeed = 2.5f;
+	baseProperty.experience = 10.0f;
+	
+	heroProperty.lifeSteal = 0.0f;
+	heroProperty.Gold = 0.0f;
+	heroProperty.resetTime = 5.0f;
+	heroProperty.strikeDamage = 2.0f;
+	
+	heroGrowth.armorGrowth = 3.0f;
+	heroGrowth.attackGrowth = 7.0f;
+	heroGrowth.attackSpeedGrowth = 0.08f;
+	heroGrowth.experienceCarriedGrowth = 4.0f;
+	heroGrowth.hpGrowth = 80.0f;
+	heroGrowth.hpRecoveryGrowth = 0.2f;
+	heroGrowth.magicResistGrowth = 2.0f;
+	heroGrowth.mpGrowth = 30.0f;
+	heroGrowth.mpRecoveryGrowth = 0.2f;
+	heroGrowth.resetTimeGrowth = 4.0f;
+
+	this->ChangeState(State::Normal);
+
+	heroProperty.bIsInjured = false;
+	baseProperty.bCanBeAttacked = true;
+	baseProperty.bCanMove = true;
+	baseProperty.bAbleToAttack = true;
+	baseProperty.bHaveMp = true;
 }
 
 void AMOBAHeroCharacter::resetQSkill()

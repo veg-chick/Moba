@@ -23,11 +23,23 @@ AMOBAHubCrystalActor::AMOBAHubCrystalActor() {
 	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
 	ClickComp->SetupAttachment(RootComp);
 
-	this->GetbCanBeAttacked() = false;
+	this->SetValue();
+
 }
 
 AMOBAHubCrystalActor::AMOBAHubCrystalActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :AMOBABaseActor(aBaseProperty, aBaseValue) {
 
+}
+
+void AMOBAHubCrystalActor::SetValue()
+{
+	baseProperty.maxHp = 5000.0f;
+	baseProperty.hp = 5000.0f;
+	baseProperty.hpRecovery = 20.0f;
+	baseProperty.bHaveMp = false;
+	baseProperty.bCanBeAttacked = false;
+	baseProperty.armor = 50.0f;
+	baseProperty.magicResist = 50.0f;
 }
 
 void AMOBAHubCrystalActor::assignHubCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){

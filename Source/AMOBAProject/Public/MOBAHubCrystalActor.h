@@ -35,6 +35,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		USphereComponent* ClickComp;
 
+		void SetValue();
+
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

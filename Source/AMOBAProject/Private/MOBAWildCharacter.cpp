@@ -8,7 +8,7 @@
 
 AMOBAWildCharacter::AMOBAWildCharacter()
 {
-	
+	this->SetValue();
 }
 
 void AMOBAWildCharacter::QuickRecovery()
@@ -50,17 +50,48 @@ void AMOBAWildCharacter::ResetTimer()
 	this->GetbAbleToAttack() = true;
 }
 
+void AMOBAWildCharacter::SetValue()
+{
+	baseProperty.hp = 800.0f;
+	baseProperty.maxHp = 800.0f;
+	baseProperty.armor = 50.0f;
+	baseProperty.magicResist = 50.0f;
+	baseProperty.attackSpeed = 1.0f;
+	baseProperty.attackStrength = 80.0f;
+	baseProperty.attackRange = 100.0f;
+	baseProperty.moveSpeed = 800.0f;
+
+	baseProperty.bAbleToAttack = true;
+	baseProperty.bCanBeAttacked = true;
+	baseProperty.bCanMove = true;
+
+	baseValue.experienceValue = 3.0f;
+	baseValue.goldValue = 50.0f;
+}
+
+void AMOBAWildCharacter::WildLevelUp()
+{
+	baseProperty.hp += 400.0f;
+	baseProperty.maxHp += 400.0f;
+	baseProperty.armor += 10.0f;
+	baseProperty.magicResist += 10.0f;
+	baseProperty.attackStrength = 40.0f;
+	baseValue.goldValue += 40.0f;
+}
+
 void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAttack)
 {
 	if (this->GetbAbleToAttack())
 	{
+		this->GetbIsAttacking() = true;
 		auto MyAttackStrength = this->GetAttackStrength();
 		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
 		this->GetbAbleToAttack() = false;
 		auto MyTimeHandle = this->AttackTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		auto AttackCDTime = 1.0f / GetAttackSpeed();
-		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetTimer, AttackCDTime);
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetTimer, AttackCDTime); 
+		this->GetbIsAttacking() = false;
 	}
 }
 

@@ -7,7 +7,7 @@
 
 AMOBASoldierCharacter::AMOBASoldierCharacter()
 {
-
+	this->SetValue();
 }
 
 SoldierRoad& AMOBASoldierCharacter::GetRoad()
@@ -26,6 +26,7 @@ void AMOBASoldierCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAt
 {
 	if (this->GetbAbleToAttack())
 	{
+		this->GetbIsAttacking() = true;
 		auto MyAttackStrength = this->GetAttackStrength();
 		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
 		this->GetbAbleToAttack() = false;
@@ -33,6 +34,7 @@ void AMOBASoldierCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAt
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		auto AttackCDTime = 1.0f / GetAttackSpeed();
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+		this->GetbIsAttacking() = false;
 	}
 }
 
@@ -40,6 +42,7 @@ void AMOBASoldierCharacter::AttackToActorOnce(AMOBABaseActor * TargetToAttack)
 {
 	if (this->GetbAbleToAttack())
 	{
+		this->GetbIsAttacking() = true;
 		auto MyAttackStrength = this->GetAttackStrength();
 		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
 		this->GetbAbleToAttack() = false;
@@ -47,6 +50,7 @@ void AMOBASoldierCharacter::AttackToActorOnce(AMOBABaseActor * TargetToAttack)
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		auto AttackCDTime = 1.0f / GetAttackSpeed();
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+		this->GetbIsAttacking() = false;
 	}
 }
 
@@ -62,6 +66,31 @@ bool AMOBASoldierCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter * Enem
 void AMOBASoldierCharacter::ResetTimer()
 {
 	this->GetbAbleToAttack() = true;
+}
+
+void AMOBASoldierCharacter::SoldierLevelUp()
+{
+	baseProperty.maxHp += 50.0f;
+	baseProperty.hp += 50.0f;
+	baseProperty.attackStrength += 10.0f;
+}
+
+void AMOBASoldierCharacter::SetValue()
+{
+	baseProperty.maxHp = 200.0f;
+	baseProperty.hp = 200.0f;
+	baseProperty.attackStrength = 20.0f;
+	baseProperty.attackSpeed = 0.7f;
+	baseProperty.moveSpeed = 600.0f;
+
+	baseValue.experienceValue = 15.0f;
+	baseValue.goldValue = 20.0f;
+
+	baseProperty.bHaveMp = false;
+	baseProperty.bCanBeAttacked = true;
+	baseProperty.bCanMove = true;
+	baseProperty.bAbleToAttack = true;
+
 }
 
 

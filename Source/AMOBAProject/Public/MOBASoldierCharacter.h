@@ -69,4 +69,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetTimer();
 
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void SoldierLevelUp();
+
+	void SetValue();
 };

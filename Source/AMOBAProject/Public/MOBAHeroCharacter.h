@@ -54,9 +54,6 @@ struct FHeroProperty {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bRecallSucceed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		bool bIsAttacking;
 	
 
 };
@@ -228,6 +225,8 @@ protected:
 		virtual void ReleaseE();
 
 		virtual void ReleaseR();
+
+		void SetValue();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetQSkill();
@@ -422,9 +421,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbCanReleaseSkills() { return SkillProperty.bCanReleaseSkills; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		bool& GetbIsAttacking() { return heroProperty.bIsAttacking; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetKillNumber() { return ScoreBoard.KillNumber; }

@@ -27,6 +27,9 @@ AMOBATowerCharacter::AMOBATowerCharacter()
 
 	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
 	ClickComp->SetupAttachment(RootComp);
+
+	this->SetValue();
+
 }
 
 TowerRoad& AMOBATowerCharacter::GetRoad()
@@ -52,6 +55,7 @@ void AMOBATowerCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAtt
 
 	if (this->GetbAbleToAttack())
 	{
+		this->GetbIsAttacking() = true;
 		auto MyAttackStrength = this->GetAttackStrength();
 		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
 		this->GetbAbleToAttack() = false;
@@ -59,6 +63,7 @@ void AMOBATowerCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAtt
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		auto AttackCDTime = 1.0f / GetAttackSpeed();
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBATowerCharacter::ResetTimer, AttackCDTime);
+		this->GetbIsAttacking() = false;
 	}
 }
 
@@ -105,4 +110,23 @@ void AMOBATowerCharacter::BeginPlay()
 void AMOBATowerCharacter::ResetTimer()
 {
 	this->GetbAbleToAttack() = true;
+}
+
+void AMOBATowerCharacter::SetValue()
+{
+	baseProperty.hp = 1800.0f;
+	baseProperty.maxHp = 1800.0f;
+	baseProperty.armor = 100.0f;
+	baseProperty.magicResist = 100.0f;
+	baseProperty.attackSpeed = 1.0f;
+	baseProperty.attackStrength = 200.0f;
+	baseProperty.attackRange = 800.0f;
+	baseProperty.bIsRemote = true;
+	baseProperty.bHaveMp = false;
+	baseProperty.bCanBeAttacked = false;
+	baseProperty.bAbleToAttack = true;
+
+	baseValue.experienceValue = 2.5f;
+	baseValue.goldValue = 200.0f;
+
 }

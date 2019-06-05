@@ -41,9 +41,8 @@ AMOBACrystalActor::AMOBACrystalActor() {
 	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
 	ClickComp->SetupAttachment(RootComp);
 
-	this->GetbCanBeAttacked() = false;
+	this->SetValue();
 }
-
 
 CrystalRoad& AMOBACrystalActor::getRoad() {
 	return road;
@@ -60,6 +59,18 @@ void AMOBACrystalActor::assignCrystalValueForAPI(FBaseActorProperty aBasePropert
 void AMOBACrystalActor::CrystalDeadHandle()
 {
 	CrystalPointer->GetbCanBeAttacked() = true;
+}
+
+void AMOBACrystalActor::SetValue()
+{
+	baseProperty.hp = 2000.0f;
+	baseProperty.maxHp = 2000.0f;
+	baseProperty.armor = 50.0f;
+	baseProperty.magicResist = 50.0f;
+	baseProperty.hpRecovery = 5.0f;
+
+	baseProperty.bCanBeAttacked = false;
+	baseProperty.bHaveMp = false;
 }
 
 

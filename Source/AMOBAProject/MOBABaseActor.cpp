@@ -8,12 +8,6 @@
 #include "Public/MOBACrystalActor.h"
 #include "Public/MOBABaseCharacter.h"
 
-
-void AMOBABaseActor::setValue() {
-
-
-}
-
 // Sets default values
 AMOBABaseActor::AMOBABaseActor(){
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
