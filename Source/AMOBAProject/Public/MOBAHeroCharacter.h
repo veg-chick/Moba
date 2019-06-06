@@ -54,7 +54,6 @@ struct FHeroProperty {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bRecallSucceed;
-	
 
 };
 
@@ -158,6 +157,21 @@ struct FSkillProperty
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bCanReleaseSkills;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float SkillPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float QPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float WPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float EPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float RPoint;
+
 };
 
 USTRUCT(BlueprintType)
@@ -218,15 +232,15 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void BeginPlay()override;
 
-		virtual void ReleaseQ();
+	virtual void ReleaseQ();
 
-		virtual void ReleaseW();
+	virtual void ReleaseW();
 
-		virtual void ReleaseE();
+	virtual void ReleaseE();
 
-		virtual void ReleaseR();
+	virtual void ReleaseR();
 
-		void SetValue();
+	void SetValue();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetQSkill();
@@ -423,6 +437,33 @@ public:
 		bool& GetbCanReleaseSkills() { return SkillProperty.bCanReleaseSkills; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetSkillPoint() { return SkillProperty.SkillPoint; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetQPoint() { return SkillProperty.QPoint; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetWPoint() { return SkillProperty.WPoint; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetEPoint() { return SkillProperty.EPoint; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetRPoint() { return SkillProperty.RPoint; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetCanAddQ() { return (SkillProperty.SkillPoint) && (baseProperty.level / 2.0f > SkillProperty.QPoint); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetCanAddW() { return (SkillProperty.SkillPoint) && (baseProperty.level / 2.0f > SkillProperty.WPoint); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetCanAddE() { return (SkillProperty.SkillPoint) && (baseProperty.level / 2.0f > SkillProperty.EPoint); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetCanAddR() { return (SkillProperty.SkillPoint) && (baseProperty.level / 5.0f) > (SkillProperty.RPoint + 1.0f); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetKillNumber() { return ScoreBoard.KillNumber; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -439,4 +480,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		State& GetHeroState() { return HeroState; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AddQ();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AddW();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AddE();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AddR();
+
 };
