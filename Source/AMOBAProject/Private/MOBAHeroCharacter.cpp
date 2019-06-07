@@ -168,6 +168,42 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	}
 }
 
+void AMOBAHeroCharacter::AddQ()
+{
+	if (this->GetCanAddQ())
+	{
+		this->SkillProperty.QPoint += 1.0f;
+		this->SkillProperty.SkillPoint -= 1.0f;
+	}
+}
+
+void AMOBAHeroCharacter::AddW()
+{
+	if (this->GetCanAddW())
+	{
+		this->SkillProperty.WPoint += 1.0f;
+		this->SkillProperty.SkillPoint -= 1.0f;
+	}
+}
+
+void AMOBAHeroCharacter::AddE()
+{
+	if (this->GetCanAddE())
+	{
+		this->SkillProperty.EPoint += 1.0f;
+		this->SkillProperty.SkillPoint -= 1.0f;
+	}
+}
+
+void AMOBAHeroCharacter::AddR()
+{
+	if (this->GetCanAddE())
+	{
+		this->SkillProperty.RPoint += 1.0f;
+		this->SkillProperty.SkillPoint -= 1.0f;
+	}
+}
+
 void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharacter* BeAttackedCharacter)
 {
 	auto MyAttackStrength = this->GetAttackStrength();
@@ -220,8 +256,9 @@ void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 	this->GetExperienceValue() += ExperienceValue;
 	auto MyExperienceJudge = this->GetExperience() / 100.0f;
 	auto MyLevel = this->GetLevel();
+	auto MaxLevel = this->GetMaxLevel();
 
-	if (MyExperienceJudge > MyLevel)
+	if ((MyExperienceJudge > MyLevel) && (MyLevel < MaxLevel))
 	{
 		levelUp();
 	}
@@ -231,6 +268,12 @@ void AMOBAHeroCharacter::ResetAttackTimer()
 {
 	this->GetbAbleToAttack() = true;
 	this->GetbIsAttackingHero() = false;
+}
+
+void AMOBAHeroCharacter::AddCDReduction(float CD)
+{
+	auto& MyCD = SkillProperty.CDReduction;
+	MyCD = FMath::Clamp(MyCD + CD, 0.0f, SkillProperty.MaxCDReduction);
 }
 
 void AMOBAHeroCharacter::BeginPlay()
@@ -246,22 +289,6 @@ void AMOBAHeroCharacter::BeginPlay()
 		this->MpRecoveryHandle();
 	}
 
-}
-
-void AMOBAHeroCharacter::ReleaseQ()
-{
-}
-
-void AMOBAHeroCharacter::ReleaseW()
-{
-}
-
-void AMOBAHeroCharacter::ReleaseE()
-{
-}
-
-void AMOBAHeroCharacter::ReleaseR()
-{
 }
 
 void AMOBAHeroCharacter::SetValue()
@@ -280,12 +307,12 @@ void AMOBAHeroCharacter::SetValue()
 	baseProperty.maxLevel = 18.0f;
 	baseProperty.maxAttackSpeed = 2.5f;
 	baseProperty.experience = 10.0f;
-	
+
 	heroProperty.lifeSteal = 0.0f;
 	heroProperty.Gold = 0.0f;
 	heroProperty.resetTime = 5.0f;
 	heroProperty.strikeDamage = 2.0f;
-	
+
 	heroGrowth.armorGrowth = 3.0f;
 	heroGrowth.attackGrowth = 7.0f;
 	heroGrowth.attackSpeedGrowth = 0.08f;
@@ -296,9 +323,12 @@ void AMOBAHeroCharacter::SetValue()
 	heroGrowth.mpGrowth = 30.0f;
 	heroGrowth.mpRecoveryGrowth = 0.2f;
 	heroGrowth.resetTimeGrowth = 4.0f;
+	SkillProperty.CDReduction = 0.0f;
+	SkillProperty.MaxCDReduction = 0.4f;
 
 	this->ChangeState(State::Normal);
 
+	SkillProperty.bCanReleaseSkills = true;
 	heroProperty.bIsInjured = false;
 	baseProperty.bCanBeAttacked = true;
 	baseProperty.bCanMove = true;
@@ -341,29 +371,25 @@ void AMOBAHeroCharacter::resetHeroHandle()
 void AMOBAHeroCharacter::levelUp()
 {
 	auto& myPro = this->baseProperty;
-	if (myPro.level < myPro.maxLevel)
-	{
-		auto& heroPro = this->heroProperty;
-		auto myGro = this->heroGrowth;
+	auto& heroPro = this->heroProperty;
+	auto myGro = this->heroGrowth;
 
 
-		myPro.maxHp += myGro.hpGrowth;
-		myPro.hp += myGro.hpGrowth;
+	myPro.maxHp += myGro.hpGrowth;
+	myPro.hp += myGro.hpGrowth;
 
-		myPro.maxMp += myGro.mpGrowth;
-		myPro.mp += myGro.mpGrowth;
+	myPro.maxMp += myGro.mpGrowth;
+	myPro.mp += myGro.mpGrowth;
 
-		myPro.attackStrength += myGro.attackGrowth;
-		myPro.attackSpeed = FMath::Clamp(myPro.attackSpeed + myGro.attackSpeedGrowth, 0.0f, myPro.maxAttackSpeed);
+	myPro.attackStrength += myGro.attackGrowth;
+	myPro.attackSpeed = FMath::Clamp(myPro.attackSpeed + myGro.attackSpeedGrowth, 0.0f, myPro.maxAttackSpeed);
 
-		myPro.armor += myGro.armorGrowth;
-		myPro.magicResist += myGro.magicResistGrowth;
+	myPro.armor += myGro.armorGrowth;
+	myPro.magicResist += myGro.magicResistGrowth;
 
-		heroPro.resetTime += myGro.resetTimeGrowth;
+	heroPro.resetTime += myGro.resetTimeGrowth;
 
-	}
-
-
+	SkillProperty.SkillPoint += 1.0f;
 
 }
 
@@ -393,11 +419,11 @@ void AMOBAHeroCharacter::HpRecoveryHandle()
 {
 	auto MyTimeHanlde = timeHandles.HpRecoveryTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
-	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::HpRecoveryHandle, 5.0f);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::HpRecoveryHandle, 1.0f);
 
 	if (this->GetHp() != this->GetMaxHp())
 	{
-		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery() * 5.0f, 0.0f, this->GetMaxHp());
+		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery(), 0.0f, this->GetMaxHp());
 	}
 }
 
@@ -406,12 +432,12 @@ void AMOBAHeroCharacter::MpRecoveryHandle()
 
 	auto MyTimeHanlde = timeHandles.MpRecoveryTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
-	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::MpRecoveryHandle, 5.0f);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::MpRecoveryHandle, 1.0f);
 
 
 	if (this->GetMp() != this->GetMaxMp())
 	{
-		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery() * 5.0f, 0.0f, this->GetMaxMp());
+		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
 	}
 }
 
@@ -459,7 +485,7 @@ void AMOBAHeroCharacter::ChangeState(State TargetState, bool IsCanceling)
 void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 {
 	ChangeState(TargetState);
-	if(TargetState== State::Stun)
+	if (TargetState == State::Stun)
 	{
 		FTimerHandle& MyTimeHandle = timeHandles.StunTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
@@ -477,7 +503,7 @@ void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetImprisonState, Time);
 	}
-	
+
 }
 
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {

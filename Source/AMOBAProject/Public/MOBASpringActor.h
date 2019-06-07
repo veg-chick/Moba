@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "MOBASpringActor.generated.h"
 
+class UStaticMeshComponent;
+
 UCLASS()
 class AMOBAPROJECT_API AMOBASpringActor : public AActor
 {
@@ -23,6 +25,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		Camp springCamp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		UStaticMeshComponent* MeshComp;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,6 +37,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		Camp& GetCamp() { return springCamp; };
+
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

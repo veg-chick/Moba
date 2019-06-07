@@ -3,6 +3,7 @@
 
 #include "Public/MOBAWildCharacter.h"
 #include "Engine/EngineTypes.h"
+#include "Public/MOBAHeroCharacter.h"
 #include "Math/UnrealMathUtility.h"
 #include "Math/Vector.h"
 
@@ -32,7 +33,7 @@ void AMOBAWildCharacter::resetWild()
 
 }
 
-void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
+void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) {
 
 	assignBaseValueForAPI(aBaseProperty, aBaseValue);
 
@@ -79,7 +80,28 @@ void AMOBAWildCharacter::WildLevelUp()
 	baseValue.goldValue += 40.0f;
 }
 
-void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAttack)
+void AMOBAWildCharacter::ResetBlueBuffValue()
+{
+	BuffedHero->GetMpRecovery() -= 12.0f;
+	BuffedHero->AddCDReduction(-0.1f);
+	BuffedHero = nullptr;
+}
+
+void AMOBAWildCharacter::ResetRedBuffValue()
+{
+	BuffedHero->GetHpRecovery() -= 18.0f;
+	BuffedHero->GetAttackStrength() -= 30.0f;
+	BuffedHero = nullptr;
+}
+
+void AMOBAWildCharacter::ResetNashBuffValue()
+{
+	BuffedHero->GetAttackStrength() -= 80.0f;
+	BuffedHero->GetPowerStrength() -= 80.0f;
+	BuffedHero = nullptr;
+}
+
+void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack)
 {
 	if (this->GetbAbleToAttack())
 	{
@@ -90,7 +112,7 @@ void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAtta
 		auto MyTimeHandle = this->AttackTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		auto AttackCDTime = 1.0f / GetAttackSpeed();
-		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetTimer, AttackCDTime); 
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetTimer, AttackCDTime);
 		this->GetbIsAttacking() = false;
 	}
 }
@@ -104,4 +126,50 @@ AMOBABaseCharacter* AMOBAWildCharacter::GetAttacker()
 		return Attacker;
 	}
 	return nullptr;
+}
+
+void AMOBAWildCharacter::KillValueForHero(AMOBAHeroCharacter* AHero)
+{
+	BuffedHero = AHero;
+	if (WildType == AWildType::Other)
+	{
+		BuffedHero = nullptr;
+		return;
+	}
+	if (WildType == AWildType::BlueBuff)
+	{
+		if (BuffedHero)
+		{
+			BuffedHero->GetMpRecovery() += 12.0f;
+			BuffedHero->AddCDReduction(0.1f);
+
+			FTimerHandle& MyTimeHandle = BlueBuffTimer;
+			GetWorldTimerManager().ClearTimer(MyTimeHandle);
+			GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetBlueBuffValue, 100.0f);
+		}
+	}
+	if (WildType == AWildType::RedBuff)
+	{
+		if (BuffedHero)
+		{
+			BuffedHero->GetHpRecovery() += 18.0f;
+			BuffedHero->GetAttackStrength() += 30.0f;
+
+			FTimerHandle& MyTimeHandle = RedBuffTimer;
+			GetWorldTimerManager().ClearTimer(MyTimeHandle);
+			GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetRedBuffValue, 100.0f);
+		}
+	}
+	if (WildType == AWildType::Nash)
+	{
+		if (BuffedHero)
+		{
+			BuffedHero->GetAttackStrength() += 80.0f;
+			BuffedHero->GetPowerStrength() += 80.0f;
+
+			FTimerHandle& MyTimeHandle = NashTimer;
+			GetWorldTimerManager().ClearTimer(MyTimeHandle);
+			GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetNashBuffValue, 120.0f);
+		}
+	}
 }

@@ -2,6 +2,7 @@
 
 
 #include "Public/MOBASpringActor.h"
+#include "Components/StaticMeshComponent.h"
 #include "Public/MOBABaseCharacter.h"
 
 // Sets default values
@@ -9,6 +10,10 @@ AMOBASpringActor::AMOBASpringActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RootComponent = MeshComp;
 
 }
 
@@ -73,3 +78,14 @@ void AMOBASpringActor::OverlapHandle(AMOBABaseCharacter* who)
 	}
 }
 
+void AMOBASpringActor::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	auto MyCharacter = Cast<AMOBABaseCharacter>(OtherActor);
+	if (MyCharacter)
+	{
+		this->OverlapHandle(MyCharacter);
+	}
+
+}
