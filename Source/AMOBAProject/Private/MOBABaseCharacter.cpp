@@ -201,7 +201,7 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 			}
 
 			DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			DeadCharacter->SetLifeSpan(10.0f);
+			DeadCharacter->SetLifeSpan(1.0f);
 		}
 
 	}

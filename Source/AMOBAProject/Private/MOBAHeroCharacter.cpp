@@ -98,7 +98,6 @@ void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float
 			AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
 			if (PC)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Move!"))
 				UAIBlueprintHelperLibrary::SimpleMoveToLocation(PC, DestLocation);
 			}
 		}
@@ -137,8 +136,7 @@ bool AMOBAHeroCharacter::ServerMoveToLocation_Validate(const FVector DestLocatio
 void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 {
 	float const Distance = FVector::Dist(BeAttackedActor->GetActorLocation(), this->GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Attack To Actor Succeed!"));
-	if (Distance > this->GetAttackRange()) return;
+	if (Distance > this->GetAttackRange() || !this->GetbAbleToAttack()) return;
 	else
 	{
 		this->GetbIsAttacking() = true;
@@ -149,13 +147,19 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 		auto MyTimeHanlde = timeHandles.AttackTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
-		this->GetbIsAttacking() = false;
 	}
 
 }
 
 void AMOBAHeroCharacter::ServerAttackToActor_Implementation(AMOBABaseActor* BeAttackedActor)
 {
+	FVector Direction = BeAttackedActor->GetActorLocation() - this->GetActorLocation();
+	Direction.Normalize();
+	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	NewRotation.Pitch = 0.0f;
+	NewRotation.Roll = 0.0f;
+	SetActorRotation(NewRotation);
+
 	auto MyAttackStrength = this->GetAttackStrength();
 	BeAttackedActor->ReceiveDamageFromCharacter(BeAttackedActor, DamageType::physical, MyAttackStrength, this);
 }
@@ -169,8 +173,7 @@ bool AMOBAHeroCharacter::ServerAttackToActor_Validate(AMOBABaseActor* BeAttacked
 void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter)
 {
 	float const Distance = FVector::Dist(BeAttackedCharacter->GetActorLocation(), this->GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Attack To Character Succeed!"));
-	if (Distance > this->GetAttackRange()) return;
+	if (Distance > this->GetAttackRange() || !this->GetbAbleToAttack()) return;
 	else
 	{
 		this->GetbIsAttacking() = true;
@@ -189,8 +192,38 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 		auto MyTimeHanlde = timeHandles.AttackTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
-		this->GetbIsAttacking() = false;
 	}
+}
+
+void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharacter* BeAttackedCharacter)
+{
+
+	FVector Direction = BeAttackedCharacter->GetActorLocation() - this->GetActorLocation();
+	Direction.Normalize();
+	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	NewRotation.Pitch = 0.0f;
+	NewRotation.Roll = 0.0f;
+	SetActorRotation(NewRotation);
+
+	auto MyAttackStrength = this->GetAttackStrength();
+	//Strike
+	FRandomStream MyRandomStream;
+	auto MyStrikeRate = this->GetStrikeRate();
+	auto MyStrikeDamage = this->GetStrikeDamage();
+	MyRandomStream.GenerateNewSeed();
+	auto RandomResult = MyRandomStream.GetFraction();
+	if (RandomResult <= MyStrikeRate && RandomResult >= 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Strike!"));
+		MyAttackStrength *= MyStrikeDamage;
+	}
+
+	BeAttackedCharacter->ReceiveDamageFromCharacter(BeAttackedCharacter, DamageType::physical, MyAttackStrength, this);
+}
+
+bool AMOBAHeroCharacter::ServerAttackToCharacter_Validate(AMOBABaseCharacter* BeAttackedCharacter)
+{
+	return true;
 }
 
 void AMOBAHeroCharacter::AddQ()
@@ -227,29 +260,6 @@ void AMOBAHeroCharacter::AddR()
 		this->SkillProperty.RPoint += 1.0f;
 		this->SkillProperty.SkillPoint -= 1.0f;
 	}
-}
-
-void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharacter* BeAttackedCharacter)
-{
-	auto MyAttackStrength = this->GetAttackStrength();
-	//Strike
-	FRandomStream MyRandomStream;
-	auto MyStrikeRate = this->GetStrikeRate();
-	auto MyStrikeDamage = this->GetStrikeDamage();
-	MyRandomStream.GenerateNewSeed();
-	auto RandomResult = MyRandomStream.GetFraction();
-	if (RandomResult <= MyStrikeRate && RandomResult >= 0.0f)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Strike!"));
-		MyAttackStrength *= MyStrikeDamage;
-	}
-
-	BeAttackedCharacter->ReceiveDamageFromCharacter(BeAttackedCharacter, DamageType::physical, MyAttackStrength, this);
-}
-
-bool AMOBAHeroCharacter::ServerAttackToCharacter_Validate(AMOBABaseCharacter* BeAttackedCharacter)
-{
-	return true;
 }
 
 
@@ -293,6 +303,7 @@ void AMOBAHeroCharacter::ResetAttackTimer()
 {
 	this->GetbAbleToAttack() = true;
 	this->GetbIsAttackingHero() = false;
+	this->GetbIsAttacking() = false;
 }
 
 void AMOBAHeroCharacter::AddCDReduction(float CD)

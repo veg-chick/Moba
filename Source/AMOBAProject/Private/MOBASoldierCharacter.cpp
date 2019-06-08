@@ -34,7 +34,6 @@ void AMOBASoldierCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAt
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		auto AttackCDTime = 1.0f / GetAttackSpeed();
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
-		this->GetbIsAttacking() = false;
 	}
 }
 
@@ -50,7 +49,6 @@ void AMOBASoldierCharacter::AttackToActorOnce(AMOBABaseActor * TargetToAttack)
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		auto AttackCDTime = 1.0f / GetAttackSpeed();
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
-		this->GetbIsAttacking() = false;
 	}
 }
 
@@ -65,6 +63,7 @@ bool AMOBASoldierCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter * Enem
 
 void AMOBASoldierCharacter::ResetTimer()
 {
+	this->GetbIsAttacking() = false;
 	this->GetbAbleToAttack() = true;
 }
 
