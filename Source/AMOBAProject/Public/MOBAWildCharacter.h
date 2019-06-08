@@ -8,6 +8,17 @@
 
 struct FTimerHandle;
 struct FVector;
+class AMOBAHeroCharacter;
+
+UENUM(BlueprintType)
+enum class AWildType : uint8
+{
+	BlueBuff UMETA(DisplayName = "BlueBuff"),
+	RedBuff UMETA(DisplayName = "RedBuff"),
+	Nash UMETA(DisplayName = "Nash"),
+	Other UMETA(DisplayName = "Other")
+};
+
 
 /**
  *
@@ -23,19 +34,34 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		AMOBABaseCharacter* GetAttacker();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		AWildType GetWildType() { return this->WildType; }
 
-
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void KillValueForHero(AMOBAHeroCharacter* AHero);
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
-		FTimerHandle wildResetTimeHanlde;
+		FTimerHandle WildResetTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandle BlueBuffTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandle RedBuffTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandle NashTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandle AttackTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		AMOBAHeroCharacter* BuffedHero;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void QuickRecovery();
@@ -48,6 +74,10 @@ protected:
 
 	FVector birthLocation;
 
+	AWildType WildType;
+
+	
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -58,4 +88,12 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void WildLevelUp();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetBlueBuffValue();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetRedBuffValue();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetNashBuffValue();
 };
