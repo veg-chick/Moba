@@ -87,7 +87,26 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
 {
 	this->GetbRecallSucceed() = false;
-	ServerMoveToLocation(DestLocation, Speed);
+	float const Distance = FVector::Dist(DestLocation, GetActorLocation());
+
+	// We need to issue move command only if far enough in order for walk animation to play correctly
+	if (Distance > 120.0f && this->GetbCanMove())
+	{
+		this->GetCharacterMovement()->MaxWalkSpeed = Speed;
+		if (Speed > 10) 
+		{
+			AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
+			if (PC)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Move!"))
+				UAIBlueprintHelperLibrary::SimpleMoveToLocation(PC, DestLocation);
+			}
+		}
+	}
+	if (Role < ROLE_Authority)
+	{
+		ServerMoveToLocation(DestLocation, Speed);
+	}
 }
 
 
@@ -99,8 +118,14 @@ void AMOBAHeroCharacter::ServerMoveToLocation_Implementation(const FVector DestL
 	if (Distance > 120.0f && this->GetbCanMove())
 	{
 		this->GetCharacterMovement()->MaxWalkSpeed = Speed;
-		AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(PC, DestLocation);
+		if (Speed > 10)
+		{
+			AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
+			if (PC)
+			{
+				UAIBlueprintHelperLibrary::SimpleMoveToLocation(PC, DestLocation);
+			}
+		}
 	}
 }
 
