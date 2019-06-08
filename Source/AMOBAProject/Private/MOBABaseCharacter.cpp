@@ -4,6 +4,7 @@
 #include "Public/MOBABaseCharacter.h"
 #include "Public/MOBAHeroCharacter.h"
 #include "Public/MOBATowerCharacter.h"
+#include "Public/MOBAWildCharacter.h"
 #include "Engine/Classes/GameFramework/Character.h"
 #include "Engine/Classes/GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -157,6 +158,11 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
 				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());
+				auto MayBeKilledBuff = Cast<AMOBAWildCharacter>(DamagedActor);
+				if (MayBeKilledBuff)
+				{
+					MayBeKilledBuff->KillValueForHero(MayBeAHero);
+				}
 			}
 			DamagedActor->DeadHandle(DamagedActor);
 		}
@@ -179,11 +185,11 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 		this->GetbCanBeAttacked() = false;
 		this->GetbAbleToAttack() = false;
 
-		auto mayBeHero = Cast<AMOBAHeroCharacter>(DeadCharacter);
-		if (mayBeHero)
+		auto MayBeHero = Cast<AMOBAHeroCharacter>(DeadCharacter);
+		if (MayBeHero)
 		{
 			DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			mayBeHero->resetHero();
+			MayBeHero->resetHero();
 		}
 		else
 		{

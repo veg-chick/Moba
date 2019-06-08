@@ -172,6 +172,12 @@ struct FSkillProperty
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float RPoint;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float CDReduction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float MaxCDReduction;
+
 };
 
 USTRUCT(BlueprintType)
@@ -179,7 +185,7 @@ struct FScoreBoard
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float KillNumber = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float DeathNumber = 0.0f;
@@ -232,13 +238,13 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void BeginPlay()override;
 
-	virtual void ReleaseQ();
+	virtual void ReleaseQ() {};
 
-	virtual void ReleaseW();
+	virtual void ReleaseW() {};
 
-	virtual void ReleaseE();
+	virtual void ReleaseE() {};
 
-	virtual void ReleaseR();
+	virtual void ReleaseR() {};
 
 	void SetValue();
 
@@ -303,6 +309,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetAttackTimer();
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void AddCDReduction(float CD);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerMoveToLocation(const FVector DestLocation, float Speed);
@@ -477,6 +485,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsAttackingHero() { return bIsAttackingHero; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetCDReduction() { return SkillProperty.CDReduction; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetMaxCDReduction() { return SkillProperty.MaxCDReduction; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		State& GetHeroState() { return HeroState; }

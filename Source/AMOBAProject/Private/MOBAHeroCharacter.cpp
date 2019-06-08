@@ -295,6 +295,12 @@ void AMOBAHeroCharacter::ResetAttackTimer()
 	this->GetbIsAttackingHero() = false;
 }
 
+void AMOBAHeroCharacter::AddCDReduction(float CD)
+{
+	auto& MyCD = SkillProperty.CDReduction;
+	MyCD = FMath::Clamp(MyCD + CD, 0.0f, SkillProperty.MaxCDReduction);
+}
+
 void AMOBAHeroCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -308,22 +314,6 @@ void AMOBAHeroCharacter::BeginPlay()
 		this->MpRecoveryHandle();
 	}
 
-}
-
-void AMOBAHeroCharacter::ReleaseQ()
-{
-}
-
-void AMOBAHeroCharacter::ReleaseW()
-{
-}
-
-void AMOBAHeroCharacter::ReleaseE()
-{
-}
-
-void AMOBAHeroCharacter::ReleaseR()
-{
 }
 
 void AMOBAHeroCharacter::SetValue()
@@ -358,6 +348,8 @@ void AMOBAHeroCharacter::SetValue()
 	heroGrowth.mpGrowth = 30.0f;
 	heroGrowth.mpRecoveryGrowth = 0.2f;
 	heroGrowth.resetTimeGrowth = 4.0f;
+	SkillProperty.CDReduction = 0.0f;
+	SkillProperty.MaxCDReduction = 0.4f;
 
 	this->ChangeState(State::Normal);
 
