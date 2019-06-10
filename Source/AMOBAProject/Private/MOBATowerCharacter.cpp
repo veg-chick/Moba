@@ -8,6 +8,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -22,11 +23,8 @@ AMOBATowerCharacter::AMOBATowerCharacter()
 	StructMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StructMeshComp"));
 	StructMeshComp->SetupAttachment(RootComp);
 
-	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
-	CollisionComp->SetupAttachment(RootComp);
-
-	ClickComp = CreateDefaultSubobject<USphereComponent>(TEXT("ClickComp"));
-	ClickComp->SetupAttachment(RootComp);
+	AttackComp = CreateDefaultSubobject<USceneComponent>(TEXT("AttackComp"));
+	AttackComp->SetupAttachment(RootComp);
 
 	this->SetValue();
 
@@ -55,8 +53,10 @@ void AMOBATowerCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAtt
 
 	if (this->GetbAbleToAttack())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Tower Attack Succeed!"))
 		this->GetbIsAttacking() = true;
 		auto MyAttackStrength = this->GetAttackStrength();
+		PlayEffects(TargetToAttack->GetActorLocation());
 		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
 		this->GetbAbleToAttack() = false;
 		auto MyTimeHandle = this->AttackTimer;
@@ -130,4 +130,10 @@ void AMOBATowerCharacter::SetValue()
 	baseValue.experienceValue = 25.0f;
 	baseValue.goldValue = 200.0f;
 
+}
+
+void AMOBATowerCharacter::PlayEffects(FVector Location)
+{
+	UGameplayStatics::SpawnEmitterAtLocation(this, BeAttackedFX, Location);
+	UGameplayStatics::SpawnEmitterAtLocation(this, AttackFX, this->AttackComp->GetComponentLocation());
 }
