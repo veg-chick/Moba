@@ -19,6 +19,25 @@ enum class State : uint8
 	Dead UMETA(DisplayName = "Dead")
 };
 
+UENUM(BlueprintType)
+enum class Equip : uint8
+{
+	NullEquip UMETA(DisplayName = "Null"),
+	Sword UMETA(DisplayName = "Sword"),
+	Pickaxe UMETA(DisplayName = "Pickaxe"),
+	Dagger UMETA(DisplayName = "Dagger"),
+	BigSword UMETA(DisplayName = "BigSword"),
+	Cloth UMETA(DisplayName = "Cloth"),
+	Cloak UMETA(DisplayName = "Cloak"),
+	Shield UMETA(DisplayName = "Shield"),
+	Armor UMETA(DisplayName = "Armor"),
+	MagicBook UMETA(DisplayName = "MagicBook"),
+	Wand UMETA(DisplayName = "Wand"),
+	Boxer UMETA(DisplayName = "Boxer"),
+	StrikeCloak UMETA(DisplayName = "Cloak"),
+	LifePotion UMETA(DisplayName = "LifePotion"),
+	MagicPotion UMETA(DisplayName = "MagicPotion")
+};
 
 USTRUCT(BlueprintType)
 struct FHeroProperty {
@@ -55,6 +74,9 @@ struct FHeroProperty {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bRecallSucceed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float FakeAttackSpeed;
+
 };
 
 USTRUCT(BlueprintType)
@@ -89,6 +111,18 @@ struct FHeroGrowth {
 		float resetTimeGrowth;
 };
 
+USTRUCT(BlueprintType)
+struct FHeroPack
+{
+	GENERATED_BODY()
+
+	Equip PackOne = Equip::NullEquip;
+	Equip PackTwo = Equip::NullEquip;
+	Equip PackThree = Equip::NullEquip;
+	Equip PackFour = Equip::NullEquip;
+	Equip PackFive = Equip::NullEquip;
+	Equip PackSix = Equip::NullEquip;
+};
 
 USTRUCT(BlueprintType)
 struct FTimerHandles {
@@ -122,6 +156,9 @@ struct FTimerHandles {
 		FTimerHandle SilenceTimer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle ImprisonTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+		FTimerHandle DeadTimer;
 
 };
 
@@ -219,6 +256,9 @@ protected:
 		FTimerHandles timeHandles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FHeroPack HeroPack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FSkillProperty SkillProperty;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
@@ -292,6 +332,17 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetImprisonState() { ChangeState(State::Imprison, true); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void DeadHeroHandle() { this->SetActorLocation(birthLocation); }
+
+	void ResetSkillHandle(int Target);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void BuyEquipment(Equip BuyingEquip);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void SellEquipment(float PackageNumber);
 
 public:
 
@@ -494,6 +545,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		State& GetHeroState() { return HeroState; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetFakeAttackSpeed() { return heroProperty.FakeAttackSpeed; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AddQ();

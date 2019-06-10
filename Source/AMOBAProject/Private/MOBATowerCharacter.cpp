@@ -125,8 +125,9 @@ void AMOBATowerCharacter::SetValue()
 	baseProperty.bHaveMp = false;
 	baseProperty.bCanBeAttacked = false;
 	baseProperty.bAbleToAttack = true;
+	baseProperty.sightRange = 1200.0f;
 
-	baseValue.experienceValue = 2.5f;
+	baseValue.experienceValue = 25.0f;
 	baseValue.goldValue = 200.0f;
 
 }

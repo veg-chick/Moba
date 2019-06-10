@@ -93,7 +93,7 @@ void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float
 	if (Distance > 120.0f && this->GetbCanMove())
 	{
 		this->GetCharacterMovement()->MaxWalkSpeed = Speed;
-		if (Speed > 10) 
+		if (Speed > 10)
 		{
 			AMOBAPlayerController* PC = Cast<AMOBAPlayerController>(this->GetController());
 			if (PC)
@@ -268,6 +268,11 @@ void AMOBAHeroCharacter::resetHero()
 	this->GetGoldValue() = 300.0f;
 	this->GetCombKillNumber() = 0.0f;
 
+	auto DeadTimer = timeHandles.DeadTimer;
+	GetWorldTimerManager().ClearTimer(DeadTimer);
+	GetWorldTimerManager().SetTimer(DeadTimer, this, &AMOBAHeroCharacter::DeadHeroHandle, 3.0f);
+
+
 	this->ChangeState(State::Dead);
 
 	float resetTime = this->heroProperty.resetTime;
@@ -374,22 +379,22 @@ void AMOBAHeroCharacter::SetValue()
 
 void AMOBAHeroCharacter::resetQSkill()
 {
-	this->SkillProperty.bCanQ = true;
+	this->ResetSkillHandle(1);
 }
 
 void AMOBAHeroCharacter::resetWSkill()
 {
-	this->SkillProperty.bCanW = true;
+	this->ResetSkillHandle(2);
 }
 
 void AMOBAHeroCharacter::resetESkill()
 {
-	this->SkillProperty.bCanE = true;
+	this->ResetSkillHandle(3);
 }
 
 void AMOBAHeroCharacter::resetRSkill()
 {
-	this->SkillProperty.bCanR = true;
+	this->ResetSkillHandle(4);
 }
 
 void AMOBAHeroCharacter::resetHeroHandle()
@@ -398,8 +403,6 @@ void AMOBAHeroCharacter::resetHeroHandle()
 	this->baseProperty.hp = this->baseProperty.maxHp;
 	this->baseProperty.mp = this->baseProperty.maxMp;
 	this->ChangeState(State::Dead, true);
-
-	this->SetActorLocation(birthLocation);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 }
@@ -419,6 +422,7 @@ void AMOBAHeroCharacter::levelUp()
 
 	myPro.attackStrength += myGro.attackGrowth;
 	myPro.attackSpeed = FMath::Clamp(myPro.attackSpeed + myGro.attackSpeedGrowth, 0.0f, myPro.maxAttackSpeed);
+	heroPro.FakeAttackSpeed += myGro.attackSpeedGrowth;
 
 	myPro.armor += myGro.armorGrowth;
 	myPro.magicResist += myGro.magicResistGrowth;
@@ -457,7 +461,7 @@ void AMOBAHeroCharacter::HpRecoveryHandle()
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::HpRecoveryHandle, 1.0f);
 
-	if (this->GetHp() != this->GetMaxHp())
+	if (this->GetHp() != this->GetMaxHp() && this->GetHp() > 0.0f)
 	{
 		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery(), 0.0f, this->GetMaxHp());
 	}
@@ -471,7 +475,7 @@ void AMOBAHeroCharacter::MpRecoveryHandle()
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::MpRecoveryHandle, 1.0f);
 
 
-	if (this->GetMp() != this->GetMaxMp())
+	if (this->GetMp() != this->GetMaxMp() && this->GetMp() > 0.0f)
 	{
 		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
 	}
@@ -542,6 +546,178 @@ void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 
 }
 
+void AMOBAHeroCharacter::ResetSkillHandle(int Target)
+{
+	switch (Target)
+	{
+	case 1:
+		this->SkillProperty.bCanQ = true;
+		break;
+	case 2:
+		this->SkillProperty.bCanW = true;
+		break;
+	case 3:
+		this->SkillProperty.bCanE = true;
+		break;
+	case 4:
+		this->SkillProperty.bCanR = true;
+		break;
+	default:
+		break;
+	}
+}
+
+void AMOBAHeroCharacter::BuyEquipment(Equip BuyingEquip)
+{
+	Equip* MyEquip = nullptr;
+	if (HeroPack.PackOne == Equip::NullEquip)
+		MyEquip = &(HeroPack.PackOne);
+	else if (HeroPack.PackTwo == Equip::NullEquip)
+		MyEquip = &(HeroPack.PackTwo);
+	else if (HeroPack.PackThree == Equip::NullEquip)
+		MyEquip = &(HeroPack.PackThree);
+	else if (HeroPack.PackFour == Equip::NullEquip)
+		MyEquip = &(HeroPack.PackFour);
+	else if (HeroPack.PackFive == Equip::NullEquip)
+		MyEquip = &(HeroPack.PackFive);
+	else if (HeroPack.PackSix == Equip::NullEquip)
+		MyEquip = &(HeroPack.PackSix);
+	else return;
+
+	if (MyEquip)
+	{
+		if (BuyingEquip == Equip::Sword)
+		{
+			if (GetGold() >= 300.0f)
+			{
+				GetGold() -= 300.0f;
+				GetAttackStrength() += 15.0f;
+				*MyEquip = Equip::Sword;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Dagger)
+		{
+			if (GetGold() >= 300.0f)
+			{
+				GetGold() -= 300.0f;
+				GetFakeAttackSpeed() += 0.2f;
+				GetAttackSpeed() = FMath::Clamp(GetAttackSpeed() + 0.2f, 0.0f, GetMaxAttackSpeed());
+				*MyEquip = Equip::Dagger;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Pickaxe)
+		{
+			if (GetGold() >= 800.0f)
+			{
+				GetGold() -= 800.0f;
+				GetAttackStrength() += 30.0f;
+				*MyEquip = Equip::Pickaxe;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::BigSword)
+		{
+			if (GetGold() >= 1500.0f)
+			{
+				GetGold() -= 1500.0f;
+				GetAttackStrength() += 60.0f;
+				*MyEquip = Equip::BigSword;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Cloth)
+		{
+			if (GetGold() >= 300.0f)
+			{
+				GetGold() -= 300.0f;
+				GetArmor() += 15.0f;
+				*MyEquip = Equip::Cloth;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Cloak)
+		{
+			if (GetGold() >= 400.0f)
+			{
+				GetGold() -= 400.0f;
+				GetMagicResist() += 15.0f;
+				*MyEquip = Equip::Cloak;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Shield)
+		{
+			if (GetGold() >= 700.0f)
+			{
+				GetGold() -= 700.0f;
+				GetMagicResist() += 20.0f;
+				GetArmor() += 20.0f;
+				GetMaxHp() += 200.0f;
+				GetHp() = FMath::Clamp(GetHp() + 200.0f, 0.0f, GetMaxHp());
+				*MyEquip = Equip::Shield;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Armor)
+		{
+			if (GetGold() >= 1500.0f)
+			{
+				GetGold() -= 1500.0f;
+				GetMagicResist() += 50.0f;
+				GetArmor() += 50.0f;
+				GetMaxHp() += 400.0f;
+				GetHp() = FMath::Clamp(GetHp() + 400.0f, 0.0f, GetMaxHp());
+				*MyEquip = Equip::Armor;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::MagicBook)
+		{
+			if (GetGold() >= 500.0f)
+			{
+				GetGold() -= 500.0f;
+				GetPowerStrength() += 20.0f;
+				*MyEquip = Equip::MagicBook;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Wand)
+		{
+			if (GetGold() >= 900.0f)
+			{
+				GetGold() -= 900.0f;
+				GetPowerStrength() += 50.0f;
+				*MyEquip = Equip::Wand;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::Boxer)
+		{
+			if (GetGold() >= 400.0f)
+			{
+				GetGold() -= 400.0f;
+				GetStrikeRate() += 0.15f;
+				*MyEquip = Equip::Boxer;
+			}
+			else return;
+		}
+		if (BuyingEquip == Equip::StrikeCloak)
+		{
+			if (GetGold() >= 800.0f)
+			{
+				GetGold() -= 800.0f;
+				GetStrikeRate() += 0.25f;
+				*MyEquip = Equip::StrikeCloak;
+			}
+			else return;
+		}
+
+	}
+
+}
+
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {
 
 	assignBaseValueForAPI(aBaseProperty, aBaseValue);
@@ -550,3 +726,113 @@ void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty,
 
 }
 
+void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
+{
+	Equip* MyEquip = nullptr;
+	switch ((int)PackageNumber)
+	{
+	case 1:
+		MyEquip = &(HeroPack.PackOne);
+		break;
+	case 2:
+		MyEquip = &(HeroPack.PackTwo);
+		break;
+	case 3:
+		MyEquip = &(HeroPack.PackThree);
+		break;
+	case 4:
+		MyEquip = &(HeroPack.PackFour);
+		break;
+	case 5:
+		MyEquip = &(HeroPack.PackFive);
+		break;
+	case 6:
+		MyEquip = &(HeroPack.PackSix);
+		break;
+	default:
+		return;
+	}
+
+	if (*MyEquip == Equip::NullEquip)
+		return;
+	else
+	{
+		if (*MyEquip == Equip::Sword)
+		{
+			GetGold() += 300.0f * 0.6f;
+			GetAttackStrength() -= 15.0f;
+		}
+		if (*MyEquip == Equip::Dagger)
+		{
+			GetGold() += 300.0f * 0.6f;
+			GetFakeAttackSpeed() -= 0.2f;
+			GetAttackSpeed() = FMath::Clamp(GetFakeAttackSpeed(), 0.0f, GetMaxAttackSpeed());
+		}
+		if (*MyEquip == Equip::Pickaxe)
+		{
+			GetGold() += 800.0f * 0.6f;
+			GetAttackStrength() -= 30.0f;
+		}
+		if (*MyEquip == Equip::BigSword)
+		{
+			GetGold() += 1500.0f * 0.6f;
+			GetAttackStrength() -= 60.0f;
+
+		}
+		if (*MyEquip == Equip::Cloth)
+		{
+
+			GetGold() += 300.0f * 0.6f;
+			GetArmor() -= 15.0f;
+
+		}
+		if (*MyEquip == Equip::Cloak)
+		{
+
+			GetGold() += 400.0f * 0.6f;
+			GetMagicResist() -= 15.0f;
+
+		}
+		if (*MyEquip == Equip::Shield)
+		{
+
+			GetGold() += 700.0f * 0.6f;
+			GetMagicResist() -= 20.0f;
+			GetArmor() -= 20.0f;
+			GetMaxHp() -= 200.0f;
+			GetHp() = FMath::Clamp(GetHp(), 0.0f, GetMaxHp());
+
+		}
+		if (*MyEquip == Equip::Armor)
+		{
+
+			GetGold() += 1500.0f * 0.6f;
+			GetMagicResist() -= 50.0f;
+			GetArmor() -= 50.0f;
+			GetMaxHp() -= 400.0f;
+			GetHp() = FMath::Clamp(GetHp(), 0.0f, GetMaxHp());
+		}
+		if (*MyEquip == Equip::MagicBook)
+		{
+			GetGold() += 500.0f * 0.6f;
+			GetPowerStrength() -= 20.0f;
+		}
+		if (*MyEquip == Equip::Wand)
+		{
+			GetGold() += 900.0f * 0.6f;
+			GetPowerStrength() -= 50.0f;
+		}
+		if (*MyEquip == Equip::Boxer)
+		{
+			GetGold() += 400.0f * 0.6f;
+			GetStrikeRate() -= 0.15f;
+		}
+		if (*MyEquip == Equip::StrikeCloak)
+		{
+			GetGold() += 800.0f * 0.6f;
+			GetStrikeRate() -= 0.25f;
+		}
+
+		*MyEquip = Equip::NullEquip;
+	}
+}
