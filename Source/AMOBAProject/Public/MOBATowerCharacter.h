@@ -81,6 +81,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCAttackToCharacter(AMOBABaseCharacter* TargetToAttack);
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero);
 
