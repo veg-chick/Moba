@@ -44,7 +44,7 @@ struct FHeroProperty {
 
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float resetTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
@@ -84,7 +84,7 @@ struct FHeroGrowth {
 
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
 		float hpGrowth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
 		float mpGrowth;
@@ -129,7 +129,7 @@ struct FTimerHandles {
 
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle SkillQTimer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle SkillWTimer;
@@ -167,7 +167,7 @@ struct FSkillProperty
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bCanQ;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
@@ -222,7 +222,7 @@ struct FScoreBoard
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float KillNumber = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float DeathNumber = 0.0f;
@@ -246,13 +246,13 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroProperty heroProperty;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroGrowth heroGrowth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandles timeHandles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
@@ -270,7 +270,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FScoreBoard ScoreBoard;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
 
 protected:

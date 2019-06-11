@@ -32,7 +32,7 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FBaseActorProperty baseProperty;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")

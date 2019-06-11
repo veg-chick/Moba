@@ -8,6 +8,7 @@
 #include "Engine/Classes/GameFramework/Character.h"
 #include "Engine/Classes/GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AMOBABaseCharacter::AMOBABaseCharacter()
@@ -253,5 +254,12 @@ void AMOBABaseCharacter::assignBaseValueForAPI(FBaseActorProperty aBaseProperty,
 {
 	this->baseProperty = aBaseProperty;
 	this->baseValue = aBaseValue;
+}
+
+void AMOBABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMOBABaseCharacter, baseProperty);
 }
 

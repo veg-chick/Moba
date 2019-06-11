@@ -16,6 +16,7 @@
 #include "Engine/World.h"
 #include "MOBAPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 AMOBAHeroCharacter::AMOBAHeroCharacter()
 {
@@ -62,6 +63,8 @@ AMOBAHeroCharacter::AMOBAHeroCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	this->SetValue();
+
+	SetReplicates(true);
 
 }
 
@@ -139,29 +142,30 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 	if (Distance > this->GetAttackRange() || !this->GetbAbleToAttack()) return;
 	else
 	{
-		this->GetbIsAttacking() = true;
-		this->GetbRecallSucceed() = false;
-		this->GetbAbleToAttack() = false;
 		ServerAttackToActor(BeAttackedActor);
-		float AttackCDTime = 1.0f / this->GetAttackSpeed();
-		auto MyTimeHanlde = timeHandles.AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
-		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 	}
 
 }
 
 void AMOBAHeroCharacter::ServerAttackToActor_Implementation(AMOBABaseActor* BeAttackedActor)
 {
+	this->GetbIsAttacking() = true;
+	this->GetbRecallSucceed() = false;
+	this->GetbAbleToAttack() = false;
 	FVector Direction = BeAttackedActor->GetActorLocation() - this->GetActorLocation();
 	Direction.Normalize();
 	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	NewRotation.Pitch = 0.0f;
 	NewRotation.Roll = 0.0f;
 	SetActorRotation(NewRotation);
+	float AttackCDTime = 1.0f / this->GetAttackSpeed();
+	auto MyTimeHanlde = timeHandles.AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 
 	auto MyAttackStrength = this->GetAttackStrength();
 	BeAttackedActor->ReceiveDamageFromCharacter(BeAttackedActor, DamageType::physical, MyAttackStrength, this);
+
 }
 
 bool AMOBAHeroCharacter::ServerAttackToActor_Validate(AMOBABaseActor* BeAttackedActor)
@@ -176,10 +180,6 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	if (Distance > this->GetAttackRange() || !this->GetbAbleToAttack()) return;
 	else
 	{
-		this->GetbIsAttacking() = true;
-		this->GetbRecallSucceed() = false;
-		this->GetbAbleToAttack() = false;
-
 		auto MayBeAttackingHero = Cast<AMOBAHeroCharacter>(BeAttackedCharacter);
 		if (MayBeAttackingHero)
 		{
@@ -187,23 +187,24 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 		}
 
 		ServerAttackToCharacter(BeAttackedCharacter);
-
-		float AttackCDTime = 1.0f / this->GetAttackSpeed();
-		auto MyTimeHanlde = timeHandles.AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
-		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 	}
 }
 
 void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharacter* BeAttackedCharacter)
 {
-
+	this->GetbIsAttacking() = true;
+	this->GetbRecallSucceed() = false;
+	this->GetbAbleToAttack() = false;
 	FVector Direction = BeAttackedCharacter->GetActorLocation() - this->GetActorLocation();
 	Direction.Normalize();
 	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	NewRotation.Pitch = 0.0f;
 	NewRotation.Roll = 0.0f;
 	SetActorRotation(NewRotation);
+	float AttackCDTime = 1.0f / this->GetAttackSpeed();
+	auto MyTimeHanlde = timeHandles.AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 
 	auto MyAttackStrength = this->GetAttackStrength();
 	//Strike
@@ -835,4 +836,13 @@ void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
 
 		*MyEquip = Equip::NullEquip;
 	}
+}
+
+void AMOBAHeroCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(AMOBAHeroCharacter, heroProperty);
+	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, heroProperty, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, timeHandles, COND_OwnerOnly);
 }
