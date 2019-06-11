@@ -303,12 +303,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		virtual void BeginPlay()override;
 
-	virtual void ReleaseQ() {};
-
-	virtual void ReleaseW() {};
-
-	virtual void ReleaseE() {};
-
 	void SetValue();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

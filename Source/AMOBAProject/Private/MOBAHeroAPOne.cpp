@@ -2,6 +2,7 @@
 
 
 #include "MOBAHeroAPOne.h"
+#include "Components/DecalComponent.h"
 
 AMOBAHeroAPOne::AMOBAHeroAPOne()
 {

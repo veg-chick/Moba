@@ -2,6 +2,7 @@
 
 
 #include "MOBAHeroTankOne.h"
+#include "Components/DecalComponent.h"
 
 AMOBAHeroTankOne::AMOBAHeroTankOne()
 {

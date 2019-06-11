@@ -2,6 +2,7 @@
 
 
 #include "MOBAHeroADCOne.h"
+#include "Components/DecalComponent.h"
 
 AMOBAHeroADCOne::AMOBAHeroADCOne()
 {
