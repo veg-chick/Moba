@@ -97,22 +97,9 @@ void AMOBAGameMode::StartPlay()
 
 void AMOBAGameMode::GameOver(Camp SuccessCamp)
 {
-// 	AMOBAGameState* GS = GetGameState<AMOBAGameState>();
-// 	if (GS)
-// 	{
-// 		GS->MultiCastOnGameOver(SuccessCamp);
-// 	}
-
-	//UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
-
-	APawn* MyPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	if (MyPawn) 
+	AMOBAGameState* GS = GetGameState<AMOBAGameState>();
+	if (GS)
 	{
-		AController* PC = MyPawn->GetController();
-		if (PC) 
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
-			PC->DisableInput(Cast<APlayerController>(PC));
-		}
+		GS->MultiCastOnGameOver(SuccessCamp);
 	}
 }
