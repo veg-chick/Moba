@@ -7,28 +7,36 @@
 #include "MOBAHeroTankOne.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class AMOBAPROJECT_API AMOBAHeroTankOne : public AMOBAHeroCharacter
 {
 	GENERATED_BODY()
-	
+
 public:
 	AMOBAHeroTankOne();
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseQ() override;
+		void ReleaseQ(AMOBAHeroCharacter* TargetHero, float MpCost = 0.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseW() override;
+		void ReleaseW(float MpCost = 0.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseE() override;
+		void ReleaseE(float MpCost = 0.0f);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseR() override;
+protected:
+	FTimerHandle WTimerHandle;
 
+	FTimerHandle ETimerHandle;
 
+	void WTimeHandle();
+
+	void ETimeHandle();
+
+	float RecoveryValue;
+
+	virtual void Tick(float DeltaSeconds) override;
 };

@@ -62,6 +62,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandle AttackTimer;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* BeAttackedFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* AttackFX;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerRoad& GetRoad();
@@ -92,11 +98,7 @@ protected:
 		UStaticMeshComponent* StructMeshComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-		USphereComponent* CollisionComp;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-		USphereComponent* ClickComp;
-
+		USceneComponent* AttackComp;
 
 
 
@@ -108,5 +110,7 @@ protected:
 		void ResetTimer();
 
 	void SetValue();
+
+	void PlayEffects(FVector Location);
 
 };

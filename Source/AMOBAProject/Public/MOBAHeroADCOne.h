@@ -19,16 +19,34 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseQ() override;
+		void ReleaseQ(AMOBAHeroCharacter* Target,float MpCost);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseW() override;
+		void ReleaseW(float MpCost);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseE() override;
+		void ReleaseE(float MpCost);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseR() override;
+protected:
+	FTimerHandle WTimerHandle;
 
+	FTimerHandle QTimerHandle;
+
+	FTimerHandle ETimerHandle;
+
+	AMOBAHeroCharacter* QAttackingHero;
+
+	void WTimeHandle();
+
+	void QTimeHandle();
+
+	void ETimeHandle();
 	
+	float MyAttackSpeedAddValue;
+
+	float MyLifeStealAddValue;
+
+	float MyAttackStrengthAddValue;
+
+	virtual void Tick(float DeltaSeconds) override;
 };

@@ -19,15 +19,21 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseQ() override;
+		void ReleaseQ(AMOBABaseCharacter* Target, float MpCost);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseW() override;
+		void ReleaseW(float MpCost);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseE() override;
+		void ReleaseE(AMOBAHeroCharacter* Target, float MpCost);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		virtual void ReleaseR() override;
+protected:
+	bool bSkillIsStrengthed;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+	FTimerHandle WTimerHandle;
+
+	void WTimeHandle();
 
 };

@@ -68,6 +68,10 @@ void AMOBACrystalActor::SetValue()
 	baseProperty.armor = 50.0f;
 	baseProperty.magicResist = 50.0f;
 	baseProperty.hpRecovery = 5.0f;
+	baseProperty.sightRange = 800.0f;
+
+	baseValue.experienceValue = 10.0f;
+	baseValue.goldValue = 50.0f;
 
 	baseProperty.bCanBeAttacked = false;
 	baseProperty.bHaveMp = false;
