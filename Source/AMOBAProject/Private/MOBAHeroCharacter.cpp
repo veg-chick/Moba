@@ -254,16 +254,6 @@ void AMOBAHeroCharacter::AddE()
 	}
 }
 
-void AMOBAHeroCharacter::AddR()
-{
-	if (this->GetCanAddE())
-	{
-		this->SkillProperty.RPoint += 1.0f;
-		this->SkillProperty.SkillPoint -= 1.0f;
-	}
-}
-
-
 void AMOBAHeroCharacter::resetHero()
 {
 	this->GetGoldValue() = 300.0f;
@@ -279,7 +269,7 @@ void AMOBAHeroCharacter::resetHero()
 	float resetTime = this->heroProperty.resetTime;
 	auto MyTimeHanlde = timeHandles.ResetTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
-	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::resetHeroHandle, resetTime);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetHeroHandle, resetTime);
 
 }
 
@@ -294,7 +284,7 @@ void AMOBAHeroCharacter::AddCombKillNumber()
 
 void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 {
-	this->GetExperienceValue() += ExperienceValue;
+	this->GetExperience() += ExperienceValue;
 	auto MyExperienceJudge = this->GetExperience() / 100.0f;
 	auto MyLevel = this->GetLevel();
 	auto MaxLevel = this->GetMaxLevel();
@@ -317,6 +307,34 @@ void AMOBAHeroCharacter::AddCDReduction(float CD)
 	auto& MyCD = SkillProperty.CDReduction;
 	MyCD = FMath::Clamp(MyCD + CD, 0.0f, SkillProperty.MaxCDReduction);
 }
+
+void AMOBAHeroCharacter::ChangeReleasingSkill(float Target)
+{
+	if (Target == 1.0f)
+	{
+		GetbIsReleasingQ() = true;
+		FTimerHandle MyTImer;
+		GetWorldTimerManager().ClearTimer(MyTImer);
+		GetWorldTimerManager().SetTimer(MyTImer, this, &AMOBAHeroCharacter::ResetReleasingQ, 1.0f);
+	}
+	if (Target == 2.0f)
+	{
+		GetbIsReleasingQ() = true;
+		FTimerHandle MyTImer;
+		GetWorldTimerManager().ClearTimer(MyTImer);
+		GetWorldTimerManager().SetTimer(MyTImer, this, &AMOBAHeroCharacter::ResetReleasingW, 1.0f);
+	}
+	if (Target == 3.0f)
+	{
+		GetbIsReleasingQ() = true;
+		FTimerHandle MyTImer;
+		GetWorldTimerManager().ClearTimer(MyTImer);
+		GetWorldTimerManager().SetTimer(MyTImer, this, &AMOBAHeroCharacter::ResetReleasingE, 1.0f);
+	}
+
+
+}
+
 
 void AMOBAHeroCharacter::BeginPlay()
 {
@@ -348,7 +366,9 @@ void AMOBAHeroCharacter::SetValue()
 	baseProperty.level = 1.0f;
 	baseProperty.maxLevel = 18.0f;
 	baseProperty.maxAttackSpeed = 2.5f;
-	baseProperty.experience = 10.0f;
+
+	baseValue.experienceValue = 10.0f;
+	baseValue.goldValue = 300.0f;
 
 	heroProperty.lifeSteal = 0.0f;
 	heroProperty.Gold = 0.0f;
@@ -378,27 +398,22 @@ void AMOBAHeroCharacter::SetValue()
 	baseProperty.bHaveMp = true;
 }
 
-void AMOBAHeroCharacter::resetQSkill()
+void AMOBAHeroCharacter::ResetQSkill()
 {
-	this->ResetSkillHandle(1);
+	this->SkillProperty.bCanQ = true;
 }
 
-void AMOBAHeroCharacter::resetWSkill()
+void AMOBAHeroCharacter::ResetWSkill()
 {
-	this->ResetSkillHandle(2);
+	this->SkillProperty.bCanW = true;
 }
 
-void AMOBAHeroCharacter::resetESkill()
+void AMOBAHeroCharacter::ResetESkill()
 {
-	this->ResetSkillHandle(3);
+	this->SkillProperty.bCanE = true;
 }
 
-void AMOBAHeroCharacter::resetRSkill()
-{
-	this->ResetSkillHandle(4);
-}
-
-void AMOBAHeroCharacter::resetHeroHandle()
+void AMOBAHeroCharacter::ResetHeroHandle()
 {
 
 	this->baseProperty.hp = this->baseProperty.maxHp;
@@ -430,8 +445,9 @@ void AMOBAHeroCharacter::levelUp()
 
 	heroPro.resetTime += myGro.resetTimeGrowth;
 
+	if(myPro.level<=13.0f)
 	SkillProperty.SkillPoint += 1.0f;
-
+	myPro.level += 1.0f;
 }
 
 void AMOBAHeroCharacter::reCall()
@@ -547,24 +563,29 @@ void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 
 }
 
-void AMOBAHeroCharacter::ResetSkillHandle(int Target)
+void AMOBAHeroCharacter::ResetSkills(float Target)
 {
-	switch (Target)
+	float MyCDTime;
+	if(Target==1.0f)
 	{
-	case 1:
-		this->SkillProperty.bCanQ = true;
-		break;
-	case 2:
-		this->SkillProperty.bCanW = true;
-		break;
-	case 3:
-		this->SkillProperty.bCanE = true;
-		break;
-	case 4:
-		this->SkillProperty.bCanR = true;
-		break;
-	default:
-		break;
+		MyCDTime = SkillProperty.CDofQ * SkillProperty.CDReduction;
+		FTimerHandle& MyTimeHandle = timeHandles.SkillQTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetQSkill, MyCDTime);
+	}
+	if (Target == 2.0f)
+	{
+		MyCDTime = SkillProperty.CDofW * SkillProperty.CDReduction;
+		FTimerHandle& MyTimeHandle = timeHandles.SkillWTimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetWSkill, MyCDTime);
+	}
+	if (Target == 3.0f)
+	{
+		MyCDTime = SkillProperty.CDofE * SkillProperty.CDReduction;
+		FTimerHandle& MyTimeHandle = timeHandles.SkillETimer;
+		GetWorldTimerManager().ClearTimer(MyTimeHandle);
+		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetESkill, MyCDTime);
 	}
 }
 

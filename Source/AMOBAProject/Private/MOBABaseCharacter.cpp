@@ -15,7 +15,6 @@ AMOBABaseCharacter::AMOBABaseCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -113,9 +112,19 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 		if (Type == DamageType::physical)
 		{
 
-			float tDamage = Damage * physicalPercent;
+			float TDamage = Damage * physicalPercent;
 
-			myHp = FMath::Clamp(myHp - tDamage, 0.0f, myMaxHp);
+			myHp = FMath::Clamp(myHp - TDamage, 0.0f, myMaxHp);
+
+			auto MayBeHeroAttacking = Cast<AMOBAHeroCharacter>(DamageCauser);
+			if (MayBeHeroAttacking)
+			{
+				if (MayBeHeroAttacking->GetLifeSteal() != 0.0f)
+				{
+					auto FakeHp = MayBeHeroAttacking->GetHp() + TDamage * MayBeHeroAttacking->GetLifeSteal();
+					MayBeHeroAttacking->GetHp() = FMath::Clamp(FakeHp, 0.0f, MayBeHeroAttacking->GetMaxHp());
+				}
+			}
 
 		}
 
