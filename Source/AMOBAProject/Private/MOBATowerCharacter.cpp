@@ -142,7 +142,7 @@ void AMOBATowerCharacter::SetValue()
 
 }
 
-void AMOBATowerCharacter::PlayEffects(FVector Location)
+void AMOBATowerCharacter::PlayEffects_Implementation(FVector Location)
 {
 	UGameplayStatics::SpawnEmitterAtLocation(this, BeAttackedFX, Location);
 	UGameplayStatics::SpawnEmitterAtLocation(this, AttackFX, this->AttackComp->GetComponentLocation());

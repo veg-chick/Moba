@@ -114,6 +114,7 @@ protected:
 
 	void SetValue();
 
-	void PlayEffects(FVector Location);
+	UFUNCTION(NetMulticast, Reliable)
+		void PlayEffects(FVector Location);
 
 };
