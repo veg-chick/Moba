@@ -2,6 +2,7 @@
 
 
 #include "Public/MOBASpringActor.h"
+#include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Public/MOBABaseCharacter.h"
 
@@ -11,10 +12,12 @@ AMOBASpringActor::AMOBASpringActor()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	RootComponent = MeshComp;
-
+	OnOverlapComp = CreateDefaultSubobject<USphereComponent>(TEXT("OverlapConp"));
+	OnOverlapComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	OnOverlapComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	OnOverlapComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	RootComponent = OnOverlapComp;
+	OnOverlapComp->OnComponentBeginOverlap.AddDynamic(this, &AMOBASpringActor::OverlapHandle);
 }
 
 // Called when the game starts or when spawned
@@ -46,10 +49,21 @@ void AMOBASpringActor::FriendHandle(AMOBABaseCharacter* who)
 		{
 			while (who->GetHp() < who->GetMaxHp())
 			{
-				who->ApplyDamage(who, DamageType::treat, 500.0f, this);
+				ServerRPCFriendHandle(who);
 			}
 		}
 	}
+}
+
+
+void AMOBASpringActor::ServerRPCFriendHandle_Implementation(AMOBABaseCharacter* who)
+{
+	who->ApplyDamage(who, DamageType::treat, 500.0f, this);
+}
+
+bool AMOBASpringActor::ServerRPCFriendHandle_Validate(AMOBABaseCharacter* who)
+{
+	return true;
 }
 
 void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)	
@@ -60,32 +74,35 @@ void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)
 		{
 			while (who->GetHp() > 0.0f)
 			{
-				who->ApplyDamage(who, DamageType::real, 1000.0f, this);
+				ServerRPCEnemyHandle(who);
 			}
 		}
 	}
 }
 
-void AMOBASpringActor::OverlapHandle(AMOBABaseCharacter* who)
+void AMOBASpringActor::ServerRPCEnemyHandle_Implementation(AMOBABaseCharacter* who)
 {
-	if (this->GetCamp() == who->GetCamp())
-	{
-		FriendHandle(who);
-	}
-	else
-	{
-		EnemyHandle(who);
-	}
+	who->ApplyDamage(who, DamageType::real, 1000.0f, this);
 }
 
-void AMOBASpringActor::NotifyActorBeginOverlap(AActor* OtherActor)
+bool AMOBASpringActor::ServerRPCEnemyHandle_Validate(AMOBABaseCharacter* who)
 {
-	Super::NotifyActorBeginOverlap(OtherActor);
+	return true;
+}
 
-	auto MyCharacter = Cast<AMOBABaseCharacter>(OtherActor);
-	if (MyCharacter)
+
+void AMOBASpringActor::OverlapHandle(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AMOBABaseCharacter* OverlapChar = Cast<AMOBABaseCharacter>(OtherActor);
+	if (OverlapChar)
 	{
-		this->OverlapHandle(MyCharacter);
+		if (this->GetCamp() == OverlapChar->GetCamp())
+		{
+			FriendHandle(OverlapChar);
+		}
+		else
+		{
+			EnemyHandle(OverlapChar);
+		}
 	}
-
 }
