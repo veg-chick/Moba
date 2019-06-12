@@ -42,8 +42,11 @@ void AMOBAHeroTankOne::ReleaseW(float MpCost)
 	this->GetCDofW() = 21.0f - this->GetWPoint();
 	if (this->GetbMayW() && this->GetbCanW())
 	{
-		this->GetArmor() += 15.0f + GetWPoint() * 6.0f;
-		this->GetMagicResist() += 15.0f + GetWPoint() * 6.0f;
+		float WPoint = GetWPoint();
+		float Armor = GetArmor();
+		float MagicResist = GetMagicResist();
+		this->SetArmor(Armor + 15.0f + WPoint * 6.0f);
+		this->SetMagicResist(MagicResist + 15.0f + WPoint * 6.0f);
 
 		auto WTime = GetWPoint() + 5.0f;
 		GetWorldTimerManager().ClearTimer(WTimerHandle);
@@ -75,8 +78,11 @@ void AMOBAHeroTankOne::ReleaseE(float MpCost)
 
 void AMOBAHeroTankOne::WTimeHandle()
 {
-	this->GetArmor() -= 15.0f + GetWPoint() * 6.0f;
-	this->GetMagicResist() -= 15.0f + GetWPoint() * 6.0f;
+	float WPoint = GetWPoint();
+	float Armor = GetArmor();
+	float MagicResist = GetMagicResist();
+	this->SetArmor(Armor - 15.0f - WPoint * 6.0f);
+	this->SetMagicResist(MagicResist - 15.0f - WPoint * 6.0f);
 }
 
 void AMOBAHeroTankOne::ETimeHandle()

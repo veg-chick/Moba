@@ -32,6 +32,7 @@ void AMOBASpringActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	nowtime += DeltaTime;
 	//Detect if there is an overlapping AMOBABaseCharacter
 
 }
@@ -93,6 +94,9 @@ bool AMOBASpringActor::ServerRPCEnemyHandle_Validate(AMOBABaseCharacter* who)
 
 void AMOBASpringActor::OverlapHandle(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
+	if (nowtime < 10.0f) return;
+
 	AMOBABaseCharacter* OverlapChar = Cast<AMOBABaseCharacter>(OtherActor);
 	if (OverlapChar)
 	{

@@ -13,6 +13,7 @@
 #include "MOBACrystalActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
+#include "GameFramework/PlayerStart.h"
 
 
 AMOBAGameMode::AMOBAGameMode()
