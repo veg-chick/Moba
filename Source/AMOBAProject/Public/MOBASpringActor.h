@@ -29,6 +29,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "MyMOBA")
 		USphereComponent* OnOverlapComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* Heal;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* Lighting;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -51,6 +57,12 @@ protected:
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerRPCEnemyHandle(AMOBABaseCharacter* who);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void PlayRedemptionEffects(FVector Location);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void PlayExecutionEffects(FVector Location);
 
 	UFUNCTION()
 		void OverlapHandle(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

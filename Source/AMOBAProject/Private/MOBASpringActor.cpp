@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Public/MOBABaseCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMOBASpringActor::AMOBASpringActor()
@@ -60,11 +61,17 @@ void AMOBASpringActor::FriendHandle(AMOBABaseCharacter* who)
 void AMOBASpringActor::ServerRPCFriendHandle_Implementation(AMOBABaseCharacter* who)
 {
 	who->ApplyDamage(who, DamageType::treat, 500.0f, this);
+	PlayRedemptionEffects(who->GetActorLocation());
 }
 
 bool AMOBASpringActor::ServerRPCFriendHandle_Validate(AMOBABaseCharacter* who)
 {
 	return true;
+}
+
+void AMOBASpringActor::PlayRedemptionEffects_Implementation(FVector Location)
+{
+	UGameplayStatics::SpawnEmitterAtLocation(this, Heal, Location);
 }
 
 void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)	
@@ -81,9 +88,11 @@ void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)
 	}
 }
 
+
 void AMOBASpringActor::ServerRPCEnemyHandle_Implementation(AMOBABaseCharacter* who)
 {
 	who->ApplyDamage(who, DamageType::real, 1000.0f, this);
+	PlayExecutionEffects(who->GetActorLocation());
 }
 
 bool AMOBASpringActor::ServerRPCEnemyHandle_Validate(AMOBABaseCharacter* who)
@@ -91,6 +100,10 @@ bool AMOBASpringActor::ServerRPCEnemyHandle_Validate(AMOBABaseCharacter* who)
 	return true;
 }
 
+void AMOBASpringActor::PlayExecutionEffects_Implementation(FVector Location)
+{
+	UGameplayStatics::SpawnEmitterAtLocation(this, Lighting, Location);
+}
 
 void AMOBASpringActor::OverlapHandle(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
