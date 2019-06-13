@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "MOBAHeroCharacter.h"
-#include "MOBAHeroADCOne.generated.h"
+#include "MOBAHeroAssassinOne.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AMOBAPROJECT_API AMOBAHeroADCOne : public AMOBAHeroCharacter
+class AMOBAPROJECT_API AMOBAHeroAssassinOne : public AMOBAHeroCharacter
 {
 	GENERATED_BODY()
 
 public:
-	AMOBAHeroADCOne();
+	AMOBAHeroAssassinOne();
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -27,27 +27,19 @@ protected:
 		void ReleaseW(float MpCost);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ReleaseE(float MpCost);
+		void ReleaseE(AMOBAHeroCharacter* Target,float MpCost);
 
 protected:
+
 	FTimerHandle WTimerHandle;
 
-	FTimerHandle QTimerHandle;
-
 	FTimerHandle ETimerHandle;
-
-	AMOBAHeroCharacter* QAttackingHero;
-
+	
 	void WTimeHandle();
 
-	void QTimeHandle();
-
 	void ETimeHandle();
-	
-	float MyAttackSpeedAddValue;
 
-	float MyLifeStealAddValue;
+	float MyStrikeRateAddValue;
 
-	float MyAttackStrengthAddValue;
-
+	float MyStrikeDamageAddValue;
 };

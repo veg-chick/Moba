@@ -570,6 +570,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	float MyCDTime;
 	if(Target==1.0f)
 	{
+		this->SkillProperty.bCanQ = false;
 		MyCDTime = SkillProperty.CDofQ * SkillProperty.CDReduction;
 		FTimerHandle& MyTimeHandle = timeHandles.SkillQTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
@@ -577,6 +578,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	}
 	if (Target == 2.0f)
 	{
+		this->SkillProperty.bCanW = false;
 		MyCDTime = SkillProperty.CDofW * SkillProperty.CDReduction;
 		FTimerHandle& MyTimeHandle = timeHandles.SkillWTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
@@ -584,6 +586,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	}
 	if (Target == 3.0f)
 	{
+		this->SkillProperty.bCanE = false;
 		MyCDTime = SkillProperty.CDofE * SkillProperty.CDReduction;
 		FTimerHandle& MyTimeHandle = timeHandles.SkillETimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);

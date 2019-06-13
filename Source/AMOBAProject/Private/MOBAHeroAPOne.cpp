@@ -29,7 +29,7 @@ void AMOBAHeroAPOne::ReleaseQ(AMOBABaseCharacter* Target, float MpCost)
 			auto QDamage = 40.0f + this->GetQPoint() * 20.0f + this->GetPowerStrength() * 0.2f;
 			Target->ReceiveDamageFromCharacter(Target, DamageType::magic, QDamage, this);
 
-
+			this->GetMp() -= MpCost;
 			ChangeReleasingSkill(1.0f);
 			ResetSkills(1.0f);
 		}
@@ -50,7 +50,8 @@ void AMOBAHeroAPOne::ReleaseW(float MpCost)
 
 		GetWorldTimerManager().ClearTimer(WTimerHandle);
 		GetWorldTimerManager().SetTimer(WTimerHandle, this, &AMOBAHeroAPOne::WTimeHandle, 2.5f);
-
+		
+		this->GetMp() -= MpCost;
 		ChangeReleasingSkill(2.0f);
 		ResetSkills(2.0f);
 	}
@@ -72,6 +73,7 @@ void AMOBAHeroAPOne::ReleaseE(AMOBAHeroCharacter* Target, float MpCost)
 			}
 		}
 
+		this->GetMp() -= MpCost;
 		ChangeReleasingSkill(3.0f);
 		ResetSkills(3.0f);
 	}

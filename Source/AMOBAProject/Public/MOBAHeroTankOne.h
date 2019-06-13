@@ -17,6 +17,8 @@ class AMOBAPROJECT_API AMOBAHeroTankOne : public AMOBAHeroCharacter
 public:
 	AMOBAHeroTankOne();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ReleaseQ(AMOBAHeroCharacter* TargetHero, float MpCost = 0.0f);
@@ -38,5 +40,5 @@ protected:
 
 	float RecoveryValue;
 
-	virtual void Tick(float DeltaSeconds) override;
+	
 };
