@@ -450,7 +450,7 @@ void AMOBAHeroCharacter::levelUp()
 	myPro.level += 1.0f;
 }
 
-void AMOBAHeroCharacter::reCall()
+void AMOBAHeroCharacter::Recall()
 {
 	GetCharacterMovement()->StopMovementImmediately();
 
@@ -460,11 +460,11 @@ void AMOBAHeroCharacter::reCall()
 
 	this->GetbRecallSucceed() = true;
 
-	GetWorldTimerManager().SetTimer(myTimeHandle, this, &AMOBAHeroCharacter::reCallHandle, 8.0f);
+	GetWorldTimerManager().SetTimer(myTimeHandle, this, &AMOBAHeroCharacter::RecallHandle, 8.0f);
 
 }
 
-void AMOBAHeroCharacter::reCallHandle()
+void AMOBAHeroCharacter::RecallHandle()
 {
 	if (this->GetbRecallSucceed())
 	{
@@ -482,6 +482,8 @@ void AMOBAHeroCharacter::HpRecoveryHandle()
 	{
 		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery(), 0.0f, this->GetMaxHp());
 	}
+
+	this->GetGold() += 1.0f;
 }
 
 void AMOBAHeroCharacter::MpRecoveryHandle()
@@ -568,6 +570,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	float MyCDTime;
 	if(Target==1.0f)
 	{
+		this->SkillProperty.bCanQ = false;
 		MyCDTime = SkillProperty.CDofQ * SkillProperty.CDReduction;
 		FTimerHandle& MyTimeHandle = timeHandles.SkillQTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
@@ -575,6 +578,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	}
 	if (Target == 2.0f)
 	{
+		this->SkillProperty.bCanW = false;
 		MyCDTime = SkillProperty.CDofW * SkillProperty.CDReduction;
 		FTimerHandle& MyTimeHandle = timeHandles.SkillWTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
@@ -582,6 +586,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	}
 	if (Target == 3.0f)
 	{
+		this->SkillProperty.bCanE = false;
 		MyCDTime = SkillProperty.CDofE * SkillProperty.CDReduction;
 		FTimerHandle& MyTimeHandle = timeHandles.SkillETimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);

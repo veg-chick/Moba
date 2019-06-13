@@ -17,6 +17,8 @@ class AMOBAPROJECT_API AMOBAHeroAPOne : public AMOBAHeroCharacter
 public:
 	AMOBAHeroAPOne();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ReleaseQ(AMOBABaseCharacter* Target, float MpCost);
@@ -29,8 +31,6 @@ protected:
 
 protected:
 	bool bSkillIsStrengthed;
-
-	virtual void Tick(float DeltaSeconds) override;
 
 	FTimerHandle WTimerHandle;
 

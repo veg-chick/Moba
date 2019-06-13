@@ -321,10 +321,10 @@ protected:
 		void levelUp();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void reCall();
+		void Recall();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void reCallHandle();
+		void RecallHandle();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void HpRecoveryHandle();

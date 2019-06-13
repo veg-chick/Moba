@@ -36,6 +36,7 @@ void AMOBAHeroADCOne::ReleaseQ(AMOBAHeroCharacter* Target,float MpCost)
 			GetWorldTimerManager().ClearTimer(QTimerHandle);
 			GetWorldTimerManager().SetTimer(QTimerHandle, this, &AMOBAHeroADCOne::QTimeHandle, 5.0f);
 
+			this->GetMp() -= MpCost;
 			ChangeReleasingSkill(1.0f);
 			ResetSkills(1.0f);
 		}
@@ -55,6 +56,7 @@ void AMOBAHeroADCOne::ReleaseW(float MpCost)
 		GetWorldTimerManager().ClearTimer(WTimerHandle);
 		GetWorldTimerManager().SetTimer(WTimerHandle, this, &AMOBAHeroADCOne::WTimeHandle, 4.0f);
 
+		this->GetMp() -= MpCost;
 		ChangeReleasingSkill(2.0f);
 		ResetSkills(2.0f);
 	}
@@ -79,6 +81,7 @@ void AMOBAHeroADCOne::ReleaseE(float MpCost)
 		GetWorldTimerManager().ClearTimer(ETimerHandle);
 		GetWorldTimerManager().SetTimer(ETimerHandle, this, &AMOBAHeroADCOne::ETimeHandle, 6.0f);
 
+		this->GetMp() -= MpCost;
 		ChangeReleasingSkill(3.0f);
 		ResetSkills(3.0f);
 	}
