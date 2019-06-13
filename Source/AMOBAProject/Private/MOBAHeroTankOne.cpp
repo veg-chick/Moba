@@ -8,6 +8,8 @@ AMOBAHeroTankOne::AMOBAHeroTankOne()
 {
 	baseProperty.bIsRemote = false;
 	baseProperty.bHaveMp = false;
+	baseProperty.maxMp = 0.0f;
+	baseProperty.mp = 0.0f;
 	baseProperty.attackRange = 125.0f;
 
 	GetQRange() = 400.0f;

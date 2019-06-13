@@ -289,7 +289,7 @@ void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 	auto MyLevel = this->GetLevel();
 	auto MaxLevel = this->GetMaxLevel();
 
-	if ((MyExperienceJudge > MyLevel) && (MyLevel < MaxLevel))
+	if ((MyExperienceJudge >= MyLevel) && (MyLevel < MaxLevel))
 	{
 		levelUp();
 	}

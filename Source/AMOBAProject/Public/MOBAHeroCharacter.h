@@ -336,9 +336,6 @@ protected:
 		void ChangeState(State TargetState, bool IsCanceling = false);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ExceptionState(State TargetState, float Time);
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetStunState() { ChangeState(State::Stun, true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -381,6 +378,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ChangeReleasingSkill(float Target);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ExceptionState(State TargetState, float Time);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetReleasingQ() { this->GetbIsReleasingQ() = false; }
