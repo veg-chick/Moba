@@ -49,10 +49,7 @@ void AMOBASpringActor::FriendHandle(AMOBABaseCharacter* who)
 	{
 		if (who->GetHp() != 0.0f)
 		{
-			while (who->GetHp() < who->GetMaxHp())
-			{
-				ServerRPCFriendHandle(who);
-			}
+			ServerRPCFriendHandle(who);
 		}
 	}
 }
@@ -60,8 +57,11 @@ void AMOBASpringActor::FriendHandle(AMOBABaseCharacter* who)
 
 void AMOBASpringActor::ServerRPCFriendHandle_Implementation(AMOBABaseCharacter* who)
 {
-	who->ApplyDamage(who, DamageType::treat, 500.0f, this);
-	PlayRedemptionEffects(who->GetActorLocation());
+	while (who->GetHp() < who->GetMaxHp())
+	{
+		who->ApplyDamage(who, DamageType::treat, 500.0f, this);
+		PlayRedemptionEffects(who->GetActorLocation());
+	}
 }
 
 bool AMOBASpringActor::ServerRPCFriendHandle_Validate(AMOBABaseCharacter* who)
@@ -80,10 +80,7 @@ void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)
 	{
 		if (who->GetHp() != 0.0f)
 		{
-			while (who->GetHp() > 0.0f)
-			{
-				ServerRPCEnemyHandle(who);
-			}
+			ServerRPCEnemyHandle(who);
 		}
 	}
 }
@@ -91,8 +88,11 @@ void AMOBASpringActor::EnemyHandle(AMOBABaseCharacter* who)
 
 void AMOBASpringActor::ServerRPCEnemyHandle_Implementation(AMOBABaseCharacter* who)
 {
-	who->ApplyDamage(who, DamageType::real, 1000.0f, this);
-	PlayExecutionEffects(who->GetActorLocation());
+	while (who->GetHp() > 0.0f)
+	{
+		who->ApplyDamage(who, DamageType::real, 1000.0f, this);
+		PlayExecutionEffects(who->GetActorLocation());
+	}
 }
 
 bool AMOBASpringActor::ServerRPCEnemyHandle_Validate(AMOBABaseCharacter* who)
