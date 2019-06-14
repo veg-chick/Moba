@@ -29,6 +29,10 @@ protected:
 	void MoveToMouseCursor();
 	
 	void AttackToMouseCursor();
+
+	void StopMove();
+
+	void Recall();
 };
 
 

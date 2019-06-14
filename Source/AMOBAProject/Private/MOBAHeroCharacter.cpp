@@ -264,7 +264,7 @@ void AMOBAHeroCharacter::resetHero()
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &AMOBAHeroCharacter::DeadHeroHandle, 3.0f);
 
 
-	this->ChangeState(State::Dead);
+	this->ServerRPCChangeState(State::Dead);
 
 	float resetTime = this->heroProperty.resetTime;
 	auto MyTimeHanlde = timeHandles.ResetTimer;
@@ -275,11 +275,21 @@ void AMOBAHeroCharacter::resetHero()
 
 void AMOBAHeroCharacter::AddCombKillNumber()
 {
+	ServerRPCAddCombKillNumber();
+}
+
+void AMOBAHeroCharacter::ServerRPCAddCombKillNumber_Implementation()
+{
 	this->GetCombKillNumber() += 1.0f;
 	if (GetCombKillNumber() <= 8.0f)
 	{
 		this->GetGoldValue() += 50.0f;
 	}
+}
+
+bool AMOBAHeroCharacter::ServerRPCAddCombKillNumber_Validate()
+{
+	return true;
 }
 
 void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
@@ -388,7 +398,7 @@ void AMOBAHeroCharacter::SetValue()
 	SkillProperty.CDReduction = 0.0f;
 	SkillProperty.MaxCDReduction = 0.4f;
 
-	this->ChangeState(State::Normal);
+	this->ServerRPCChangeState(State::Normal);
 
 	SkillProperty.bCanReleaseSkills = true;
 	heroProperty.bIsInjured = false;
@@ -418,7 +428,7 @@ void AMOBAHeroCharacter::ResetHeroHandle()
 
 	this->baseProperty.hp = this->baseProperty.maxHp;
 	this->baseProperty.mp = this->baseProperty.maxMp;
-	this->ChangeState(State::Dead, true);
+	this->ServerRPCChangeState(State::Dead, true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 }
@@ -452,6 +462,11 @@ void AMOBAHeroCharacter::levelUp()
 
 void AMOBAHeroCharacter::Recall()
 {
+	ServerRPCRecall();
+}
+
+void AMOBAHeroCharacter::ServerRPCRecall_Implementation()
+{
 	GetCharacterMovement()->StopMovementImmediately();
 
 	auto& myTimeHandle = this->timeHandles.ResetTimer;
@@ -461,7 +476,11 @@ void AMOBAHeroCharacter::Recall()
 	this->GetbRecallSucceed() = true;
 
 	GetWorldTimerManager().SetTimer(myTimeHandle, this, &AMOBAHeroCharacter::RecallHandle, 8.0f);
+}
 
+bool AMOBAHeroCharacter::ServerRPCRecall_Validate()
+{
+	return true;
 }
 
 void AMOBAHeroCharacter::RecallHandle()
@@ -478,6 +497,11 @@ void AMOBAHeroCharacter::HpRecoveryHandle()
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::HpRecoveryHandle, 1.0f);
 
+	ServerRPCHpRecovery();
+}
+
+void AMOBAHeroCharacter::ServerRPCHpRecovery_Implementation()
+{
 	if (this->GetHp() != this->GetMaxHp() && this->GetHp() > 0.0f)
 	{
 		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery(), 0.0f, this->GetMaxHp());
@@ -486,21 +510,21 @@ void AMOBAHeroCharacter::HpRecoveryHandle()
 	this->GetGold() += 1.0f;
 }
 
+bool AMOBAHeroCharacter::ServerRPCHpRecovery_Validate()
+{
+	return true;
+}
+
 void AMOBAHeroCharacter::MpRecoveryHandle()
 {
-
 	auto MyTimeHanlde = timeHandles.MpRecoveryTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::MpRecoveryHandle, 1.0f);
 
-
-	if (this->GetMp() != this->GetMaxMp() && this->GetMp() > 0.0f)
-	{
-		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
-	}
+	ServerRPCMpRecovery();
 }
 
-void AMOBAHeroCharacter::ChangeState(State TargetState, bool IsCanceling)
+void AMOBAHeroCharacter::ServerRPCChangeState_Implementation(State TargetState, bool IsCanceling /*= false*/)
 {
 	if (!IsCanceling)
 	{
@@ -541,9 +565,28 @@ void AMOBAHeroCharacter::ChangeState(State TargetState, bool IsCanceling)
 	}
 }
 
+bool AMOBAHeroCharacter::ServerRPCChangeState_Validate(State TargetState, bool IsCanceling /*= false*/)
+{
+	return true;
+}
+
+void AMOBAHeroCharacter::ServerRPCMpRecovery_Implementation()
+{
+	if (this->GetMp() != this->GetMaxMp() && this->GetMp() > 0.0f)
+	{
+		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
+	}
+}
+
+bool AMOBAHeroCharacter::ServerRPCMpRecovery_Validate()
+{
+	return true;
+}
+
+
 void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 {
-	ChangeState(TargetState);
+	ServerRPCChangeState(TargetState);
 	if (TargetState == State::Stun)
 	{
 		FTimerHandle& MyTimeHandle = timeHandles.StunTimer;
@@ -595,6 +638,11 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 }
 
 void AMOBAHeroCharacter::BuyEquipment(Equip BuyingEquip)
+{
+	ServerRPCBuyEquipment(BuyingEquip);
+}
+
+void AMOBAHeroCharacter::ServerRPCBuyEquipment_Implementation(Equip BuyingEquip)
 {
 	Equip* MyEquip = nullptr;
 	if (HeroPack.PackOne == Equip::NullEquip)
@@ -742,7 +790,11 @@ void AMOBAHeroCharacter::BuyEquipment(Equip BuyingEquip)
 		}
 
 	}
+}
 
+bool AMOBAHeroCharacter::ServerRPCBuyEquipment_Validate(Equip BuyingEquip)
+{
+	return true;
 }
 
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {
@@ -754,6 +806,11 @@ void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty,
 }
 
 void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
+{
+	ServerRPCSellEquipment(PackageNumber);
+}
+
+void AMOBAHeroCharacter::ServerRPCSellEquipment_Implementation(float PackageNumber)
 {
 	Equip* MyEquip = nullptr;
 	switch ((int)PackageNumber)
@@ -864,11 +921,37 @@ void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
 	}
 }
 
+bool AMOBAHeroCharacter::ServerRPCSellEquipment_Validate(float PackageNumber)
+{
+	return true;
+}
+
+
+
+void AMOBAHeroCharacter::StopMove()
+{
+	ServerRPCStopMove();
+}
+
+void AMOBAHeroCharacter::ServerRPCStopMove_Implementation()
+{
+	GetMovementComponent()->StopMovementImmediately();
+}
+
+bool AMOBAHeroCharacter::ServerRPCStopMove_Validate()
+{
+	return true;
+}
+
 void AMOBAHeroCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//DOREPLIFETIME(AMOBAHeroCharacter, heroProperty);
 	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, heroProperty, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, timeHandles, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, birthLocation, COND_OwnerOnly);
+	DOREPLIFETIME(AMOBAHeroCharacter, HeroPack);
+	DOREPLIFETIME(AMOBAHeroCharacter, ScoreBoard);
+	DOREPLIFETIME(AMOBAHeroCharacter, HeroState);
+	DOREPLIFETIME(AMOBAHeroCharacter, heroGrowth);
 }

@@ -28,7 +28,8 @@ void AMOBAPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AMOBAPlayerController::MoveToMouseCursor);
 	InputComponent->BindAction("AttackTarget", IE_Pressed, this, &AMOBAPlayerController::AttackToMouseCursor);
-
+	InputComponent->BindAction("StopMove", IE_Pressed, this, &AMOBAPlayerController::StopMove);
+	InputComponent->BindAction("Recall", IE_Pressed, this, &AMOBAPlayerController::Recall);
 }
 
 
@@ -75,6 +76,24 @@ void AMOBAPlayerController::AttackToMouseCursor()
 				MyCharacter->AttackToAActor(BeAttackedActor);
 			}
 		}
+	}
+}
+
+void AMOBAPlayerController::StopMove()
+{
+	AMOBAHeroCharacter* MyCharacter = Cast<AMOBAHeroCharacter>(this->GetCharacter());
+	if (MyCharacter)
+	{
+		MyCharacter->StopMove();
+	}
+}
+
+void AMOBAPlayerController::Recall()
+{
+	AMOBAHeroCharacter* MyCharacter = Cast<AMOBAHeroCharacter>(this->GetCharacter());
+	if (MyCharacter)
+	{
+		MyCharacter->Recall();
 	}
 }
 

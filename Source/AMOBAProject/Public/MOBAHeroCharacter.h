@@ -116,7 +116,7 @@ struct FHeroPack
 {
 	GENERATED_BODY()
 
-		Equip PackOne = Equip::NullEquip;
+	Equip PackOne = Equip::NullEquip;
 	Equip PackTwo = Equip::NullEquip;
 	Equip PackThree = Equip::NullEquip;
 	Equip PackFour = Equip::NullEquip;
@@ -196,18 +196,6 @@ struct FSkillProperty
 		bool bCanReleaseSkills;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float SkillPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float QPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float WPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float EPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float CDReduction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
@@ -221,6 +209,18 @@ struct FSkillProperty
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bIsReleasingE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float SkillPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float QPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float WPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float EPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float QCost;
@@ -274,13 +274,13 @@ protected:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroProperty heroProperty;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroGrowth heroGrowth;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandles timeHandles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroPack HeroPack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
@@ -289,10 +289,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		bool bIsAttackingHero;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FScoreBoard ScoreBoard;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
@@ -320,8 +320,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void levelUp();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void Recall();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCRecall();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void RecallHandle();
@@ -329,20 +329,26 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void HpRecoveryHandle();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCHpRecovery();
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void MpRecoveryHandle();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ChangeState(State TargetState, bool IsCanceling = false);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCMpRecovery();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCChangeState(State TargetState, bool IsCanceling = false);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetStunState() { ChangeState(State::Stun, true); }
+		void ResetStunState() { ServerRPCChangeState(State::Stun, true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetSilenceState() { ChangeState(State::Silence, true); }
+		void ResetSilenceState() { ServerRPCChangeState(State::Silence, true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetImprisonState() { ChangeState(State::Imprison, true); }
+		void ResetImprisonState() { ServerRPCChangeState(State::Imprison, true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void DeadHeroHandle() { this->SetActorLocation(birthLocation); }
@@ -350,11 +356,26 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetSkills(float Target);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void BuyEquipment(Equip BuyingEquip);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCBuyEquipment(Equip BuyingEquip);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void SellEquipment(float PackageNumber);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCSellEquipment(float PackageNumber);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCStopMove();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerMoveToLocation(const FVector DestLocation, float Speed);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerAttackToActor(AMOBABaseActor* BeAttackedActor);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCAddCombKillNumber();
 
 public:
 
@@ -391,14 +412,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetReleasingE() { this->GetbIsReleasingE() = false; }
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerMoveToLocation(const FVector DestLocation, float Speed);
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void StopMove();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerAttackToActor(AMOBABaseActor* BeAttackedActor);
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void Recall();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void BuyEquipment(Equip BuyingEquip);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void SellEquipment(float PackageNumber);
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
