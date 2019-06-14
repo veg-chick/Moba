@@ -68,6 +68,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 		UParticleSystem* AttackFX;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* DestroyFX;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		TowerRoad& GetRoad();
@@ -86,8 +89,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "MyMOBA")
+		void SpawnRuin();
 
-		void TowerDeadHandle();
+	void TowerDeadHandle();
 
 
 protected:

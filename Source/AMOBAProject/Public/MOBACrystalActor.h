@@ -55,6 +55,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		AMOBATowerCharacter* CrystalPointer;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* DestroyFX;
+
+
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -63,8 +67,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void CrystalDeadHandle();
+	UFUNCTION(BlueprintImplementableEvent, Category = "MyMOBA")
+		void SpawnRuin();
+
+	void CrystalDeadHandle();
 
 	void SetValue();
 

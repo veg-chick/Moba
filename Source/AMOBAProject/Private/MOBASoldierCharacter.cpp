@@ -81,6 +81,7 @@ bool AMOBASoldierCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter * Enem
 	return false;
 }
 
+
 void AMOBASoldierCharacter::ResetTimer()
 {
 	this->GetbIsAttacking() = false;

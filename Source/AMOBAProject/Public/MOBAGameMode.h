@@ -18,6 +18,11 @@ protected:
 
 	FTimerHandle TimerHandle_SoldierSpawner;
 
+	int32 WaveCnt;
+
+	UPROPERTY(BlueprintReadOnly, Category = "GameMode")
+		int32 SoldierLevel;
+
 	//The Number of Soldiers To Spawn In Current Wave
 	UPROPERTY(BlueprintReadOnly, Category = "GameMode")
 		int32 NumberOfSoldierToSpawn;
