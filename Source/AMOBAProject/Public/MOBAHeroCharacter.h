@@ -9,6 +9,13 @@
 struct FTimerHandle;
 struct FVector;
 
+class AMOBAHeroADOne;
+class AMOBAHeroADCOne;
+class AMOBAHeroAPOne;
+class AMOBAHeroTankOne;
+class AMOBAHeroAssistOne;
+class AMOBAHeroAssassinOne;
+
 UENUM(BlueprintType)
 enum class State : uint8
 {
@@ -404,13 +411,22 @@ public:
 		void ExceptionState(State TargetState, float Time);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingQ() { this->GetbIsReleasingQ() = false; }
+		void ResetReleasingQ() { this->GetbIsReleasingQ() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingW() { this->GetbIsReleasingW() = false; }
+		void ResetReleasingW() { this->GetbIsReleasingW() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingE() { this->GetbIsReleasingE() = false; }
+		void ResetReleasingE() { this->GetbIsReleasingE() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseQ(AMOBAHeroCharacter* Target = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseW(AMOBAHeroCharacter* Target = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseE(AMOBAHeroCharacter* Target = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void StopMove();
