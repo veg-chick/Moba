@@ -7,6 +7,7 @@
 #include "Public/MOBASoldierCharacter.h"
 #include "Public/MOBACrystalActor.h"
 #include "Public/MOBABaseCharacter.h"
+#include "MOBAPlayerState.h"
 
 // Sets default values
 AMOBABaseActor::AMOBABaseActor(){
@@ -95,9 +96,13 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 			if (MayBeAHero)
 			{
 				auto MayBeSoldier = Cast<AMOBASoldierCharacter>(DamagedActor);
-				if (DamagedActor)
+				if (MayBeSoldier)
 				{
-					MayBeAHero->GetSoldierKillNumber() += 1.0f;
+					AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(MayBeAHero->GetPlayerState());
+					if (GS)
+					{
+						GS->AddSoldierKillNumber();
+					}
 				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
 				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());

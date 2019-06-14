@@ -249,21 +249,6 @@ struct FSkillProperty
 
 };
 
-USTRUCT(BlueprintType)
-struct FScoreBoard
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float KillNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float DeathNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float CombKillNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float SoldierKillNumber = 0.0f;
-};
-
 
 /**
  *
@@ -298,9 +283,6 @@ protected:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
-		FScoreBoard ScoreBoard;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
@@ -381,8 +363,6 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerRPCAddCombKillNumber();
 
 public:
 
@@ -391,9 +371,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void AddCombKillNumber();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AddExperienceToHero(float ExperienceValue);
@@ -577,18 +554,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool GetCanAddE() { return (SkillProperty.SkillPoint) && (baseProperty.level / 5.0f) > (SkillProperty.EPoint + 1.0f) && (SkillProperty.EPoint < 5.0f); }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetKillNumber() { return ScoreBoard.KillNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetDeathNumber() { return ScoreBoard.DeathNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetCombKillNumber() { return ScoreBoard.CombKillNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetSoldierKillNumber() { return ScoreBoard.SoldierKillNumber; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsAttackingHero() { return bIsAttackingHero; }

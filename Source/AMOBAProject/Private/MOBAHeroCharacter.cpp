@@ -23,6 +23,7 @@
 #include "MOBAPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "MOBAPlayerState.h"
 
 AMOBAHeroCharacter::AMOBAHeroCharacter()
 {
@@ -269,7 +270,11 @@ void AMOBAHeroCharacter::AddE()
 void AMOBAHeroCharacter::resetHero()
 {
 	this->GetGoldValue() = 300.0f;
-	this->GetCombKillNumber() = 0.0f;
+	AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(this->GetPlayerState());
+	if (GS)
+	{
+		GS->ClearCombKillNumber();
+	}
 
 	auto DeadTimer = timeHandles.DeadTimer;
 	GetWorldTimerManager().ClearTimer(DeadTimer);
@@ -285,24 +290,6 @@ void AMOBAHeroCharacter::resetHero()
 
 }
 
-void AMOBAHeroCharacter::AddCombKillNumber()
-{
-	ServerRPCAddCombKillNumber();
-}
-
-void AMOBAHeroCharacter::ServerRPCAddCombKillNumber_Implementation()
-{
-	this->GetCombKillNumber() += 1.0f;
-	if (GetCombKillNumber() <= 8.0f)
-	{
-		this->GetGoldValue() += 50.0f;
-	}
-}
-
-bool AMOBAHeroCharacter::ServerRPCAddCombKillNumber_Validate()
-{
-	return true;
-}
 
 void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 {
@@ -1023,7 +1010,6 @@ void AMOBAHeroCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >&
 	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, timeHandles, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, birthLocation, COND_OwnerOnly);
 	DOREPLIFETIME(AMOBAHeroCharacter, HeroPack);
-	DOREPLIFETIME(AMOBAHeroCharacter, ScoreBoard);
 	DOREPLIFETIME(AMOBAHeroCharacter, HeroState);
 	DOREPLIFETIME(AMOBAHeroCharacter, heroGrowth);
 }

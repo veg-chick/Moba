@@ -82,6 +82,16 @@ bool AMOBASoldierCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter * Enem
 }
 
 
+void AMOBASoldierCharacter::SetSoldierLevel(float level)
+{
+	SetLevel(level);
+	
+	for (int i = 1; i < level; i++)
+	{
+		SoldierLevelUp();
+	}
+}
+
 void AMOBASoldierCharacter::ResetTimer()
 {
 	this->GetbIsAttacking() = false;

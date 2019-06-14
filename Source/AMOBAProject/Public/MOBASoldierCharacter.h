@@ -72,7 +72,7 @@ public:
 		bool IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void SetSoldierLevel(float level) { SetLevel(level); }
+		void SetSoldierLevel(float level);
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

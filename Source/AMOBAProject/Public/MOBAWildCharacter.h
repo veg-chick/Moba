@@ -16,7 +16,6 @@ enum class AWildType : uint8
 	BlueBuff UMETA(DisplayName = "BlueBuff"),
 	RedBuff UMETA(DisplayName = "RedBuff"),
 	Nash UMETA(DisplayName = "Nash"),
-	Other UMETA(DisplayName = "Other")
 };
 
 
@@ -43,6 +42,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void KillValueForHero(AMOBAHeroCharacter* AHero);
+
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
@@ -72,13 +73,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
-	FVector birthLocation;
-
 	AWildType WildType;
-
-	
-
-	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetTimer();
@@ -89,6 +84,9 @@ protected:
 		void WildLevelUp();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void SetWildLevel(float level);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetBlueBuffValue();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
@@ -96,4 +94,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetNashBuffValue();
+
+public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "MyMOBA")
+		void WildDeadHandle(AWildType WildType);
+
 };

@@ -33,17 +33,9 @@ void AMOBAWildCharacter::resetWild()
 
 }
 
-void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) {
-
-	assignBaseValueForAPI(aBaseProperty, aBaseValue);
-
-}
-
-void AMOBAWildCharacter::BeginPlay()
+void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) 
 {
-	Super::BeginPlay();
-
-	birthLocation = GetActorLocation();
+	assignBaseValueForAPI(aBaseProperty, aBaseValue);
 }
 
 void AMOBAWildCharacter::ResetTimer()
@@ -59,14 +51,14 @@ void AMOBAWildCharacter::SetValue()
 	baseProperty.magicResist = 50.0f;
 	baseProperty.attackSpeed = 1.0f;
 	baseProperty.attackStrength = 80.0f;
-	baseProperty.attackRange = 100.0f;
+	baseProperty.attackRange = 200.0f;
 	baseProperty.moveSpeed = 800.0f;
 
 	baseProperty.bAbleToAttack = true;
 	baseProperty.bCanBeAttacked = true;
 	baseProperty.bCanMove = true;
 
-	baseValue.experienceValue = 3.0f;
+	baseValue.experienceValue = 30.0f;
 	baseValue.goldValue = 50.0f;
 }
 
@@ -78,6 +70,15 @@ void AMOBAWildCharacter::WildLevelUp()
 	baseProperty.magicResist += 10.0f;
 	baseProperty.attackStrength = 40.0f;
 	baseValue.goldValue += 40.0f;
+}
+
+void AMOBAWildCharacter::SetWildLevel(float level)
+{
+	SetLevel(level);
+	for (int i = 1; i < level; i++)
+	{
+		WildLevelUp();
+	}
 }
 
 void AMOBAWildCharacter::ResetBlueBuffValue()
@@ -131,11 +132,6 @@ AMOBABaseCharacter* AMOBAWildCharacter::GetAttacker()
 void AMOBAWildCharacter::KillValueForHero(AMOBAHeroCharacter* AHero)
 {
 	BuffedHero = AHero;
-	if (WildType == AWildType::Other)
-	{
-		BuffedHero = nullptr;
-		return;
-	}
 	if (WildType == AWildType::BlueBuff)
 	{
 		if (BuffedHero)
