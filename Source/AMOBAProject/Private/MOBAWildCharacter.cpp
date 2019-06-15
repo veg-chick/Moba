@@ -41,6 +41,7 @@ void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty,
 void AMOBAWildCharacter::ResetTimer()
 {
 	this->GetbAbleToAttack() = true;
+	this->GetbIsAttacking() = false;
 }
 
 void AMOBAWildCharacter::SetValue()
@@ -107,19 +108,28 @@ void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttac
 {
 	if (this->GetbAbleToAttack())
 	{
-		this->GetbIsAttacking() = true;
-		auto MyAttackStrength = this->GetAttackStrength();
-		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
-		this->GetbAbleToAttack() = false;
-		auto MyTimeHandle = this->AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHandle);
-		auto AttackCDTime = 1.0f / GetAttackSpeed();
-		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetTimer, AttackCDTime);
-		this->GetbIsAttacking() = false;
+		ServerRPCAttackToCharacterOnce(TargetToAttack);
 	}
 }
 
 
+
+void AMOBAWildCharacter::ServerRPCAttackToCharacterOnce_Implementation(AMOBABaseCharacter* TargetToAttack)
+{
+	this->GetbIsAttacking() = true;
+	auto MyAttackStrength = this->GetAttackStrength();
+	TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+	this->GetbAbleToAttack() = false;
+	auto MyTimeHandle = this->AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHandle);
+	auto AttackCDTime = 1.0f / GetAttackSpeed();
+	GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAWildCharacter::ResetTimer, AttackCDTime);
+}
+
+bool AMOBAWildCharacter::ServerRPCAttackToCharacterOnce_Validate(AMOBABaseCharacter* TargetToAttack)
+{
+	return true;
+}
 
 AMOBABaseCharacter* AMOBAWildCharacter::GetAttacker()
 {

@@ -52,6 +52,9 @@ struct FHeroProperty {
 
 	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadOnly, Category = "HeroCharacterProperty")
+		float deadtime;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float resetTime;
 
@@ -294,6 +297,8 @@ protected:
 	FTimerManager QTimerManager;
 	FTimerManager WTimerManager;
 	FTimerManager ETimerManager;
+
+	FTimerHandle DeadTimer = TimeHandles.DeadTimer;
 
 protected:
 

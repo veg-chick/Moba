@@ -36,6 +36,12 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
 		void SpawnNewSoldier(int32 SolderType);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
+		void SpawnStartWild();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
+		void SpawnStartDragon();
+
 	void SpawnSoldierTimerElapsed();
 
 	// Start Spawning Soldier

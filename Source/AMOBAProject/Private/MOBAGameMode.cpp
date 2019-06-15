@@ -98,6 +98,14 @@ void AMOBAGameMode::StartPlay()
 	TimeBetweenWaves = 10.0f;
 
 	PrepareForNextWave();
+
+	FTimerHandle WildTimer;
+	FTimerHandle DragonTimer;
+
+	GetWorldTimerManager().SetTimer(WildTimer, this, &AMOBAGameMode::SpawnStartWild, 60.0f, false);
+	GetWorldTimerManager().SetTimer(DragonTimer, this, &AMOBAGameMode::SpawnStartDragon, 1.0f, false);
+
+
 }
 
 void AMOBAGameMode::GameOver(Camp SuccessCamp)

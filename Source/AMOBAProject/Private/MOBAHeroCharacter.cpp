@@ -24,6 +24,7 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "MOBAPlayerState.h"
+#include "TimerManager.h"
 
 AMOBAHeroCharacter::AMOBAHeroCharacter()
 {
@@ -77,7 +78,14 @@ AMOBAHeroCharacter::AMOBAHeroCharacter()
 
 void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 {
+	
 	Super::Tick(DeltaSeconds);
+
+	if (HeroState == State::Dead)
+	{
+		FTimerManager CalDeadtime;
+		heroProperty.deadtime = CalDeadtime.GetTimerRemaining(DeadTimer);
+	}
 
 	if (CursorToWorld != nullptr)
 	{
@@ -400,7 +408,6 @@ void AMOBAHeroCharacter::resetHero()
 		GS->ClearCombKillNumber();
 	}
 
-	auto DeadTimer = TimeHandles.DeadTimer;
 	GetWorldTimerManager().ClearTimer(DeadTimer);
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &AMOBAHeroCharacter::DeadHeroHandle, 3.0f);
 
