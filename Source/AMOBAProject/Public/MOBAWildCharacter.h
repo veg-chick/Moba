@@ -99,7 +99,10 @@ protected:
 		void ResetNashBuffValue();
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void WildDeadHandle();
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "MyMOBA")
-		void WildDeadHandle(AWildType WildType);
+		void WildResetHandle();
 
 };

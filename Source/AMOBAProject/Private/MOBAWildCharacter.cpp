@@ -104,6 +104,13 @@ void AMOBAWildCharacter::ResetNashBuffValue()
 	BuffedHero = nullptr;
 }
 
+
+void AMOBAWildCharacter::WildDeadHandle()
+{
+	FTimerHandle resettimer;
+	GetWorldTimerManager().SetTimer(resettimer, this, &AMOBAWildCharacter::WildResetHandle, 60.0f);
+}
+
 void AMOBAWildCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack)
 {
 	if (this->GetbAbleToAttack())

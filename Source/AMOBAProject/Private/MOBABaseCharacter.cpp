@@ -218,7 +218,7 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 			auto MayBeWild = Cast<AMOBAWildCharacter>(DeadCharacter);
 			if (MayBeWild)
 			{
-				MayBeWild->WildDeadHandle(MayBeWild->GetWildType());
+				MayBeWild->WildDeadHandle();
 			}
 
 			DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
