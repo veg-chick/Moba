@@ -16,48 +16,10 @@ AMOBAHeroADOne::AMOBAHeroADOne()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
-void AMOBAHeroADOne::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	if (CursorToWorld != nullptr)
-	{
-		if (APlayerController * PC = Cast<APlayerController>(GetController()))
-		{
-			FHitResult TraceHitResult;
-			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
-			FVector CursorFV = TraceHitResult.ImpactNormal;
-			FRotator CursorR = CursorFV.Rotation();
-			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
-			CursorToWorld->SetWorldRotation(CursorR);
-		}
-	}
-
-	if (GetbCanReleaseSkills())
-	{
-		if ((GetQPoint() != 0.0f) && (GetMp() >= GetQCost()))
-			GetbMayQ() = true;
-		else GetbMayQ() = false;
-		if ((GetWPoint() != 0.0f) && (GetMp() >= GetWCost()))
-			GetbMayW() = true;
-		else GetbMayW() = false;
-		if ((GetEPoint() != 0.0f) && (GetMp() >= GetECost()))
-			GetbMayE() = true;
-		else GetbMayE() = false;
-	}
-
-
-	GetQCost() = GetQPoint() * 10.0f + 30.0f;
-	GetWCost() = GetWPoint() * 10.0f + 70.0f;
-	GetECost() = GetEPoint() * 20.0f + 150.0f;
-
-}
-
 void AMOBAHeroADOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 {
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
-		GetCDofQ() = 15.5f - GetQPoint() * 0.5f;
 		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			auto MyStunTime = 2.5f + this->GetQPoint() * 0.5f;
@@ -74,8 +36,6 @@ void AMOBAHeroADOne::ReleaseW(float MpCost)
 {
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
-		GetCDofW() = 18.5f - GetWPoint() * 1.5f;
-
 		MyAttackStrengthAddValue = (this->GetMaxHp() - this->GetHp()) * (this->GetWPoint() * 0.05f + 0.1f);
 		this->GetAttackStrength() += MyAttackStrengthAddValue;
 
@@ -92,8 +52,6 @@ void AMOBAHeroADOne::ReleaseE(float MpCost)
 {
 	if (this->GetbMayE() && this->GetbCanE())
 	{
-		GetCDofE() = 200.0f - this->GetEPoint() * 20.0f;
-
 		this->GetArmor() += 1000.0f;
 		this->GetMagicResist() += 1000.0f;
 

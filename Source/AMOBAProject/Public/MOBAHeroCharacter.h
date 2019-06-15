@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MOBABaseCharacter.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 #include "MOBAHeroCharacter.generated.h"
 
 struct FTimerHandle;
@@ -247,8 +248,11 @@ struct FSkillProperty
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float ERange;
 
-};
+	float RemainingQCD;
+	float RemainingWCD;
+	float RemainingECD;
 
+};
 
 /**
  *
@@ -270,7 +274,7 @@ protected:
 		FHeroGrowth heroGrowth;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
-		FTimerHandles timeHandles;
+		FTimerHandles TimeHandles;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroPack HeroPack;
@@ -286,6 +290,10 @@ protected:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
+
+	FTimerManager QTimerManager;
+	FTimerManager WTimerManager;
+	FTimerManager ETimerManager;
 
 protected:
 
@@ -614,5 +622,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AddE();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetRemainingQCD() { return SkillProperty.RemainingQCD; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetRemainingWCD() { return SkillProperty.RemainingWCD; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetRemainingECD() { return SkillProperty.RemainingWCD; }
 
 };

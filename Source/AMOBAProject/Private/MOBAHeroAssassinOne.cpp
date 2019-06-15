@@ -21,7 +21,6 @@ void AMOBAHeroAssassinOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 {
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
-		GetCDofQ() = 7.0f;
 		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			auto QDamage = this->GetAttackStrength() * 0.8f + 30.0f + this->GetQPoint() * 30.0f;
@@ -38,7 +37,6 @@ void AMOBAHeroAssassinOne::ReleaseW(float MpCost)
 {
 	if (this->GetbMayW() && this->GetbCanW())
 	{
-		GetCDofW() = 21.0f - GetWPoint();
 		MyStrikeRateAddValue = this->GetWPoint() * 0.05f;
 		this->GetStrikeRate() += MyStrikeRateAddValue;
 
@@ -55,7 +53,6 @@ void AMOBAHeroAssassinOne::ReleaseE(AMOBAHeroCharacter* Target, float MpCost)
 {
 	if (this->GetbMayE() && this->GetbCanE())
 	{
-		GetCDofE() = 10.0f;
 		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			FVector TargetLocation = Target->GetActorLocation();
@@ -86,38 +83,3 @@ void AMOBAHeroAssassinOne::ETimeHandle()
 }
 
 
-void AMOBAHeroAssassinOne::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	if (CursorToWorld != nullptr)
-	{
-		if (APlayerController * PC = Cast<APlayerController>(GetController()))
-		{
-			FHitResult TraceHitResult;
-			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
-			FVector CursorFV = TraceHitResult.ImpactNormal;
-			FRotator CursorR = CursorFV.Rotation();
-			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
-			CursorToWorld->SetWorldRotation(CursorR);
-		}
-	}
-
-	if (GetbCanReleaseSkills())
-	{
-		if ((GetQPoint() != 0.0f) && (GetMp() >= GetQCost()))
-			GetbMayQ() = true;
-		else GetbMayQ() = false;
-		if ((GetWPoint() != 0.0f) && (GetMp() >= GetWCost()))
-			GetbMayW() = true;
-		else GetbMayW() = false;
-		if ((GetEPoint() != 0.0f) && (GetMp() >= GetECost()))
-			GetbMayE() = true;
-		else GetbMayE() = false;
-	}
-
-	GetQCost() = GetQPoint() * 20.0f + 10.0f;
-	GetWCost() = GetWPoint() * 10.0f + 50.0f;
-	GetECost() = GetWPoint() * 10.0f + 70.0f;
-
-}

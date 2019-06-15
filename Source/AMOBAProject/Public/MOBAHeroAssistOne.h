@@ -17,8 +17,6 @@ class AMOBAPROJECT_API AMOBAHeroAssistOne : public AMOBAHeroCharacter
 public:
 	AMOBAHeroAssistOne();
 
-	virtual void Tick(float DeltaSeconds) override;
-
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ReleaseQ(AMOBAHeroCharacter* Target,float MpCost);
 

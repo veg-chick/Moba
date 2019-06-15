@@ -17,51 +17,10 @@ AMOBAHeroAssistOne::AMOBAHeroAssistOne()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
-void AMOBAHeroAssistOne::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	if (CursorToWorld != nullptr)
-	{
-		if (APlayerController * PC = Cast<APlayerController>(GetController()))
-		{
-			FHitResult TraceHitResult;
-			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
-			FVector CursorFV = TraceHitResult.ImpactNormal;
-			FRotator CursorR = CursorFV.Rotation();
-			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
-			CursorToWorld->SetWorldRotation(CursorR);
-		}
-	}
-
-	if (GetbCanReleaseSkills())
-	{
-		if ((GetQPoint() != 0.0f) && (GetMp() >= GetQCost()))
-			GetbMayQ() = true;
-		else GetbMayQ() = false;
-		if ((GetWPoint() != 0.0f) && (GetMp() >= GetWCost()))
-		{
-			if (50.0f + this->GetQPoint() * 50.0f)
-				GetbMayW() = true;
-		}
-		else GetbMayW() = false;
-		if ((GetEPoint() != 0.0f) && (GetMp() >= GetECost()))
-			GetbMayE() = true;
-		else GetbMayE() = false;
-	}
-
-
-	GetQCost() = GetQPoint() * 30.0f + 50.0f;
-	GetWCost() = 110.0f - GetWPoint() * 10.0f;
-	GetECost() = GetWPoint() * 10.0f + 70.0f;
-
-}
-
 void AMOBAHeroAssistOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 {
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
-		GetCDofQ() = 21.5f - this->GetQPoint() * 0.5f;
 		if (Target && Target != this && Target->GetCamp() == this->GetCamp())
 		{
 
@@ -83,7 +42,6 @@ void AMOBAHeroAssistOne::ReleaseW(AMOBAHeroCharacter* Target, float MpCost)
 {
 	if (this->GetbMayW() && this->GetbCanW())
 	{
-		GetCDofW() = 18.5f - this->GetWPoint() * 1.5f;
 		if (Target && this->GetCamp() != Target->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			Target->ExceptionState(State::Silence, 2.5f);
@@ -99,7 +57,6 @@ void AMOBAHeroAssistOne::ReleaseE(AMOBAHeroCharacter* Target, float MpCost)
 {
 	if (this->GetbMayE() && this->GetbCanE())
 	{
-		GetCDofE() = 21.5f - this->GetEPoint() * 1.5f;
 		if (Target && Target != this && this->GetCamp() == Target->GetCamp())
 		{
 			auto MpRecoveryValue = 30.0f + this->GetEPoint() * 50.0f + this->GetPowerStrength() * 0.5f;

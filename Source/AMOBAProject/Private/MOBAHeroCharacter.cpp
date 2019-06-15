@@ -92,6 +92,32 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 		}
 	}
 
+	if (GetbCanReleaseSkills())
+	{
+		if ((GetQPoint() != 0.0f) && (GetMp() >= GetQCost()))
+			GetbMayQ() = true;
+		else GetbMayQ() = false;
+		if ((GetWPoint() != 0.0f) && (GetMp() >= GetWCost()))
+			GetbMayW() = true;
+		else GetbMayW() = false;
+		if ((GetEPoint() != 0.0f) && (GetMp() >= GetECost()))
+			GetbMayE() = true;
+		else GetbMayE() = false;
+	}
+
+	if (QTimerManager.IsTimerActive(TimeHandles.SkillQTimer))
+	{
+		SkillProperty.RemainingQCD = QTimerManager.GetTimerRemaining(TimeHandles.SkillQTimer);
+	}
+	if (WTimerManager.IsTimerActive(TimeHandles.SkillWTimer))
+	{
+		SkillProperty.RemainingWCD = WTimerManager.GetTimerRemaining(TimeHandles.SkillWTimer);
+	}
+	if (ETimerManager.IsTimerActive(TimeHandles.SkillETimer))
+	{
+		SkillProperty.RemainingECD = ETimerManager.GetTimerRemaining(TimeHandles.SkillETimer);
+	}
+
 }
 
 void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
@@ -169,7 +195,7 @@ void AMOBAHeroCharacter::ServerAttackToActor_Implementation(AMOBABaseActor* BeAt
 	NewRotation.Roll = 0.0f;
 	SetActorRotation(NewRotation);
 	float AttackCDTime = 1.0f / this->GetAttackSpeed();
-	auto MyTimeHanlde = timeHandles.AttackTimer;
+	auto MyTimeHanlde = TimeHandles.AttackTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 
@@ -215,7 +241,7 @@ void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharact
 	NewRotation.Roll = 0.0f;
 	SetActorRotation(NewRotation);
 	float AttackCDTime = 1.0f / this->GetAttackSpeed();
-	auto MyTimeHanlde = timeHandles.AttackTimer;
+	auto MyTimeHanlde = TimeHandles.AttackTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 
@@ -246,6 +272,39 @@ void AMOBAHeroCharacter::AddQ()
 	{
 		this->SkillProperty.QPoint += 1.0f;
 		this->SkillProperty.SkillPoint -= 1.0f;
+
+		if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+		{
+			GetQCost() = GetQPoint() * 10.0f + 50.0f;
+			GetCDofQ() = 10.5f - GetQPoint() * 0.5f;
+
+		}
+		else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+		{
+			GetQCost() = GetQPoint() * 10.0f + 30.0f;
+			GetCDofQ() = 15.5f - GetQPoint() * 0.5f;
+
+		}
+		else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+		{
+			GetQCost() = GetQPoint() * 5.0f + 10.0f;
+			GetCDofQ() = 3.5f;
+
+		}
+		else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+		{
+			GetQCost() = GetQPoint() * 20.0f + 10.0f;
+			GetCDofQ() = 7.0f;
+		}
+		else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+		{
+			GetQCost() = GetQPoint() * 30.0f + 50.0f;
+			GetCDofQ() = 21.5f - this->GetQPoint() * 0.5f;
+		}
+		else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+		{
+			GetCDofQ() = 12.0f - this->GetQPoint();
+		}
 	}
 }
 
@@ -256,6 +315,37 @@ void AMOBAHeroCharacter::AddW()
 		this->SkillProperty.WPoint += 1.0f;
 		this->SkillProperty.SkillPoint -= 1.0f;
 	}
+
+	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+	{
+		GetWCost() = GetWPoint() * 20.0f + 70.0f;
+		GetCDofW() = 18.0f - GetWPoint() * 2.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+	{
+		GetWCost() = GetWPoint() * 10.0f + 70.0f;
+		GetCDofW() = 18.5f - GetWPoint() * 1.5f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+	{
+		GetWCost() = GetWPoint() * 10.0f + 70.0f;
+		GetCDofW() = 100.0f - GetWPoint() * 5.0f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+	{
+		GetWCost() = GetWPoint() * 10.0f + 50.0f;
+		GetCDofW() = 21.0f - GetWPoint();
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+	{
+		GetWCost() = 110.0f - GetWPoint() * 10.0f;
+		GetCDofW() = 18.5f - this->GetWPoint() * 1.5f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+	{
+		GetCDofW() = 21.0f - this->GetWPoint();
+	}
 }
 
 void AMOBAHeroCharacter::AddE()
@@ -264,6 +354,40 @@ void AMOBAHeroCharacter::AddE()
 	{
 		this->SkillProperty.EPoint += 1.0f;
 		this->SkillProperty.SkillPoint -= 1.0f;
+	}
+
+	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+	{
+		GetECost() = GetWPoint() * 10.0f + 90.0f;
+		GetCDofE() = 90.0f - (this->GetEPoint() - 1.0f) * 15.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+	{
+		GetECost() = GetEPoint() * 20.0f + 150.0f;
+		GetCDofE() = 200.0f - this->GetEPoint() * 20.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+	{
+		GetECost() = GetEPoint() * 10.0f + 120.0f;
+		GetCDofE() = 130.0f - GetEPoint() * 10.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+	{
+		GetECost() = GetEPoint() * 10.0f + 70.0f;
+		GetCDofE() = 10.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+	{
+		GetECost() = GetWPoint() * 10.0f + 70.0f;
+		GetCDofE() = 21.5f - this->GetEPoint() * 1.5f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+	{
+		GetCDofE() = 130.0f - this->GetEPoint() * 10.0f;
 	}
 }
 
@@ -276,7 +400,7 @@ void AMOBAHeroCharacter::resetHero()
 		GS->ClearCombKillNumber();
 	}
 
-	auto DeadTimer = timeHandles.DeadTimer;
+	auto DeadTimer = TimeHandles.DeadTimer;
 	GetWorldTimerManager().ClearTimer(DeadTimer);
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &AMOBAHeroCharacter::DeadHeroHandle, 3.0f);
 
@@ -284,7 +408,7 @@ void AMOBAHeroCharacter::resetHero()
 	this->ServerRPCChangeState(State::Dead);
 
 	float resetTime = this->heroProperty.resetTime;
-	auto MyTimeHanlde = timeHandles.ResetTimer;
+	auto MyTimeHanlde = TimeHandles.ResetTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetHeroHandle, resetTime);
 
@@ -479,7 +603,7 @@ void AMOBAHeroCharacter::ServerRPCRecall_Implementation()
 {
 	GetCharacterMovement()->StopMovementImmediately();
 
-	auto& myTimeHandle = this->timeHandles.ResetTimer;
+	auto& myTimeHandle = this->TimeHandles.ResetTimer;
 
 	GetWorldTimerManager().ClearTimer(myTimeHandle);
 
@@ -503,7 +627,7 @@ void AMOBAHeroCharacter::RecallHandle()
 
 void AMOBAHeroCharacter::HpRecoveryHandle()
 {
-	auto MyTimeHanlde = timeHandles.HpRecoveryTimer;
+	auto MyTimeHanlde = TimeHandles.HpRecoveryTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::HpRecoveryHandle, 1.0f);
 
@@ -527,7 +651,7 @@ bool AMOBAHeroCharacter::ServerRPCHpRecovery_Validate()
 
 void AMOBAHeroCharacter::MpRecoveryHandle()
 {
-	auto MyTimeHanlde = timeHandles.MpRecoveryTimer;
+	auto MyTimeHanlde = TimeHandles.MpRecoveryTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::MpRecoveryHandle, 1.0f);
 
@@ -599,19 +723,19 @@ void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 	ServerRPCChangeState(TargetState);
 	if (TargetState == State::Stun)
 	{
-		FTimerHandle& MyTimeHandle = timeHandles.StunTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.StunTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetStunState, Time);
 	}
 	if (TargetState == State::Silence)
 	{
-		FTimerHandle& MyTimeHandle = timeHandles.SilenceTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SilenceTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetSilenceState, Time);
 	}
 	if (TargetState == State::Imprison)
 	{
-		FTimerHandle& MyTimeHandle = timeHandles.ImprisonTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.ImprisonTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetImprisonState, Time);
 	}
@@ -630,7 +754,7 @@ void AMOBAHeroCharacter::HeroReleaseQ(AMOBAHeroCharacter* Target)
 		MyHero->ReleaseQ(Target, MyHero->GetQCost());
 	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
 		MyHero->ReleaseQ(Target, MyHero->GetQCost());
-	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
 		MyHero->ReleaseQ(Target, MyHero->GetQCost());
 
 }
@@ -647,8 +771,8 @@ void AMOBAHeroCharacter::HeroReleaseW(AMOBAHeroCharacter* Target)
 		MyHero->ReleaseW(MyHero->GetWCost());
 	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
 		MyHero->ReleaseW(Target, MyHero->GetWCost());
-	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
-		MyHero->ReleaseW(Target, MyHero->GetWCost());
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+		MyHero->ReleaseW(MyHero->GetWCost());
 }
 
 void AMOBAHeroCharacter::HeroReleaseE(AMOBAHeroCharacter* Target)
@@ -663,8 +787,8 @@ void AMOBAHeroCharacter::HeroReleaseE(AMOBAHeroCharacter* Target)
 		MyHero->ReleaseE(Target,MyHero->GetECost());
 	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
 		MyHero->ReleaseE(Target, MyHero->GetECost());
-	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
-		MyHero->ReleaseE(Target, MyHero->GetECost());
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+		MyHero->ReleaseE(MyHero->GetECost());
 }
 
 void AMOBAHeroCharacter::ResetSkills(float Target)
@@ -674,7 +798,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	{
 		this->SkillProperty.bCanQ = false;
 		MyCDTime = SkillProperty.CDofQ * SkillProperty.CDReduction;
-		FTimerHandle& MyTimeHandle = timeHandles.SkillQTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SkillQTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetQSkill, MyCDTime);
 	}
@@ -682,7 +806,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	{
 		this->SkillProperty.bCanW = false;
 		MyCDTime = SkillProperty.CDofW * SkillProperty.CDReduction;
-		FTimerHandle& MyTimeHandle = timeHandles.SkillWTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SkillWTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetWSkill, MyCDTime);
 	}
@@ -690,7 +814,7 @@ void AMOBAHeroCharacter::ResetSkills(float Target)
 	{
 		this->SkillProperty.bCanE = false;
 		MyCDTime = SkillProperty.CDofE * SkillProperty.CDReduction;
-		FTimerHandle& MyTimeHandle = timeHandles.SkillETimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SkillETimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetESkill, MyCDTime);
 	}
@@ -1007,7 +1131,7 @@ void AMOBAHeroCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, heroProperty, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, timeHandles, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, TimeHandles, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, birthLocation, COND_OwnerOnly);
 	DOREPLIFETIME(AMOBAHeroCharacter, HeroPack);
 	DOREPLIFETIME(AMOBAHeroCharacter, HeroState);

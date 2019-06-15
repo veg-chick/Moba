@@ -52,7 +52,8 @@ void AMOBAWildCharacter::SetValue()
 	baseProperty.attackSpeed = 1.0f;
 	baseProperty.attackStrength = 80.0f;
 	baseProperty.attackRange = 200.0f;
-	baseProperty.moveSpeed = 800.0f;
+	baseProperty.moveSpeed = 700.0f;
+	baseProperty.baseCamp = Camp::other;
 
 	baseProperty.bAbleToAttack = true;
 	baseProperty.bCanBeAttacked = true;
