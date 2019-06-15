@@ -46,11 +46,11 @@ void AMOBAHeroADOne::Tick(float DeltaSeconds)
 		else GetbMayE() = false;
 	}
 
-	
+
 	GetQCost() = GetQPoint() * 10.0f + 30.0f;
 	GetWCost() = GetWPoint() * 10.0f + 70.0f;
 	GetECost() = GetEPoint() * 20.0f + 150.0f;
-	
+
 }
 
 void AMOBAHeroADOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
@@ -58,7 +58,7 @@ void AMOBAHeroADOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
 		GetCDofQ() = 15.5f - GetQPoint() * 0.5f;
-		if (Target&&Target->GetCamp()!=this->GetCamp())
+		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			auto MyStunTime = 2.5f + this->GetQPoint() * 0.5f;
 			Target->ExceptionState(State::Stun, MyStunTime);
@@ -75,7 +75,7 @@ void AMOBAHeroADOne::ReleaseW(float MpCost)
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
 		GetCDofW() = 18.5f - GetWPoint() * 1.5f;
-		
+
 		MyAttackStrengthAddValue = (this->GetMaxHp() - this->GetHp()) * (this->GetWPoint() * 0.05f + 0.1f);
 		this->GetAttackStrength() += MyAttackStrengthAddValue;
 

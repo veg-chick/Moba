@@ -23,7 +23,7 @@ void AMOBAHeroTankOne::ReleaseQ(AMOBAHeroCharacter* TargetHero,float MpCost)
 	this->GetCDofQ() = 12.0f - this->GetQPoint();
 	if (this->GetbMayQ() && this->GetbCanQ() && TargetHero)
 	{
-		if (TargetHero->GetCamp() == this->GetCamp())
+		if (TargetHero&&TargetHero->GetCamp() == this->GetCamp()&&TargetHero->GetbCanBeAttacked())
 		{
 			auto MyTreat = 50.0f + this->GetQPoint() * 50.0f;
 			TargetHero->ReceiveDamageFromCharacter(TargetHero, DamageType::treat, MyTreat, this);

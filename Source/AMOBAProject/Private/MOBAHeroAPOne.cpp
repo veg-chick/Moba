@@ -23,7 +23,7 @@ void AMOBAHeroAPOne::ReleaseQ(AMOBABaseCharacter* Target, float MpCost)
 	{
 		GetCDofQ() = 3.5f;
 
-		if (Target->GetCamp() != this->GetCamp())
+		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
 
 			auto QDamage = 40.0f + this->GetQPoint() * 20.0f + this->GetPowerStrength() * 0.2f;
@@ -50,7 +50,7 @@ void AMOBAHeroAPOne::ReleaseW(float MpCost)
 
 		GetWorldTimerManager().ClearTimer(WTimerHandle);
 		GetWorldTimerManager().SetTimer(WTimerHandle, this, &AMOBAHeroAPOne::WTimeHandle, 2.5f);
-		
+
 		this->GetMp() -= MpCost;
 		ChangeReleasingSkill(2.0f);
 		ResetSkills(2.0f);

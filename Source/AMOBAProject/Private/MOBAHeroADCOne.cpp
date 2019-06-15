@@ -17,12 +17,12 @@ AMOBAHeroADCOne::AMOBAHeroADCOne()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
-void AMOBAHeroADCOne::ReleaseQ(AMOBAHeroCharacter* Target,float MpCost)
+void AMOBAHeroADCOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 {
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
 		GetCDofQ() = 10.5f - GetQPoint() * 0.5f;
-		if (this->GetCamp() != Target->GetCamp())
+		if (Target && this->GetCamp() != Target->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			this->GetMp() -= MpCost;
 
@@ -70,7 +70,7 @@ void AMOBAHeroADCOne::ReleaseE(float MpCost)
 
 		this->GetMp() -= MpCost;
 
-		MyLifeStealAddValue= this->GetEPoint() * 0.05f + 0.05f;
+		MyLifeStealAddValue = this->GetEPoint() * 0.05f + 0.05f;
 		this->GetLifeSteal() += MyLifeStealAddValue;
 
 		MyAttackStrengthAddValue = this->GetEPoint() * 20.0f + 60.0f;

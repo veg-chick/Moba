@@ -22,7 +22,7 @@ void AMOBAHeroAssassinOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
 		GetCDofQ() = 7.0f;
-		if (Target&&Target->GetCamp()!=this->GetCamp())
+		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			auto QDamage = this->GetAttackStrength() * 0.8f + 30.0f + this->GetQPoint() * 30.0f;
 			Target->ReceiveDamageFromCharacter(Target, DamageType::physical, QDamage, this);
@@ -56,7 +56,7 @@ void AMOBAHeroAssassinOne::ReleaseE(AMOBAHeroCharacter* Target, float MpCost)
 	if (this->GetbMayE() && this->GetbCanE())
 	{
 		GetCDofE() = 10.0f;
-		if (Target && Target->GetCamp() != this->GetCamp())
+		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
 			FVector TargetLocation = Target->GetActorLocation();
 			TargetLocation.X += 10.0f;
