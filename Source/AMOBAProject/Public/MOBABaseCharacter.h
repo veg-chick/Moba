@@ -42,7 +42,7 @@ protected:
 		AMOBABaseCharacter* Attacker;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void DeadHandle(AMOBABaseCharacter* DeadCharacter);
+		void DeadHandle(AMOBABaseCharacter* DeadCharacter, AMOBABaseCharacter* DamageCauser);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);

@@ -8,6 +8,8 @@
 
 enum class Camp : uint8;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActorKilled, AMOBABaseActor*, VictimActor, AMOBABaseCharacter*, KillerCharacter);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCharacterKilled, AMOBABaseCharacter*, VictimCharacter, AMOBABaseCharacter*, KillerCharacter);
 
 UCLASS()
 class AMOBAPROJECT_API AMOBAGameMode : public AGameMode
@@ -61,4 +63,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameMode")
 		void GameOver(Camp SuccessCamp);
+
+	UPROPERTY(BlueprintAssignable, Category = "GameMode")
+		FOnActorKilled OnActorKilled;
+
+	UPROPERTY(BlueprintAssignable, Category = "GameMode")
+		FOnCharacterKilled OnCharacterKilled;
 };

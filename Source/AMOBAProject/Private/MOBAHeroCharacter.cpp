@@ -401,11 +401,11 @@ void AMOBAHeroCharacter::AddE()
 
 void AMOBAHeroCharacter::resetHero()
 {
-	this->GetGoldValue() = 300.0f;
 	AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(this->GetPlayerState());
 	if (GS)
 	{
 		GS->ClearCombKillNumber();
+		GS->AddDeathNumber();
 	}
 
 	GetWorldTimerManager().ClearTimer(DeadTimer);

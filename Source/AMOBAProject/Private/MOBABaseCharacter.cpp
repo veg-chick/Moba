@@ -10,6 +10,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "MOBAPlayerState.h"
+#include "MOBAGameMode.h"
+
 
 // Sets default values
 AMOBABaseCharacter::AMOBABaseCharacter()
@@ -80,7 +82,7 @@ void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageTyp
 		}
 
 		if (myHp <= 0.0f) {
-			DeadHandle(DamagedActor);
+			//DeadHandle(DamagedActor, DamageCauser);
 		}
 
 	}
@@ -161,14 +163,19 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 			auto MayBeAHero = Cast<AMOBAHeroCharacter>(DamageCauser);
 			if (MayBeAHero)
 			{
+				AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(MayBeAHero->GetPlayerState());
 				auto MayBeKilledHero = Cast<AMOBAHeroCharacter>(DamagedActor);
-				if (MayBeKilledHero)
+				if (GS)
 				{
-					AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(MayBeAHero->GetPlayerState());
-					if (GS)
+					if (MayBeKilledHero)
 					{
 						GS->AddKillNumber();
 						GS->AddCombKillNumber();
+					}
+
+					else
+					{
+						GS->AddSoldierKillNumber();
 					}
 				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
@@ -179,7 +186,7 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 					MayBeKilledBuff->KillValueForHero(MayBeAHero);
 				}
 			}
-			DamagedActor->DeadHandle(DamagedActor);
+			DamagedActor->DeadHandle(DamagedActor, DamageCauser);
 		}
 
 		auto RecallingHero = Cast<AMOBAHeroCharacter>(DamagedActor);
@@ -191,10 +198,16 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 	}
 }
 
-void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
+void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter, AMOBABaseCharacter* DamageCauser)
 {
 	if (DeadCharacter)
 	{
+		AMOBAGameMode* GM = Cast<AMOBAGameMode>(this->GetWorld()->GetAuthGameMode());
+		if (GM)
+		{
+			GM->OnCharacterKilled.Broadcast(DeadCharacter, DamageCauser);
+		}
+
 		DeadCharacter->GetMovementComponent()->StopMovementImmediately();
 
 		this->GetbCanBeAttacked() = false;

@@ -133,7 +133,7 @@ protected:
 		FBaseActorValue baseValue;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void DeadHandle(AMOBABaseActor* DeadActor);
+		void DeadHandle(AMOBABaseActor* DeadActor, AMOBABaseCharacter* DamageCauser);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);

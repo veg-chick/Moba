@@ -8,6 +8,7 @@
 #include "Public/MOBACrystalActor.h"
 #include "Public/MOBABaseCharacter.h"
 #include "MOBAPlayerState.h"
+#include "MOBAGameMode.h"
 
 // Sets default values
 AMOBABaseActor::AMOBABaseActor(){
@@ -107,14 +108,19 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
 				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());
 			}
-			DeadHandle(DamagedActor);
+			DeadHandle(DamagedActor, DamageCauser);
 		}
 	}
 }
 
-void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor) {
+void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor, AMOBABaseCharacter* DamageCauser) {
 	if (DeadActor) 
 	{
+		AMOBAGameMode* GM = Cast<AMOBAGameMode>(GetWorld()->GetAuthGameMode());
+		if (GM)
+		{
+			GM->OnActorKilled.Broadcast(DeadActor, DamageCauser);
+		}
 		this->GetbIsBroken()= true;
 		this->GetbCanBeAttacked() = false;
 
