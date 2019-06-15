@@ -9,6 +9,7 @@
 #include "Engine/Classes/GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "MOBAPlayerState.h"
 
 // Sets default values
 AMOBABaseCharacter::AMOBABaseCharacter()
@@ -163,8 +164,12 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 				auto MayBeKilledHero = Cast<AMOBAHeroCharacter>(DamagedActor);
 				if (MayBeKilledHero)
 				{
-					MayBeAHero->GetKillNumber() += 1.0f;
-					MayBeAHero->AddCombKillNumber();
+					AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(MayBeAHero->GetPlayerState());
+					if (GS)
+					{
+						GS->AddKillNumber();
+						GS->AddCombKillNumber();
+					}
 				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
 				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());
@@ -208,6 +213,12 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 			{
 				MayBeTower->TowerDeadHandle();
 				return;
+			}
+
+			auto MayBeWild = Cast<AMOBAWildCharacter>(DeadCharacter);
+			if (MayBeWild)
+			{
+				MayBeWild->WildDeadHandle(MayBeWild->GetWildType());
 			}
 
 			DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

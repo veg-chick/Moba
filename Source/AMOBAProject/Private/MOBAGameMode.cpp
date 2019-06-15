@@ -18,7 +18,7 @@
 
 AMOBAGameMode::AMOBAGameMode()
 {
-
+	WaveCnt = 0;
 	PlayerControllerClass = AMOBAPlayerController::StaticClass();
 	PlayerStateClass = AMOBAPlayerState::StaticClass();
 	GameStateClass = AMOBAGameState::StaticClass();
@@ -35,6 +35,8 @@ void AMOBAGameMode::StartWave()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Start Wave!"))
 	NumberOfSoldierToSpawn = 5;
+
+	SoldierLevel = WaveCnt / 3 + 1;
 
 	GetWorldTimerManager().SetTimer(TimerHandle_SoldierSpawner, this, &AMOBAGameMode::SpawnSoldierTimerElapsed, 1.0f);
 }
@@ -84,6 +86,8 @@ void AMOBAGameMode::PrepareForNextWave()
 	FTimerHandle TimerHandle_NextWaveStart;
 
 	GetWorldTimerManager().SetTimer(TimerHandle_NextWaveStart, this, &AMOBAGameMode::StartWave, TimeBetweenWaves, false);
+
+	WaveCnt++;
 }
 
 

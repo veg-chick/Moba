@@ -87,7 +87,11 @@ bool AMOBATowerCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHe
 
 void AMOBATowerCharacter::TowerDeadHandle()
 {
-	
+	UGameplayStatics::SpawnEmitterAtLocation(this, DestroyFX, GetActorLocation());
+
+	SpawnRuin();
+	Destroy();
+
 	if (GetTowerType() == TowerType::hub)
 	{
 		TowerPointerToHub->GetbCanBeAttacked() = true;

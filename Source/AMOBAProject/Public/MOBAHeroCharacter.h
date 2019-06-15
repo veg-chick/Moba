@@ -9,6 +9,13 @@
 struct FTimerHandle;
 struct FVector;
 
+class AMOBAHeroADOne;
+class AMOBAHeroADCOne;
+class AMOBAHeroAPOne;
+class AMOBAHeroTankOne;
+class AMOBAHeroAssistOne;
+class AMOBAHeroAssassinOne;
+
 UENUM(BlueprintType)
 enum class State : uint8
 {
@@ -242,21 +249,6 @@ struct FSkillProperty
 
 };
 
-USTRUCT(BlueprintType)
-struct FScoreBoard
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float KillNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float DeathNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float CombKillNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float SoldierKillNumber = 0.0f;
-};
-
 
 /**
  *
@@ -291,9 +283,6 @@ protected:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
-		FScoreBoard ScoreBoard;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
@@ -374,8 +363,6 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerRPCAddCombKillNumber();
 
 public:
 
@@ -384,9 +371,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void AddCombKillNumber();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AddExperienceToHero(float ExperienceValue);
@@ -404,13 +388,22 @@ public:
 		void ExceptionState(State TargetState, float Time);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingQ() { this->GetbIsReleasingQ() = false; }
+		void ResetReleasingQ() { this->GetbIsReleasingQ() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingW() { this->GetbIsReleasingW() = false; }
+		void ResetReleasingW() { this->GetbIsReleasingW() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingE() { this->GetbIsReleasingE() = false; }
+		void ResetReleasingE() { this->GetbIsReleasingE() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseQ(AMOBAHeroCharacter* Target = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseW(AMOBAHeroCharacter* Target = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseE(AMOBAHeroCharacter* Target = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void StopMove();
@@ -561,18 +554,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool GetCanAddE() { return (SkillProperty.SkillPoint) && (baseProperty.level / 5.0f) > (SkillProperty.EPoint + 1.0f) && (SkillProperty.EPoint < 5.0f); }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetKillNumber() { return ScoreBoard.KillNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetDeathNumber() { return ScoreBoard.DeathNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetCombKillNumber() { return ScoreBoard.CombKillNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetSoldierKillNumber() { return ScoreBoard.SoldierKillNumber; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsAttackingHero() { return bIsAttackingHero; }

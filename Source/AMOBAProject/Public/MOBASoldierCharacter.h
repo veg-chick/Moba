@@ -71,6 +71,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero);
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void SetSoldierLevel(float level);
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetTimer();
