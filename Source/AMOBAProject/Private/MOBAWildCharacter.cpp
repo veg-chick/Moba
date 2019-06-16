@@ -33,7 +33,7 @@ void AMOBAWildCharacter::resetWild()
 
 }
 
-void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) 
+void AMOBAWildCharacter::assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue)
 {
 	assignBaseValueForAPI(aBaseProperty, aBaseValue);
 }
@@ -132,11 +132,11 @@ void AMOBAWildCharacter::KillValueForHero(AMOBAHeroCharacter* AHero)
 		switch (GetWildType())
 		{
 		case AWildType::BlueBuff:
-			AHero->AddBuff(Buff::BlueBuff, 120.0f);
+			AHero->AddBuff(1.0f, 120.0f);
 		case AWildType::RedBuff:
-			AHero->AddBuff(Buff::RedBuff, 120.0f);
+			AHero->AddBuff(2.0f, 120.0f);
 		case AWildType::Nash:
-			AHero->AddBuff(Buff::DragonBuff, 180.0f);
+			AHero->AddBuff(3.0f, 180.0f);
 		default:
 			break;
 		}
