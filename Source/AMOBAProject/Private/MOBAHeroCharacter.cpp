@@ -796,6 +796,7 @@ void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 
 void AMOBAHeroCharacter::HeroReleaseQ(AMOBAHeroCharacter* Target)
 {
+	StopMove();
 	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
 		MyHero->ReleaseQ(Target, MyHero->GetQCost());
 	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
@@ -813,6 +814,7 @@ void AMOBAHeroCharacter::HeroReleaseQ(AMOBAHeroCharacter* Target)
 
 void AMOBAHeroCharacter::HeroReleaseW(AMOBAHeroCharacter* Target)
 {
+	StopMove();
 	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
 		MyHero->ReleaseW(MyHero->GetWCost());
 	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
@@ -829,6 +831,7 @@ void AMOBAHeroCharacter::HeroReleaseW(AMOBAHeroCharacter* Target)
 
 void AMOBAHeroCharacter::HeroReleaseE(AMOBAHeroCharacter* Target)
 {
+	StopMove();
 	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
 		MyHero->ReleaseE(MyHero->GetECost());
 	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
