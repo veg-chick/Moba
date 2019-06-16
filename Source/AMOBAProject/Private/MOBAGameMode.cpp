@@ -13,11 +13,12 @@
 #include "MOBACrystalActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
+#include "GameFramework/PlayerStart.h"
 
 
 AMOBAGameMode::AMOBAGameMode()
 {
-
+	WaveCnt = 0;
 	PlayerControllerClass = AMOBAPlayerController::StaticClass();
 	PlayerStateClass = AMOBAPlayerState::StaticClass();
 	GameStateClass = AMOBAGameState::StaticClass();
@@ -34,6 +35,8 @@ void AMOBAGameMode::StartWave()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Start Wave!"))
 	NumberOfSoldierToSpawn = 5;
+
+	SoldierLevel = WaveCnt / 3 + 1;
 
 	GetWorldTimerManager().SetTimer(TimerHandle_SoldierSpawner, this, &AMOBAGameMode::SpawnSoldierTimerElapsed, 1.0f);
 }
@@ -83,6 +86,8 @@ void AMOBAGameMode::PrepareForNextWave()
 	FTimerHandle TimerHandle_NextWaveStart;
 
 	GetWorldTimerManager().SetTimer(TimerHandle_NextWaveStart, this, &AMOBAGameMode::StartWave, TimeBetweenWaves, false);
+
+	WaveCnt++;
 }
 
 
@@ -93,26 +98,21 @@ void AMOBAGameMode::StartPlay()
 	TimeBetweenWaves = 10.0f;
 
 	PrepareForNextWave();
+
+	FTimerHandle WildTimer;
+	FTimerHandle DragonTimer;
+
+	GetWorldTimerManager().SetTimer(WildTimer, this, &AMOBAGameMode::SpawnStartWild, 60.0f, false);
+	GetWorldTimerManager().SetTimer(DragonTimer, this, &AMOBAGameMode::SpawnStartDragon, 1.0f, false);
+
+
 }
 
 void AMOBAGameMode::GameOver(Camp SuccessCamp)
 {
-// 	AMOBAGameState* GS = GetGameState<AMOBAGameState>();
-// 	if (GS)
-// 	{
-// 		GS->MultiCastOnGameOver(SuccessCamp);
-// 	}
-
-	//UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
-
-	APawn* MyPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	if (MyPawn) 
+	AMOBAGameState* GS = GetGameState<AMOBAGameState>();
+	if (GS)
 	{
-		AController* PC = MyPawn->GetController();
-		if (PC) 
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Game Over!"));
-			PC->DisableInput(Cast<APlayerController>(PC));
-		}
+		GS->MultiCastOnGameOver(SuccessCamp);
 	}
 }

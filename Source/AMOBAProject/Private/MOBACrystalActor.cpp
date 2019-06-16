@@ -5,6 +5,7 @@
 #include "Public/MOBATowerCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBACrystalActor::AMOBACrystalActor(FBaseActorProperty ABaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad) :AMOBABaseActor(ABaseProperty, aBaseValue), road(aRoad) {
 	
@@ -58,6 +59,11 @@ void AMOBACrystalActor::assignCrystalValueForAPI(FBaseActorProperty aBasePropert
 
 void AMOBACrystalActor::CrystalDeadHandle()
 {
+	UGameplayStatics::SpawnEmitterAtLocation(this, DestroyFX, GetActorLocation());
+
+	SpawnRuin();
+	Destroy();
+
 	CrystalPointer->GetbCanBeAttacked() = true;
 }
 

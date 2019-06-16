@@ -26,39 +26,70 @@ void AMOBASoldierCharacter::AttackToCharacterOnce(AMOBABaseCharacter* TargetToAt
 {
 	if (this->GetbAbleToAttack())
 	{
-		this->GetbIsAttacking() = true;
-		auto MyAttackStrength = this->GetAttackStrength();
-		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
-		this->GetbAbleToAttack() = false;
-		auto MyTimeHandle = this->AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHandle);
-		auto AttackCDTime = 1.0f / GetAttackSpeed();
-		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+		ServerRPCAttackToCharacterOnce(TargetToAttack);
 	}
+}
+
+void AMOBASoldierCharacter::ServerRPCAttackToCharacterOnce_Implementation(AMOBABaseCharacter* TargetToAttack)
+{
+	this->GetbIsAttacking() = true;
+	auto MyAttackStrength = this->GetAttackStrength();
+	TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+	this->GetbAbleToAttack() = false;
+	auto MyTimeHandle = this->AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHandle);
+	auto AttackCDTime = 1.0f / GetAttackSpeed();
+	GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+}
+
+bool AMOBASoldierCharacter::ServerRPCAttackToCharacterOnce_Validate(AMOBABaseCharacter* TargetToAttack)
+{
+	return true;
 }
 
 void AMOBASoldierCharacter::AttackToActorOnce(AMOBABaseActor * TargetToAttack)
 {
 	if (this->GetbAbleToAttack())
 	{
-		this->GetbIsAttacking() = true;
-		auto MyAttackStrength = this->GetAttackStrength();
-		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
-		this->GetbAbleToAttack() = false;
-		auto MyTimeHandle = this->AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHandle);
-		auto AttackCDTime = 1.0f / GetAttackSpeed();
-		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+		ServerRPCAttackToActorOnce(TargetToAttack);
 	}
 }
 
 
+
+void AMOBASoldierCharacter::ServerRPCAttackToActorOnce_Implementation(AMOBABaseActor* TargetToAttack)
+{
+	this->GetbIsAttacking() = true;
+	auto MyAttackStrength = this->GetAttackStrength();
+	TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+	this->GetbAbleToAttack() = false;
+	auto MyTimeHandle = this->AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHandle);
+	auto AttackCDTime = 1.0f / GetAttackSpeed();
+	GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBASoldierCharacter::ResetTimer, AttackCDTime);
+}
+
+bool AMOBASoldierCharacter::ServerRPCAttackToActorOnce_Validate(AMOBABaseActor* TargetToAttack)
+{
+	return true;
+}
 
 bool AMOBASoldierCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter * EnemyHero)
 {
 	if (EnemyHero->GetbIsAttackingHero())
 		return true;
 	return false;
+}
+
+
+void AMOBASoldierCharacter::SetSoldierLevel(float level)
+{
+	SetLevel(level);
+	
+	for (int i = 1; i < level; i++)
+	{
+		SoldierLevelUp();
+	}
 }
 
 void AMOBASoldierCharacter::ResetTimer()

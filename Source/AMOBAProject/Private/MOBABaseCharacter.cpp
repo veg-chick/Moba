@@ -8,6 +8,11 @@
 #include "Engine/Classes/GameFramework/Character.h"
 #include "Engine/Classes/GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "MOBAPlayerState.h"
+#include "MOBAGameMode.h"
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 AMOBABaseCharacter::AMOBABaseCharacter()
@@ -78,7 +83,7 @@ void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageTyp
 		}
 
 		if (myHp <= 0.0f) {
-			DeadHandle(DamagedActor);
+			//DeadHandle(DamagedActor, DamageCauser);
 		}
 
 	}
@@ -90,6 +95,7 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 
 	if (DamagedActor)
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, AttackedFX, this->GetActorLocation());
 		Attacker = DamageCauser;
 		DamagedActor->GetbIsBeingAttacked() = true;
 
@@ -159,11 +165,20 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 			auto MayBeAHero = Cast<AMOBAHeroCharacter>(DamageCauser);
 			if (MayBeAHero)
 			{
+				AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(MayBeAHero->GetPlayerState());
 				auto MayBeKilledHero = Cast<AMOBAHeroCharacter>(DamagedActor);
-				if (MayBeKilledHero)
+				if (GS)
 				{
-					MayBeAHero->GetKillNumber() += 1.0f;
-					MayBeAHero->AddCombKillNumber();
+					if (MayBeKilledHero)
+					{
+						GS->AddKillNumber();
+						GS->AddCombKillNumber();
+					}
+
+					else
+					{
+						GS->AddSoldierKillNumber();
+					}
 				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
 				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());
@@ -173,22 +188,28 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 					MayBeKilledBuff->KillValueForHero(MayBeAHero);
 				}
 			}
-			DamagedActor->DeadHandle(DamagedActor);
+			DamagedActor->DeadHandle(DamagedActor, DamageCauser);
 		}
 
 		auto RecallingHero = Cast<AMOBAHeroCharacter>(DamagedActor);
 		if (RecallingHero)
 		{
-			RecallingHero->GetbRecallSucceed() = false;
+			RecallingHero->GetbIsRecalling() = false;
 		}
 
 	}
 }
 
-void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
+void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter, AMOBABaseCharacter* DamageCauser)
 {
 	if (DeadCharacter)
 	{
+		AMOBAGameMode* GM = Cast<AMOBAGameMode>(this->GetWorld()->GetAuthGameMode());
+		if (GM)
+		{
+			GM->OnCharacterKilled.Broadcast(DeadCharacter, DamageCauser);
+		}
+
 		DeadCharacter->GetMovementComponent()->StopMovementImmediately();
 
 		this->GetbCanBeAttacked() = false;
@@ -207,6 +228,12 @@ void AMOBABaseCharacter::DeadHandle(AMOBABaseCharacter* DeadCharacter)
 			{
 				MayBeTower->TowerDeadHandle();
 				return;
+			}
+
+			auto MayBeWild = Cast<AMOBAWildCharacter>(DeadCharacter);
+			if (MayBeWild)
+			{
+				MayBeWild->WildDeadHandle();
 			}
 
 			DeadCharacter->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -262,5 +289,12 @@ void AMOBABaseCharacter::assignBaseValueForAPI(FBaseActorProperty aBaseProperty,
 {
 	this->baseProperty = aBaseProperty;
 	this->baseValue = aBaseValue;
+}
+
+void AMOBABaseCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMOBABaseCharacter, baseProperty);
 }
 

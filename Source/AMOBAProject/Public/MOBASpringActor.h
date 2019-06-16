@@ -8,6 +8,7 @@
 #include "MOBASpringActor.generated.h"
 
 class UStaticMeshComponent;
+class USphereComponent;
 
 UCLASS()
 class AMOBAPROJECT_API AMOBASpringActor : public AActor
@@ -25,8 +26,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		Camp springCamp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
-		UStaticMeshComponent* MeshComp;
+	UPROPERTY(VisibleAnywhere, Category = "MyMOBA")
+		USphereComponent* OnOverlapComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* Heal;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* Lighting;
 
 public:
 	// Called every frame
@@ -38,15 +45,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		Camp& GetCamp() { return springCamp; };
 
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
-
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void FriendHandle(AMOBABaseCharacter* who);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCFriendHandle(AMOBABaseCharacter* who);
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void EnemyHandle(AMOBABaseCharacter* who);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void OverlapHandle(AMOBABaseCharacter* who);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCEnemyHandle(AMOBABaseCharacter* who);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void PlayRedemptionEffects(FVector Location);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void PlayExecutionEffects(FVector Location);
+
+	UFUNCTION()
+		void OverlapHandle(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+protected:
+	float nowtime;
 };

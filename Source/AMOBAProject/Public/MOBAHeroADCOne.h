@@ -17,7 +17,6 @@ class AMOBAPROJECT_API AMOBAHeroADCOne : public AMOBAHeroCharacter
 public:
 	AMOBAHeroADCOne();
 
-protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ReleaseQ(AMOBAHeroCharacter* Target,float MpCost);
 
@@ -48,5 +47,4 @@ protected:
 
 	float MyAttackStrengthAddValue;
 
-	virtual void Tick(float DeltaSeconds) override;
 };

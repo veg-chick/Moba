@@ -4,10 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "MOBABaseCharacter.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 #include "MOBAHeroCharacter.generated.h"
 
 struct FTimerHandle;
 struct FVector;
+
+class AMOBAHeroADOne;
+class AMOBAHeroADCOne;
+class AMOBAHeroAPOne;
+class AMOBAHeroTankOne;
+class AMOBAHeroAssistOne;
+class AMOBAHeroAssassinOne;
 
 UENUM(BlueprintType)
 enum class State : uint8
@@ -44,7 +52,10 @@ struct FHeroProperty {
 
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+	UPROPERTY(BlueprintReadOnly, Category = "HeroCharacterProperty")
+		float deadtime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float resetTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
@@ -84,7 +95,7 @@ struct FHeroGrowth {
 
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
 		float hpGrowth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterGrowth")
 		float mpGrowth;
@@ -116,12 +127,12 @@ struct FHeroPack
 {
 	GENERATED_BODY()
 
-		Equip PackOne = Equip::NullEquip;
-	Equip PackTwo = Equip::NullEquip;
-	Equip PackThree = Equip::NullEquip;
-	Equip PackFour = Equip::NullEquip;
-	Equip PackFive = Equip::NullEquip;
-	Equip PackSix = Equip::NullEquip;
+	float PackOne = 0.0f;
+	float PackTwo = 0.0f;
+	float PackThree = 0.0f;
+	float PackFour = 0.0f;
+	float PackFive = 0.0f;
+	float PackSix = 0.0f;
 };
 
 USTRUCT(BlueprintType)
@@ -129,7 +140,7 @@ struct FTimerHandles {
 
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle SkillQTimer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterTimer")
 		FTimerHandle SkillWTimer;
@@ -196,18 +207,6 @@ struct FSkillProperty
 		bool bCanReleaseSkills;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float SkillPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float QPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float WPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float EPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float CDReduction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
@@ -221,6 +220,18 @@ struct FSkillProperty
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		bool bIsReleasingE;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float SkillPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float QPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float WPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
+		float EPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float QCost;
@@ -240,23 +251,11 @@ struct FSkillProperty
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
 		float ERange;
 
+	float RemainingQCD;
+	float RemainingWCD;
+	float RemainingECD;
+
 };
-
-USTRUCT(BlueprintType)
-struct FScoreBoard
-{
-	GENERATED_BODY()
-
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float KillNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float DeathNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float CombKillNumber = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HeroCharacterProperty")
-		float SoldierKillNumber = 0.0f;
-};
-
 
 /**
  *
@@ -271,16 +270,16 @@ public:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroProperty heroProperty;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroGrowth heroGrowth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
-		FTimerHandles timeHandles;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+		FTimerHandles TimeHandles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FHeroPack HeroPack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
@@ -289,14 +288,36 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		bool bIsAttackingHero;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		FVector birthLocation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
-		FScoreBoard ScoreBoard;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* QFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* WFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* EFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* RecallFX;
+
+	bool bHaveBlueBuff;
+	bool bHaveRedBuff;
+	bool bHaveDragonBuff;
+
+	FTimerManager QTimerManager;
+	FTimerManager WTimerManager;
+	FTimerManager ETimerManager;
+
+	FTimerHandle DeadTimer = TimeHandles.DeadTimer;
+	FTimerHandle RedBuffTimer;
+	FTimerHandle BlueBuffTimer;
+	FTimerHandle DragonBuffTimer;
 
 protected:
 
@@ -320,32 +341,35 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void levelUp();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void reCall();
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCRecall();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void reCallHandle();
+		void RecallHandle();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void HpRecoveryHandle();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCHpRecovery();
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void MpRecoveryHandle();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ChangeState(State TargetState, bool IsCanceling = false);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCMpRecovery();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCChangeState(State TargetState, bool IsCanceling = false);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ExceptionState(State TargetState, float Time);
+		void ResetStunState() { ServerRPCChangeState(State::Stun, true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetStunState() { ChangeState(State::Stun, true); }
+		void ResetSilenceState() { ServerRPCChangeState(State::Silence, true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetSilenceState() { ChangeState(State::Silence, true); }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetImprisonState() { ChangeState(State::Imprison, true); }
+		void ResetImprisonState() { ServerRPCChangeState(State::Imprison, true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void DeadHeroHandle() { this->SetActorLocation(birthLocation); }
@@ -353,11 +377,29 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetSkills(float Target);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void BuyEquipment(Equip BuyingEquip);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCBuyEquipment(float BuyingEquip);
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void SellEquipment(float PackageNumber);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCSellEquipment(float PackageNumber);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCStopMove();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerMoveToLocation(const FVector DestLocation, float Speed);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerAttackToActor(AMOBABaseActor* BeAttackedActor);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
+
+	void ResetRedBuff();
+
+	void ResetBlueBuff();
+
+	void ResetDragonBuff();
 
 public:
 
@@ -366,9 +408,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void resetHero();
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void AddCombKillNumber();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AddExperienceToHero(float ExperienceValue);
@@ -383,22 +422,37 @@ public:
 		void ChangeReleasingSkill(float Target);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingQ() { this->GetbIsReleasingQ() = false; }
+		void ExceptionState(State TargetState, float Time);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingW() { this->GetbIsReleasingW() = false; }
+		void ResetReleasingQ() { this->GetbIsReleasingQ() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetReleasingE() { this->GetbIsReleasingE() = false; }
+		void ResetReleasingW() { this->GetbIsReleasingW() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerMoveToLocation(const FVector DestLocation, float Speed);
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void ResetReleasingE() { this->GetbIsReleasingE() = false; this->SetbCanMove(true); this->SetbAbleToAttack(true); }
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerAttackToActor(AMOBABaseActor* BeAttackedActor);
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseQ(AMOBAHeroCharacter* Target = nullptr);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseW(AMOBAHeroCharacter* Target = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void HeroReleaseE(AMOBAHeroCharacter* Target = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void StopMove();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void Recall();
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void BuyEquipment(float BuyingEquip);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void SellEquipment(float PackageNumber);
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
@@ -417,6 +471,7 @@ public:
 
 	void AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter);
 
+	void AddBuff(float BuffType, float Time);
 
 protected:
 	/** Top down camera */
@@ -432,7 +487,8 @@ protected:
 		class UDecalComponent* CursorToWorld;
 
 public:
-
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetDeadTime() { return heroProperty.deadtime; }
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetHpGrowth() { return heroGrowth.hpGrowth; }
 
@@ -494,7 +550,7 @@ public:
 		float& GetGold() { return heroProperty.Gold; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		bool& GetbRecallSucceed() { return heroProperty.bRecallSucceed; }
+		bool& GetbIsRecalling() { return heroProperty.bRecallSucceed; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbCanQ() { return SkillProperty.bCanQ; }
@@ -537,18 +593,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool GetCanAddE() { return (SkillProperty.SkillPoint) && (baseProperty.level / 5.0f) > (SkillProperty.EPoint + 1.0f) && (SkillProperty.EPoint < 5.0f); }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetKillNumber() { return ScoreBoard.KillNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetDeathNumber() { return ScoreBoard.DeathNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetCombKillNumber() { return ScoreBoard.CombKillNumber; }
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		float& GetSoldierKillNumber() { return ScoreBoard.SoldierKillNumber; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbIsAttackingHero() { return bIsAttackingHero; }
@@ -610,4 +654,39 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AddE();
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetRemainingQCD() { return SkillProperty.RemainingQCD; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetRemainingWCD() { return SkillProperty.RemainingWCD; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetRemainingECD() { return SkillProperty.RemainingWCD; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetbHaveBlueBuff() { return bHaveBlueBuff; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetbHaveRedBuff() { return bHaveRedBuff; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetbHaveDragonBuff() { return bHaveDragonBuff; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageOne() { return HeroPack.PackOne; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageTwo() { return HeroPack.PackTwo; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageThree() { return HeroPack.PackThree; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageFour() { return HeroPack.PackFour; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageFive() { return HeroPack.PackFive; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageSix() { return HeroPack.PackSix; }
 };

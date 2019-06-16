@@ -16,7 +16,6 @@ enum class AWildType : uint8
 	BlueBuff UMETA(DisplayName = "BlueBuff"),
 	RedBuff UMETA(DisplayName = "RedBuff"),
 	Nash UMETA(DisplayName = "Nash"),
-	Other UMETA(DisplayName = "Other")
 };
 
 
@@ -35,6 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCAttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		AMOBABaseCharacter* GetAttacker();
 
@@ -43,6 +45,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void KillValueForHero(AMOBAHeroCharacter* AHero);
+
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
@@ -60,9 +64,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandle AttackTimer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
-		AMOBAHeroCharacter* BuffedHero;
-
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void QuickRecovery();
 
@@ -72,13 +73,7 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void assignWildValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue);
 
-	FVector birthLocation;
-
 	AWildType WildType;
-
-	
-
-	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void ResetTimer();
@@ -89,11 +84,13 @@ protected:
 		void WildLevelUp();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetBlueBuffValue();
+		void SetWildLevel(float level);
 
+public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetRedBuffValue();
+		void WildDeadHandle();
 
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetNashBuffValue();
+	UFUNCTION(BlueprintImplementableEvent, Category = "MyMOBA")
+		void WildResetHandle();
+
 };

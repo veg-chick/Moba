@@ -8,6 +8,8 @@
 
 enum class Camp : uint8;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActorKilled, AMOBABaseActor*, VictimActor, AMOBABaseCharacter*, KillerCharacter);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCharacterKilled, AMOBABaseCharacter*, VictimCharacter, AMOBABaseCharacter*, KillerCharacter);
 
 UCLASS()
 class AMOBAPROJECT_API AMOBAGameMode : public AGameMode
@@ -17,6 +19,11 @@ class AMOBAPROJECT_API AMOBAGameMode : public AGameMode
 protected:
 
 	FTimerHandle TimerHandle_SoldierSpawner;
+
+	int32 WaveCnt;
+
+	UPROPERTY(BlueprintReadOnly, Category = "GameMode")
+		int32 SoldierLevel;
 
 	//The Number of Soldiers To Spawn In Current Wave
 	UPROPERTY(BlueprintReadOnly, Category = "GameMode")
@@ -30,6 +37,12 @@ protected:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
 		void SpawnNewSoldier(int32 SolderType);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
+		void SpawnStartWild();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
+		void SpawnStartDragon();
 
 	void SpawnSoldierTimerElapsed();
 
@@ -50,4 +63,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "GameMode")
 		void GameOver(Camp SuccessCamp);
+
+	UPROPERTY(BlueprintAssignable, Category = "GameMode")
+		FOnActorKilled OnActorKilled;
+
+	UPROPERTY(BlueprintAssignable, Category = "GameMode")
+		FOnCharacterKilled OnCharacterKilled;
 };

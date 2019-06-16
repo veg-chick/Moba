@@ -126,6 +126,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FBaseActorProperty baseProperty;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* BeAttackedFX;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		bool bIsBroken;
 
@@ -133,7 +136,7 @@ protected:
 		FBaseActorValue baseValue;
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void DeadHandle(AMOBABaseActor* DeadActor);
+		void DeadHandle(AMOBABaseActor* DeadActor, AMOBABaseCharacter* DamageCauser);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser);

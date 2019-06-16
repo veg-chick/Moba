@@ -2,6 +2,12 @@
 
 
 #include "Public/MOBAHeroCharacter.h"
+#include "Public/MOBAHeroADCOne.h"
+#include "Public/MOBAHeroADOne.h"
+#include "Public/MOBAHeroAPOne.h"
+#include "Public/MOBAHeroAssassinOne.h"
+#include "Public/MOBAHeroTankOne.h"
+#include "Public/MOBAHeroAssistOne.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -16,6 +22,10 @@
 #include "Engine/World.h"
 #include "MOBAPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Net/UnrealNetwork.h"
+#include "MOBAPlayerState.h"
+#include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroCharacter::AMOBAHeroCharacter()
 {
@@ -63,11 +73,19 @@ AMOBAHeroCharacter::AMOBAHeroCharacter()
 
 	this->SetValue();
 
+	SetReplicates(true);
+
 }
 
 void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 {
+
 	Super::Tick(DeltaSeconds);
+
+	if (HeroState == State::Dead)
+	{
+		heroProperty.deadtime -= DeltaSeconds;
+	}
 
 	if (CursorToWorld != nullptr)
 	{
@@ -82,11 +100,41 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 		}
 	}
 
+	if (GetbCanReleaseSkills())
+	{
+		if ((GetQPoint() != 0.0f) && (GetMp() >= GetQCost()))
+			GetbMayQ() = true;
+		else GetbMayQ() = false;
+		if ((GetWPoint() != 0.0f) && (GetMp() >= GetWCost()))
+			GetbMayW() = true;
+		else GetbMayW() = false;
+		if ((GetEPoint() != 0.0f) && (GetMp() >= GetECost()))
+			GetbMayE() = true;
+		else GetbMayE() = false;
+	}
+
+	if (QTimerManager.IsTimerActive(TimeHandles.SkillQTimer))
+	{
+		SkillProperty.RemainingQCD = QTimerManager.GetTimerRemaining(TimeHandles.SkillQTimer);
+	}
+	if (WTimerManager.IsTimerActive(TimeHandles.SkillWTimer))
+	{
+		SkillProperty.RemainingWCD = WTimerManager.GetTimerRemaining(TimeHandles.SkillWTimer);
+	}
+	if (ETimerManager.IsTimerActive(TimeHandles.SkillETimer))
+	{
+		SkillProperty.RemainingECD = ETimerManager.GetTimerRemaining(TimeHandles.SkillETimer);
+	}
+
+	if (GetbIsRecalling())
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, RecallFX, this->GetActorLocation());
+	}
 }
 
 void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)
 {
-	this->GetbRecallSucceed() = false;
+	this->GetbIsRecalling() = false;
 	float const Distance = FVector::Dist(DestLocation, GetActorLocation());
 
 	// We need to issue move command only if far enough in order for walk animation to play correctly
@@ -139,29 +187,33 @@ void AMOBAHeroCharacter::AttackToAActor(AMOBABaseActor* BeAttackedActor)
 	if (Distance > this->GetAttackRange() || !this->GetbAbleToAttack()) return;
 	else
 	{
-		this->GetbIsAttacking() = true;
-		this->GetbRecallSucceed() = false;
-		this->GetbAbleToAttack() = false;
 		ServerAttackToActor(BeAttackedActor);
-		float AttackCDTime = 1.0f / this->GetAttackSpeed();
-		auto MyTimeHanlde = timeHandles.AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
-		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 	}
 
 }
 
 void AMOBAHeroCharacter::ServerAttackToActor_Implementation(AMOBABaseActor* BeAttackedActor)
 {
+	StopMove();
+	this->GetbIsAttacking() = true;
+	this->GetbIsRecalling() = false;
+	this->GetbAbleToAttack() = false;
+	this->GetbCanMove() = false;
+	this->GetbCanReleaseSkills() = false;
 	FVector Direction = BeAttackedActor->GetActorLocation() - this->GetActorLocation();
 	Direction.Normalize();
 	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	NewRotation.Pitch = 0.0f;
 	NewRotation.Roll = 0.0f;
 	SetActorRotation(NewRotation);
+	float AttackCDTime = 1.0f / this->GetAttackSpeed();
+	auto MyTimeHanlde = TimeHandles.AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 
 	auto MyAttackStrength = this->GetAttackStrength();
 	BeAttackedActor->ReceiveDamageFromCharacter(BeAttackedActor, DamageType::physical, MyAttackStrength, this);
+
 }
 
 bool AMOBAHeroCharacter::ServerAttackToActor_Validate(AMOBABaseActor* BeAttackedActor)
@@ -176,10 +228,6 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	if (Distance > this->GetAttackRange() || !this->GetbAbleToAttack()) return;
 	else
 	{
-		this->GetbIsAttacking() = true;
-		this->GetbRecallSucceed() = false;
-		this->GetbAbleToAttack() = false;
-
 		auto MayBeAttackingHero = Cast<AMOBAHeroCharacter>(BeAttackedCharacter);
 		if (MayBeAttackingHero)
 		{
@@ -187,23 +235,70 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 		}
 
 		ServerAttackToCharacter(BeAttackedCharacter);
+	}
+}
 
-		float AttackCDTime = 1.0f / this->GetAttackSpeed();
-		auto MyTimeHanlde = timeHandles.AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHanlde);
-		GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
+void AMOBAHeroCharacter::AddBuff(float BuffType, float Time)
+{
+	switch ((int)BuffType)
+	{
+	case 1:
+		if (bHaveBlueBuff)
+		{
+			GetWorldTimerManager().ClearTimer(BlueBuffTimer);
+			GetWorldTimerManager().SetTimer(BlueBuffTimer, this, &AMOBAHeroCharacter::ResetBlueBuff, Time);
+		}
+		else
+		{
+			bHaveBlueBuff = true;
+			GetWorldTimerManager().SetTimer(BlueBuffTimer, this, &AMOBAHeroCharacter::ResetBlueBuff, Time);
+		}
+		break;
+	case 2:
+		if (bHaveRedBuff)
+		{
+			GetWorldTimerManager().ClearTimer(RedBuffTimer);
+			GetWorldTimerManager().SetTimer(RedBuffTimer, this, &AMOBAHeroCharacter::ResetRedBuff, Time);
+		}
+		else
+		{
+			bHaveRedBuff = true;
+			GetWorldTimerManager().SetTimer(RedBuffTimer, this, &AMOBAHeroCharacter::ResetRedBuff, Time);
+		}
+		break;
+	case 3:
+		if (bHaveDragonBuff)
+		{
+			GetWorldTimerManager().ClearTimer(DragonBuffTimer);
+			GetWorldTimerManager().SetTimer(DragonBuffTimer, this, &AMOBAHeroCharacter::ResetDragonBuff, Time);
+		}
+		else
+		{
+			bHaveDragonBuff = true;
+			GetWorldTimerManager().SetTimer(DragonBuffTimer, this, &AMOBAHeroCharacter::ResetDragonBuff, Time);
+		}
+		break;
 	}
 }
 
 void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharacter* BeAttackedCharacter)
 {
-
+	StopMove();
+	this->GetbIsAttacking() = true;
+	this->GetbIsRecalling() = false;
+	this->GetbAbleToAttack() = false;
+	this->GetbCanMove() = false;
+	this->GetbCanReleaseSkills() = false;
 	FVector Direction = BeAttackedCharacter->GetActorLocation() - this->GetActorLocation();
 	Direction.Normalize();
 	FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	NewRotation.Pitch = 0.0f;
 	NewRotation.Roll = 0.0f;
 	SetActorRotation(NewRotation);
+	float AttackCDTime = 1.0f / this->GetAttackSpeed();
+	auto MyTimeHanlde = TimeHandles.AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
+	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetAttackTimer, AttackCDTime);
 
 	auto MyAttackStrength = this->GetAttackStrength();
 	//Strike
@@ -232,6 +327,39 @@ void AMOBAHeroCharacter::AddQ()
 	{
 		this->SkillProperty.QPoint += 1.0f;
 		this->SkillProperty.SkillPoint -= 1.0f;
+
+		if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+		{
+			GetQCost() = GetQPoint() * 10.0f + 50.0f;
+			GetCDofQ() = 10.5f - GetQPoint() * 0.5f;
+
+		}
+		else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+		{
+			GetQCost() = GetQPoint() * 10.0f + 30.0f;
+			GetCDofQ() = 15.5f - GetQPoint() * 0.5f;
+
+		}
+		else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+		{
+			GetQCost() = GetQPoint() * 5.0f + 10.0f;
+			GetCDofQ() = 3.5f;
+
+		}
+		else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+		{
+			GetQCost() = GetQPoint() * 20.0f + 10.0f;
+			GetCDofQ() = 7.0f;
+		}
+		else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+		{
+			GetQCost() = GetQPoint() * 30.0f + 50.0f;
+			GetCDofQ() = 21.5f - this->GetQPoint() * 0.5f;
+		}
+		else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+		{
+			GetCDofQ() = 12.0f - this->GetQPoint();
+		}
 	}
 }
 
@@ -242,6 +370,37 @@ void AMOBAHeroCharacter::AddW()
 		this->SkillProperty.WPoint += 1.0f;
 		this->SkillProperty.SkillPoint -= 1.0f;
 	}
+
+	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+	{
+		GetWCost() = GetWPoint() * 20.0f + 70.0f;
+		GetCDofW() = 18.0f - GetWPoint() * 2.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+	{
+		GetWCost() = GetWPoint() * 10.0f + 70.0f;
+		GetCDofW() = 18.5f - GetWPoint() * 1.5f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+	{
+		GetWCost() = GetWPoint() * 10.0f + 70.0f;
+		GetCDofW() = 100.0f - GetWPoint() * 5.0f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+	{
+		GetWCost() = GetWPoint() * 10.0f + 50.0f;
+		GetCDofW() = 21.0f - GetWPoint();
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+	{
+		GetWCost() = 110.0f - GetWPoint() * 10.0f;
+		GetCDofW() = 18.5f - this->GetWPoint() * 1.5f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+	{
+		GetCDofW() = 21.0f - this->GetWPoint();
+	}
 }
 
 void AMOBAHeroCharacter::AddE()
@@ -251,35 +410,64 @@ void AMOBAHeroCharacter::AddE()
 		this->SkillProperty.EPoint += 1.0f;
 		this->SkillProperty.SkillPoint -= 1.0f;
 	}
+
+	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+	{
+		GetECost() = GetWPoint() * 10.0f + 90.0f;
+		GetCDofE() = 90.0f - (this->GetEPoint() - 1.0f) * 15.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+	{
+		GetECost() = GetEPoint() * 20.0f + 150.0f;
+		GetCDofE() = 200.0f - this->GetEPoint() * 20.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+	{
+		GetECost() = GetEPoint() * 10.0f + 120.0f;
+		GetCDofE() = 130.0f - GetEPoint() * 10.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+	{
+		GetECost() = GetEPoint() * 10.0f + 70.0f;
+		GetCDofE() = 10.0f;
+
+	}
+	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+	{
+		GetECost() = GetWPoint() * 10.0f + 70.0f;
+		GetCDofE() = 21.5f - this->GetEPoint() * 1.5f;
+	}
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+	{
+		GetCDofE() = 130.0f - this->GetEPoint() * 10.0f;
+	}
 }
 
 void AMOBAHeroCharacter::resetHero()
 {
-	this->GetGoldValue() = 300.0f;
-	this->GetCombKillNumber() = 0.0f;
+	AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(this->GetPlayerState());
+	if (GS)
+	{
+		GS->ClearCombKillNumber();
+		GS->AddDeathNumber();
+	}
 
-	auto DeadTimer = timeHandles.DeadTimer;
 	GetWorldTimerManager().ClearTimer(DeadTimer);
 	GetWorldTimerManager().SetTimer(DeadTimer, this, &AMOBAHeroCharacter::DeadHeroHandle, 3.0f);
 
 
-	this->ChangeState(State::Dead);
+	this->ServerRPCChangeState(State::Dead);
 
 	float resetTime = this->heroProperty.resetTime;
-	auto MyTimeHanlde = timeHandles.ResetTimer;
+	auto MyTimeHanlde = TimeHandles.ResetTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::ResetHeroHandle, resetTime);
 
 }
 
-void AMOBAHeroCharacter::AddCombKillNumber()
-{
-	this->GetCombKillNumber() += 1.0f;
-	if (GetCombKillNumber() <= 8.0f)
-	{
-		this->GetGoldValue() += 50.0f;
-	}
-}
 
 void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 {
@@ -288,7 +476,7 @@ void AMOBAHeroCharacter::AddExperienceToHero(float ExperienceValue)
 	auto MyLevel = this->GetLevel();
 	auto MaxLevel = this->GetMaxLevel();
 
-	if ((MyExperienceJudge > MyLevel) && (MyLevel < MaxLevel))
+	if ((MyExperienceJudge >= MyLevel) && (MyLevel < MaxLevel))
 	{
 		levelUp();
 	}
@@ -299,6 +487,8 @@ void AMOBAHeroCharacter::ResetAttackTimer()
 	this->GetbAbleToAttack() = true;
 	this->GetbIsAttackingHero() = false;
 	this->GetbIsAttacking() = false;
+	this->GetbCanMove() = true;
+	this->GetbCanReleaseSkills() = true;
 }
 
 void AMOBAHeroCharacter::AddCDReduction(float CD)
@@ -311,6 +501,9 @@ void AMOBAHeroCharacter::ChangeReleasingSkill(float Target)
 {
 	if (Target == 1.0f)
 	{
+		StopMove();
+		SetbAbleToAttack(false);
+		SetbCanMove(false);
 		GetbIsReleasingQ() = true;
 		FTimerHandle MyTImer;
 		GetWorldTimerManager().ClearTimer(MyTImer);
@@ -318,14 +511,20 @@ void AMOBAHeroCharacter::ChangeReleasingSkill(float Target)
 	}
 	if (Target == 2.0f)
 	{
-		GetbIsReleasingQ() = true;
+		StopMove();
+		SetbAbleToAttack(false);
+		SetbCanMove(false);
+		GetbIsReleasingW() = true;
 		FTimerHandle MyTImer;
 		GetWorldTimerManager().ClearTimer(MyTImer);
 		GetWorldTimerManager().SetTimer(MyTImer, this, &AMOBAHeroCharacter::ResetReleasingW, 1.0f);
 	}
 	if (Target == 3.0f)
 	{
-		GetbIsReleasingQ() = true;
+		StopMove();
+		SetbAbleToAttack(false);
+		SetbCanMove(false);
+		GetbIsReleasingE() = true;
 		FTimerHandle MyTImer;
 		GetWorldTimerManager().ClearTimer(MyTImer);
 		GetWorldTimerManager().SetTimer(MyTImer, this, &AMOBAHeroCharacter::ResetReleasingE, 1.0f);
@@ -363,6 +562,7 @@ void AMOBAHeroCharacter::SetValue()
 	baseProperty.armor = 50.0f;
 	baseProperty.magicResist = 30.0f;
 	baseProperty.level = 1.0f;
+	SkillProperty.SkillPoint = 1.0f;
 	baseProperty.maxLevel = 18.0f;
 	baseProperty.maxAttackSpeed = 2.5f;
 
@@ -387,7 +587,7 @@ void AMOBAHeroCharacter::SetValue()
 	SkillProperty.CDReduction = 0.0f;
 	SkillProperty.MaxCDReduction = 0.4f;
 
-	this->ChangeState(State::Normal);
+	this->ServerRPCChangeState(State::Normal);
 
 	SkillProperty.bCanReleaseSkills = true;
 	heroProperty.bIsInjured = false;
@@ -395,6 +595,7 @@ void AMOBAHeroCharacter::SetValue()
 	baseProperty.bCanMove = true;
 	baseProperty.bAbleToAttack = true;
 	baseProperty.bHaveMp = true;
+	heroProperty.bRecallSucceed = false;
 }
 
 void AMOBAHeroCharacter::ResetQSkill()
@@ -417,7 +618,7 @@ void AMOBAHeroCharacter::ResetHeroHandle()
 
 	this->baseProperty.hp = this->baseProperty.maxHp;
 	this->baseProperty.mp = this->baseProperty.maxMp;
-	this->ChangeState(State::Dead, true);
+	this->ServerRPCChangeState(State::Dead, true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 }
@@ -444,60 +645,77 @@ void AMOBAHeroCharacter::levelUp()
 
 	heroPro.resetTime += myGro.resetTimeGrowth;
 
-	if(myPro.level<=13.0f)
-	SkillProperty.SkillPoint += 1.0f;
+	if (myPro.level <= 13.0f)
+		SkillProperty.SkillPoint += 1.0f;
 	myPro.level += 1.0f;
 }
 
-void AMOBAHeroCharacter::reCall()
+void AMOBAHeroCharacter::Recall()
+{
+	ServerRPCRecall();
+}
+
+void AMOBAHeroCharacter::ServerRPCRecall_Implementation()
 {
 	GetCharacterMovement()->StopMovementImmediately();
 
-	auto& myTimeHandle = this->timeHandles.ResetTimer;
+	auto& myTimeHandle = this->TimeHandles.ResetTimer;
 
 	GetWorldTimerManager().ClearTimer(myTimeHandle);
 
-	this->GetbRecallSucceed() = true;
+	this->GetbIsRecalling() = false;
 
-	GetWorldTimerManager().SetTimer(myTimeHandle, this, &AMOBAHeroCharacter::reCallHandle, 8.0f);
-
+	GetWorldTimerManager().SetTimer(myTimeHandle, this, &AMOBAHeroCharacter::RecallHandle, 8.0f);
 }
 
-void AMOBAHeroCharacter::reCallHandle()
+bool AMOBAHeroCharacter::ServerRPCRecall_Validate()
 {
-	if (this->GetbRecallSucceed())
+	return true;
+}
+
+void AMOBAHeroCharacter::RecallHandle()
+{
+	if (this->GetbIsRecalling())
 	{
 		SetActorLocation(birthLocation);
+		this->GetbIsRecalling() = false;
 	}
 }
 
 void AMOBAHeroCharacter::HpRecoveryHandle()
 {
-	auto MyTimeHanlde = timeHandles.HpRecoveryTimer;
+	auto MyTimeHanlde = TimeHandles.HpRecoveryTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::HpRecoveryHandle, 1.0f);
 
+	ServerRPCHpRecovery();
+}
+
+void AMOBAHeroCharacter::ServerRPCHpRecovery_Implementation()
+{
 	if (this->GetHp() != this->GetMaxHp() && this->GetHp() > 0.0f)
 	{
 		GetHp() = FMath::Clamp(this->GetHp() + this->GetHpRecovery(), 0.0f, this->GetMaxHp());
 	}
+
+	this->GetGold() += 1.0f;
+}
+
+bool AMOBAHeroCharacter::ServerRPCHpRecovery_Validate()
+{
+	return true;
 }
 
 void AMOBAHeroCharacter::MpRecoveryHandle()
 {
-
-	auto MyTimeHanlde = timeHandles.MpRecoveryTimer;
+	auto MyTimeHanlde = TimeHandles.MpRecoveryTimer;
 	GetWorldTimerManager().ClearTimer(MyTimeHanlde);
 	GetWorldTimerManager().SetTimer(MyTimeHanlde, this, &AMOBAHeroCharacter::MpRecoveryHandle, 1.0f);
 
-
-	if (this->GetMp() != this->GetMaxMp() && this->GetMp() > 0.0f)
-	{
-		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
-	}
+	ServerRPCMpRecovery();
 }
 
-void AMOBAHeroCharacter::ChangeState(State TargetState, bool IsCanceling)
+void AMOBAHeroCharacter::ServerRPCChangeState_Implementation(State TargetState, bool IsCanceling /*= false*/)
 {
 	if (!IsCanceling)
 	{
@@ -513,24 +731,24 @@ void AMOBAHeroCharacter::ChangeState(State TargetState, bool IsCanceling)
 
 	if (TargetState == State::Imprison)
 	{
-		this->GetbRecallSucceed() = false;
+		this->GetbIsRecalling() = false;
 		this->GetbCanMove() = (false ^ IsCanceling);
 	}
 	if (TargetState == State::Silence)
 	{
-		this->GetbRecallSucceed() = false;
+		this->GetbIsRecalling() = false;
 		this->GetbCanReleaseSkills() = (false ^ IsCanceling);
 	}
 	if (TargetState == State::Stun)
 	{
-		this->GetbRecallSucceed() = false;
+		this->GetbIsRecalling() = false;
 		this->GetbAbleToAttack() = (false ^ IsCanceling);
 		this->GetbCanMove() = (false ^ IsCanceling);
 		this->GetbCanReleaseSkills() = (false ^ IsCanceling);
 	}
 	if (TargetState == State::Dead)
 	{
-		this->GetbRecallSucceed() = false;
+		this->GetbIsRecalling() = false;
 		this->GetbAbleToAttack() = (false ^ IsCanceling);
 		this->GetbCanMove() = (false ^ IsCanceling);
 		this->GetbCanReleaseSkills() = (false ^ IsCanceling);
@@ -538,137 +756,216 @@ void AMOBAHeroCharacter::ChangeState(State TargetState, bool IsCanceling)
 	}
 }
 
+bool AMOBAHeroCharacter::ServerRPCChangeState_Validate(State TargetState, bool IsCanceling /*= false*/)
+{
+	return true;
+}
+
+void AMOBAHeroCharacter::ServerRPCMpRecovery_Implementation()
+{
+	if (this->GetMp() != this->GetMaxMp() && this->GetMp() > 0.0f)
+	{
+		GetMp() = FMath::Clamp(this->GetMp() + this->GetMpRecovery(), 0.0f, this->GetMaxMp());
+	}
+}
+
+bool AMOBAHeroCharacter::ServerRPCMpRecovery_Validate()
+{
+	return true;
+}
+
+
 void AMOBAHeroCharacter::ExceptionState(State TargetState, float Time)
 {
-	ChangeState(TargetState);
+	ServerRPCChangeState(TargetState);
 	if (TargetState == State::Stun)
 	{
-		FTimerHandle& MyTimeHandle = timeHandles.StunTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.StunTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetStunState, Time);
 	}
 	if (TargetState == State::Silence)
 	{
-		FTimerHandle& MyTimeHandle = timeHandles.SilenceTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SilenceTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetSilenceState, Time);
 	}
 	if (TargetState == State::Imprison)
 	{
-		FTimerHandle& MyTimeHandle = timeHandles.ImprisonTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.ImprisonTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetImprisonState, Time);
 	}
 
 }
 
+void AMOBAHeroCharacter::HeroReleaseQ(AMOBAHeroCharacter* Target)
+{
+	StopMove();
+	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+		MyHero->ReleaseQ(Target, MyHero->GetQCost());
+	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+		MyHero->ReleaseQ(Target, MyHero->GetQCost());
+	else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+		MyHero->ReleaseQ(Target, MyHero->GetQCost());
+	else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+		MyHero->ReleaseQ(Target, MyHero->GetQCost());
+	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+		MyHero->ReleaseQ(Target, MyHero->GetQCost());
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+		MyHero->ReleaseQ(Target, MyHero->GetQCost());
+
+}
+
+void AMOBAHeroCharacter::HeroReleaseW(AMOBAHeroCharacter* Target)
+{
+	StopMove();
+	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+		MyHero->ReleaseW(MyHero->GetWCost());
+	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+		MyHero->ReleaseW(MyHero->GetWCost());
+	else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+		MyHero->ReleaseW(MyHero->GetWCost());
+	else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+		MyHero->ReleaseW(MyHero->GetWCost());
+	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+		MyHero->ReleaseW(Target, MyHero->GetWCost());
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+		MyHero->ReleaseW(MyHero->GetWCost());
+}
+
+void AMOBAHeroCharacter::HeroReleaseE(AMOBAHeroCharacter* Target)
+{
+	StopMove();
+	if (auto MyHero = Cast<AMOBAHeroADCOne>(this))
+		MyHero->ReleaseE(MyHero->GetECost());
+	else if (auto MyHero = Cast<AMOBAHeroADOne>(this))
+		MyHero->ReleaseE(MyHero->GetECost());
+	else if (auto MyHero = Cast<AMOBAHeroAPOne>(this))
+		MyHero->ReleaseE(Target, MyHero->GetECost());
+	else if (auto MyHero = Cast<AMOBAHeroAssassinOne>(this))
+		MyHero->ReleaseE(Target, MyHero->GetECost());
+	else if (auto MyHero = Cast<AMOBAHeroAssistOne>(this))
+		MyHero->ReleaseE(Target, MyHero->GetECost());
+	else if (auto MyHero = Cast<AMOBAHeroTankOne>(this))
+		MyHero->ReleaseE(MyHero->GetECost());
+}
+
 void AMOBAHeroCharacter::ResetSkills(float Target)
 {
 	float MyCDTime;
-	if(Target==1.0f)
+	if (Target == 1.0f)
 	{
+		this->SkillProperty.bCanQ = false;
 		MyCDTime = SkillProperty.CDofQ * SkillProperty.CDReduction;
-		FTimerHandle& MyTimeHandle = timeHandles.SkillQTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SkillQTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetQSkill, MyCDTime);
 	}
 	if (Target == 2.0f)
 	{
+		this->SkillProperty.bCanW = false;
 		MyCDTime = SkillProperty.CDofW * SkillProperty.CDReduction;
-		FTimerHandle& MyTimeHandle = timeHandles.SkillWTimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SkillWTimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetWSkill, MyCDTime);
 	}
 	if (Target == 3.0f)
 	{
+		this->SkillProperty.bCanE = false;
 		MyCDTime = SkillProperty.CDofE * SkillProperty.CDReduction;
-		FTimerHandle& MyTimeHandle = timeHandles.SkillETimer;
+		FTimerHandle& MyTimeHandle = TimeHandles.SkillETimer;
 		GetWorldTimerManager().ClearTimer(MyTimeHandle);
 		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBAHeroCharacter::ResetESkill, MyCDTime);
 	}
 }
 
-void AMOBAHeroCharacter::BuyEquipment(Equip BuyingEquip)
+void AMOBAHeroCharacter::BuyEquipment(float BuyingEquip)
 {
-	Equip* MyEquip = nullptr;
-	if (HeroPack.PackOne == Equip::NullEquip)
+	ServerRPCBuyEquipment(BuyingEquip);
+}
+
+void AMOBAHeroCharacter::ServerRPCBuyEquipment_Implementation(float BuyingEquip)
+{
+	float* MyEquip = nullptr;
+	if (HeroPack.PackOne == 0.0f)
 		MyEquip = &(HeroPack.PackOne);
-	else if (HeroPack.PackTwo == Equip::NullEquip)
+	else if (HeroPack.PackTwo == 0.0f)
 		MyEquip = &(HeroPack.PackTwo);
-	else if (HeroPack.PackThree == Equip::NullEquip)
+	else if (HeroPack.PackThree == 0.0f)
 		MyEquip = &(HeroPack.PackThree);
-	else if (HeroPack.PackFour == Equip::NullEquip)
+	else if (HeroPack.PackFour == 0.0f)
 		MyEquip = &(HeroPack.PackFour);
-	else if (HeroPack.PackFive == Equip::NullEquip)
+	else if (HeroPack.PackFive == 0.0f)
 		MyEquip = &(HeroPack.PackFive);
-	else if (HeroPack.PackSix == Equip::NullEquip)
+	else if (HeroPack.PackSix == 0.0f)
 		MyEquip = &(HeroPack.PackSix);
 	else return;
 
 	if (MyEquip)
 	{
-		if (BuyingEquip == Equip::Sword)
+		if (BuyingEquip == 1.0f)
 		{
 			if (GetGold() >= 300.0f)
 			{
 				GetGold() -= 300.0f;
 				GetAttackStrength() += 15.0f;
-				*MyEquip = Equip::Sword;
+				*MyEquip = 1.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Dagger)
+		if (BuyingEquip == 2.0f)
 		{
 			if (GetGold() >= 300.0f)
 			{
 				GetGold() -= 300.0f;
 				GetFakeAttackSpeed() += 0.2f;
 				GetAttackSpeed() = FMath::Clamp(GetAttackSpeed() + 0.2f, 0.0f, GetMaxAttackSpeed());
-				*MyEquip = Equip::Dagger;
+				*MyEquip = 2.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Pickaxe)
+		if (BuyingEquip == 3.0f)
 		{
 			if (GetGold() >= 800.0f)
 			{
 				GetGold() -= 800.0f;
 				GetAttackStrength() += 30.0f;
-				*MyEquip = Equip::Pickaxe;
+				*MyEquip = 3.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::BigSword)
+		if (BuyingEquip == 4.0f)
 		{
 			if (GetGold() >= 1500.0f)
 			{
 				GetGold() -= 1500.0f;
 				GetAttackStrength() += 60.0f;
-				*MyEquip = Equip::BigSword;
+				*MyEquip = 4.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Cloth)
+		if (BuyingEquip == 5.0f)
 		{
 			if (GetGold() >= 300.0f)
 			{
 				GetGold() -= 300.0f;
 				GetArmor() += 15.0f;
-				*MyEquip = Equip::Cloth;
+				*MyEquip = 5.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Cloak)
+		if (BuyingEquip == 6.0f)
 		{
 			if (GetGold() >= 400.0f)
 			{
 				GetGold() -= 400.0f;
 				GetMagicResist() += 15.0f;
-				*MyEquip = Equip::Cloak;
+				*MyEquip = 6.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Shield)
+		if (BuyingEquip == 7.0f)
 		{
 			if (GetGold() >= 700.0f)
 			{
@@ -677,11 +974,11 @@ void AMOBAHeroCharacter::BuyEquipment(Equip BuyingEquip)
 				GetArmor() += 20.0f;
 				GetMaxHp() += 200.0f;
 				GetHp() = FMath::Clamp(GetHp() + 200.0f, 0.0f, GetMaxHp());
-				*MyEquip = Equip::Shield;
+				*MyEquip = 7.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Armor)
+		if (BuyingEquip == 8.0f)
 		{
 			if (GetGold() >= 1500.0f)
 			{
@@ -690,53 +987,57 @@ void AMOBAHeroCharacter::BuyEquipment(Equip BuyingEquip)
 				GetArmor() += 50.0f;
 				GetMaxHp() += 400.0f;
 				GetHp() = FMath::Clamp(GetHp() + 400.0f, 0.0f, GetMaxHp());
-				*MyEquip = Equip::Armor;
+				*MyEquip = 8.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::MagicBook)
+		if (BuyingEquip == 9.0f)
 		{
 			if (GetGold() >= 500.0f)
 			{
 				GetGold() -= 500.0f;
 				GetPowerStrength() += 20.0f;
-				*MyEquip = Equip::MagicBook;
+				*MyEquip = 9.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Wand)
+		if (BuyingEquip == 10.0f)
 		{
 			if (GetGold() >= 900.0f)
 			{
 				GetGold() -= 900.0f;
 				GetPowerStrength() += 50.0f;
-				*MyEquip = Equip::Wand;
+				*MyEquip = 10.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::Boxer)
+		if (BuyingEquip == 11.0f)
 		{
 			if (GetGold() >= 400.0f)
 			{
 				GetGold() -= 400.0f;
 				GetStrikeRate() += 0.15f;
-				*MyEquip = Equip::Boxer;
+				*MyEquip = 11.0f;
 			}
 			else return;
 		}
-		if (BuyingEquip == Equip::StrikeCloak)
+		if (BuyingEquip == 12.0f)
 		{
 			if (GetGold() >= 800.0f)
 			{
 				GetGold() -= 800.0f;
 				GetStrikeRate() += 0.25f;
-				*MyEquip = Equip::StrikeCloak;
+				*MyEquip = 12.0f;
 			}
 			else return;
 		}
 
 	}
+}
 
+bool AMOBAHeroCharacter::ServerRPCBuyEquipment_Validate(float BuyingEquip)
+{
+	return true;
 }
 
 void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, FHeroProperty aHeroProperty, FHeroGrowth aHeroGrowth) {
@@ -749,7 +1050,32 @@ void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty,
 
 void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
 {
-	Equip* MyEquip = nullptr;
+	ServerRPCSellEquipment(PackageNumber);
+}
+
+void AMOBAHeroCharacter::ResetRedBuff()
+{
+	GetHpRecovery() -= 18.0f;
+	GetAttackStrength() -= 30.0f;
+	bHaveRedBuff = false;
+}
+
+void AMOBAHeroCharacter::ResetBlueBuff()
+{
+	GetMpRecovery() -= 12.0f;
+	bHaveBlueBuff = false;
+}
+
+void AMOBAHeroCharacter::ResetDragonBuff()
+{
+	GetAttackStrength() -= 80.0f;
+	GetPowerStrength() -= 80.0f;
+	bHaveBlueBuff = false;
+}
+
+void AMOBAHeroCharacter::ServerRPCSellEquipment_Implementation(float PackageNumber)
+{
+	float* MyEquip = nullptr;
 	switch ((int)PackageNumber)
 	{
 	case 1:
@@ -774,47 +1100,47 @@ void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
 		return;
 	}
 
-	if (*MyEquip == Equip::NullEquip)
+	if (*MyEquip == 0.0f)
 		return;
 	else
 	{
-		if (*MyEquip == Equip::Sword)
+		if (*MyEquip == 1.0f)
 		{
 			GetGold() += 300.0f * 0.6f;
 			GetAttackStrength() -= 15.0f;
 		}
-		if (*MyEquip == Equip::Dagger)
+		if (*MyEquip == 2.0f)
 		{
 			GetGold() += 300.0f * 0.6f;
 			GetFakeAttackSpeed() -= 0.2f;
 			GetAttackSpeed() = FMath::Clamp(GetFakeAttackSpeed(), 0.0f, GetMaxAttackSpeed());
 		}
-		if (*MyEquip == Equip::Pickaxe)
+		if (*MyEquip == 3.0f)
 		{
 			GetGold() += 800.0f * 0.6f;
 			GetAttackStrength() -= 30.0f;
 		}
-		if (*MyEquip == Equip::BigSword)
+		if (*MyEquip == 4.0f)
 		{
 			GetGold() += 1500.0f * 0.6f;
 			GetAttackStrength() -= 60.0f;
 
 		}
-		if (*MyEquip == Equip::Cloth)
+		if (*MyEquip == 5.0f)
 		{
 
 			GetGold() += 300.0f * 0.6f;
 			GetArmor() -= 15.0f;
 
 		}
-		if (*MyEquip == Equip::Cloak)
+		if (*MyEquip == 6.0f)
 		{
 
 			GetGold() += 400.0f * 0.6f;
 			GetMagicResist() -= 15.0f;
 
 		}
-		if (*MyEquip == Equip::Shield)
+		if (*MyEquip == 7.0f)
 		{
 
 			GetGold() += 700.0f * 0.6f;
@@ -824,7 +1150,7 @@ void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
 			GetHp() = FMath::Clamp(GetHp(), 0.0f, GetMaxHp());
 
 		}
-		if (*MyEquip == Equip::Armor)
+		if (*MyEquip == 8.0f)
 		{
 
 			GetGold() += 1500.0f * 0.6f;
@@ -833,27 +1159,61 @@ void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
 			GetMaxHp() -= 400.0f;
 			GetHp() = FMath::Clamp(GetHp(), 0.0f, GetMaxHp());
 		}
-		if (*MyEquip == Equip::MagicBook)
+		if (*MyEquip == 9.0f)
 		{
 			GetGold() += 500.0f * 0.6f;
 			GetPowerStrength() -= 20.0f;
 		}
-		if (*MyEquip == Equip::Wand)
+		if (*MyEquip == 10.0f)
 		{
 			GetGold() += 900.0f * 0.6f;
 			GetPowerStrength() -= 50.0f;
 		}
-		if (*MyEquip == Equip::Boxer)
+		if (*MyEquip == 11.0f)
 		{
 			GetGold() += 400.0f * 0.6f;
 			GetStrikeRate() -= 0.15f;
 		}
-		if (*MyEquip == Equip::StrikeCloak)
+		if (*MyEquip == 12.0f)
 		{
 			GetGold() += 800.0f * 0.6f;
 			GetStrikeRate() -= 0.25f;
 		}
 
-		*MyEquip = Equip::NullEquip;
+		*MyEquip = 0.0f;
 	}
+}
+
+bool AMOBAHeroCharacter::ServerRPCSellEquipment_Validate(float PackageNumber)
+{
+	return true;
+}
+
+
+
+void AMOBAHeroCharacter::StopMove()
+{
+	ServerRPCStopMove();
+}
+
+void AMOBAHeroCharacter::ServerRPCStopMove_Implementation()
+{
+	GetMovementComponent()->StopMovementImmediately();
+}
+
+bool AMOBAHeroCharacter::ServerRPCStopMove_Validate()
+{
+	return true;
+}
+
+void AMOBAHeroCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, heroProperty, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, TimeHandles, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AMOBAHeroCharacter, birthLocation, COND_OwnerOnly);
+	DOREPLIFETIME(AMOBAHeroCharacter, HeroPack);
+	DOREPLIFETIME(AMOBAHeroCharacter, HeroState);
+	DOREPLIFETIME(AMOBAHeroCharacter, heroGrowth);
 }

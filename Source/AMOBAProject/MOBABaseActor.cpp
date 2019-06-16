@@ -7,15 +7,20 @@
 #include "Public/MOBASoldierCharacter.h"
 #include "Public/MOBACrystalActor.h"
 #include "Public/MOBABaseCharacter.h"
+#include "MOBAPlayerState.h"
+#include "MOBAGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
-AMOBABaseActor::AMOBABaseActor(){
+AMOBABaseActor::AMOBABaseActor()
+{
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-AMOBABaseActor::AMOBABaseActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :baseProperty(aBaseProperty), baseValue(aBaseValue) {
+AMOBABaseActor::AMOBABaseActor(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue) :baseProperty(aBaseProperty), baseValue(aBaseValue)
+{
 
 }
 
@@ -24,11 +29,13 @@ bool& AMOBABaseActor::GetbCanBeAttacked()
 	return this->baseProperty.bCanBeAttacked;
 }
 
-Camp& AMOBABaseActor::GetCamp(){
+Camp& AMOBABaseActor::GetCamp()
+{
 	return this->baseProperty.baseCamp;
 }
 
-void AMOBABaseActor::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue){
+void AMOBABaseActor::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue)
+{
 
 	this->baseProperty = aBaseProperty;
 	this->baseValue = aBaseValue;
@@ -36,13 +43,15 @@ void AMOBABaseActor::assignBaseValueForAPI(FBaseActorProperty aBaseProperty, FBa
 }
 
 // Called when the game starts or when spawned
-void AMOBABaseActor::BeginPlay() {
+void AMOBABaseActor::BeginPlay() 
+{
 	Super::BeginPlay();
 
 }
 
 // Called every frame
-void AMOBABaseActor::Tick(float DeltaTime) {
+void AMOBABaseActor::Tick(float DeltaTime)
+{
 	Super::Tick(DeltaTime);
 
 }
@@ -52,6 +61,7 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 {
 	if (DamagedActor)
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, BeAttackedFX, this->GetActorLocation());
 		auto& myHp = DamagedActor->baseProperty.hp;
 
 		auto myMaxHp = DamagedActor->baseProperty.maxHp;
@@ -95,21 +105,31 @@ void AMOBABaseActor::ReceiveDamageFromCharacter(AMOBABaseActor* DamagedActor, Da
 			if (MayBeAHero)
 			{
 				auto MayBeSoldier = Cast<AMOBASoldierCharacter>(DamagedActor);
-				if (DamagedActor)
+				if (MayBeSoldier)
 				{
-					MayBeAHero->GetSoldierKillNumber() += 1.0f;
+					AMOBAPlayerState* GS = Cast<AMOBAPlayerState>(MayBeAHero->GetPlayerState());
+					if (GS)
+					{
+						GS->AddSoldierKillNumber();
+					}
 				}
 				MayBeAHero->GetGold() += DamagedActor->GetGoldValue();
 				MayBeAHero->AddExperienceToHero(DamagedActor->GetExperienceValue());
 			}
-			DeadHandle(DamagedActor);
+			DeadHandle(DamagedActor, DamageCauser);
 		}
 	}
 }
 
-void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor) {
+void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor, AMOBABaseCharacter* DamageCauser) 
+{
 	if (DeadActor) 
 	{
+		AMOBAGameMode* GM = Cast<AMOBAGameMode>(GetWorld()->GetAuthGameMode());
+		if (GM)
+		{
+			GM->OnActorKilled.Broadcast(DeadActor, DamageCauser);
+		}
 		this->GetbIsBroken()= true;
 		this->GetbCanBeAttacked() = false;
 
@@ -140,33 +160,8 @@ void AMOBABaseActor::DeadHandle(AMOBABaseActor* DeadActor) {
 	}
 }
 
-/*
-void AMOBABaseActor::attack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser) 
+bool AMOBABaseActor::canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser) 
 {
-
-		auto otherActor = Cast<AMOBABaseActor>(damagedActor);
-
-		if (otherActor) 
-		{
-
-			otherActor->applyDamage(damagedActor, damageType, damage, damageCauser);
-
-		}
-
-		auto otherCharacter = Cast<AMOBABaseCharacter>(damagedActor);
-
-		if (otherCharacter) 
-		{
-
-			otherCharacter->applyDamage(damagedActor,damageType, damage, damageCauser);
-
-		}
-
-
-}
-*/
-
-bool AMOBABaseActor::canAttack(AActor* damagedActor, DamageType damageType, float damage, AActor* damageCauser) {
 
 	auto myActor = Cast<AMOBABaseActor>(damageCauser);
 

@@ -59,11 +59,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCAttackToCharacterOnce(AMOBABaseCharacter* TargetToAttack);
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void AttackToActorOnce(AMOBABaseActor* TargetToAttack);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRPCAttackToActorOnce(AMOBABaseActor* TargetToAttack);
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero);
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		void SetSoldierLevel(float level);
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")

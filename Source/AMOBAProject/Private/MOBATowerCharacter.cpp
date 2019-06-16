@@ -53,18 +53,28 @@ void AMOBATowerCharacter::AttackToCharacterOnce(AMOBABaseCharacter * TargetToAtt
 
 	if (this->GetbAbleToAttack())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Tower Attack Succeed!"))
-		this->GetbIsAttacking() = true;
-		auto MyAttackStrength = this->GetAttackStrength();
-		PlayEffects(TargetToAttack->GetActorLocation());
-		TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
-		this->GetbAbleToAttack() = false;
-		auto MyTimeHandle = this->AttackTimer;
-		GetWorldTimerManager().ClearTimer(MyTimeHandle);
-		auto AttackCDTime = 1.0f / GetAttackSpeed();
-		GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBATowerCharacter::ResetTimer, AttackCDTime);
-		this->GetbIsAttacking() = false;
+		ServerRPCAttackToCharacter(TargetToAttack);
 	}
+		
+}
+
+void AMOBATowerCharacter::ServerRPCAttackToCharacter_Implementation(AMOBABaseCharacter* TargetToAttack)
+{
+	this->GetbIsAttacking() = true;
+	auto MyAttackStrength = this->GetAttackStrength();
+	PlayEffects(TargetToAttack->GetActorLocation());
+	TargetToAttack->ReceiveDamageFromCharacter(TargetToAttack, DamageType::physical, MyAttackStrength, this);
+	this->GetbAbleToAttack() = false;
+	auto MyTimeHandle = this->AttackTimer;
+	GetWorldTimerManager().ClearTimer(MyTimeHandle);
+	auto AttackCDTime = 1.0f / GetAttackSpeed();
+	GetWorldTimerManager().SetTimer(MyTimeHandle, this, &AMOBATowerCharacter::ResetTimer, AttackCDTime);
+	this->GetbIsAttacking() = false;
+}
+
+bool AMOBATowerCharacter::ServerRPCAttackToCharacter_Validate(AMOBABaseCharacter* TargetToAttack)
+{
+	return true;
 }
 
 bool AMOBATowerCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHero)
@@ -77,7 +87,11 @@ bool AMOBATowerCharacter::IsEnemyHeroAttackingMyHero(AMOBAHeroCharacter* EnemyHe
 
 void AMOBATowerCharacter::TowerDeadHandle()
 {
-	
+	UGameplayStatics::SpawnEmitterAtLocation(this, DestroyFX, GetActorLocation());
+
+	SpawnRuin();
+	Destroy();
+
 	if (GetTowerType() == TowerType::hub)
 	{
 		TowerPointerToHub->GetbCanBeAttacked() = true;
@@ -132,7 +146,7 @@ void AMOBATowerCharacter::SetValue()
 
 }
 
-void AMOBATowerCharacter::PlayEffects(FVector Location)
+void AMOBATowerCharacter::PlayEffects_Implementation(FVector Location)
 {
 	UGameplayStatics::SpawnEmitterAtLocation(this, BeAttackedFX, Location);
 	UGameplayStatics::SpawnEmitterAtLocation(this, AttackFX, this->AttackComp->GetComponentLocation());
