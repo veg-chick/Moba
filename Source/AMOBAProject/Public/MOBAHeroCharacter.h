@@ -47,6 +47,19 @@ enum class Equip : uint8
 	MagicPotion UMETA(DisplayName = "MagicPotion")
 };
 
+UENUM(BlueprintType)
+enum class Buff : uint8
+{
+	NullBuff UMETA(DisplayName = "NullBuff"),
+	BlueBuff UMETA(DisplayName = "BlueBuff"),
+	RedBuff UMETA(DisplayName = "RedBuff"),
+	DragonBuff UMETA(DisplayName = "DragonBuff"),
+	BlueAndDragon UMETA(DisplayName = "BlueAndDragon"),
+	RedAndDragon UMETA(DisplayName = "RedAndDragon"),
+	RedAndBlue UMETA(DisplayName = "RedAndBlue"),
+	BlueAndRedAndDragon UMETA(DisplayName = "BlueAndRedAndDragon"),
+};
+
 USTRUCT(BlueprintType)
 struct FHeroProperty {
 
@@ -294,11 +307,17 @@ protected:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
+		Buff HeroBuff;
+
 	FTimerManager QTimerManager;
 	FTimerManager WTimerManager;
 	FTimerManager ETimerManager;
 
 	FTimerHandle DeadTimer = TimeHandles.DeadTimer;
+	FTimerHandle RedBuffTimer;
+	FTimerHandle BlueBuffTimer;
+	FTimerHandle DragonBuffTimer;
 
 protected:
 
@@ -376,6 +395,11 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerAttackToCharacter(AMOBABaseCharacter* BeAttackedCharacter);
 
+	void ResetRedBuff();
+
+	void ResetBlueBuff();
+
+	void ResetDragonBuff();
 
 public:
 
@@ -447,6 +471,7 @@ public:
 
 	void AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter);
 
+	void AddBuff(Buff BuffType, float Time);
 
 protected:
 	/** Top down camera */
@@ -636,5 +661,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float GetRemainingECD() { return SkillProperty.RemainingWCD; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		Buff GetBuff() { return HeroBuff; }
 
 };

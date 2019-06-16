@@ -234,6 +234,100 @@ void AMOBAHeroCharacter::AttackToACharacter(AMOBABaseCharacter* BeAttackedCharac
 	}
 }
 
+void AMOBAHeroCharacter::AddBuff(Buff BuffType, float Time)
+{
+	if (BuffType == Buff::RedBuff)
+	{
+		switch (HeroBuff)
+		{
+		case Buff::RedBuff:
+		case Buff::RedAndBlue:
+		case Buff::RedAndDragon:
+		case Buff::BlueAndRedAndDragon:
+			GetWorldTimerManager().ClearTimer(RedBuffTimer);
+			break;
+		case Buff::BlueBuff:
+			HeroBuff = Buff::RedAndBlue;
+			GetHpRecovery() += 18.0f;
+			GetAttackStrength() += 30.0f;
+			GetWorldTimerManager().SetTimer(RedBuffTimer, this, &AMOBAHeroCharacter::ResetRedBuff, Time);
+			break;
+		case Buff::DragonBuff:
+			HeroBuff = Buff::RedAndDragon;
+			GetHpRecovery() += 18.0f;
+			GetAttackStrength() += 30.0f;
+			GetWorldTimerManager().SetTimer(RedBuffTimer, this, &AMOBAHeroCharacter::ResetRedBuff, Time);
+			break;
+		case Buff::BlueAndDragon:
+			HeroBuff = Buff::BlueAndRedAndDragon;
+			GetHpRecovery() += 18.0f;
+			GetAttackStrength() += 30.0f;
+			GetWorldTimerManager().SetTimer(RedBuffTimer, this, &AMOBAHeroCharacter::ResetRedBuff, Time);
+		default:
+			break;
+		}
+	}
+	else if (BuffType == Buff::BlueBuff)
+	{
+		switch (HeroBuff)
+		{
+		case Buff::BlueBuff:
+		case Buff::RedAndBlue:
+		case Buff::BlueAndDragon:
+		case Buff::BlueAndRedAndDragon:
+			GetWorldTimerManager().ClearTimer(BlueBuffTimer);
+			break;
+		case Buff::RedBuff:
+			HeroBuff = Buff::RedAndBlue;
+			GetMpRecovery() += 12.0f;
+			GetWorldTimerManager().SetTimer(BlueBuffTimer, this, &AMOBAHeroCharacter::ResetBlueBuff, Time);
+			break;
+		case Buff::DragonBuff:
+			HeroBuff = Buff::BlueAndDragon;
+			GetMpRecovery() += 12.0f;
+			GetWorldTimerManager().SetTimer(BlueBuffTimer, this, &AMOBAHeroCharacter::ResetBlueBuff, Time);
+			break;
+		case Buff::RedAndDragon:
+			HeroBuff = Buff::BlueAndRedAndDragon;
+			GetMpRecovery() += 12.0f;
+			GetWorldTimerManager().SetTimer(BlueBuffTimer, this, &AMOBAHeroCharacter::ResetBlueBuff, Time);
+		default:
+			break;
+		}
+	}
+	else if (BuffType == Buff::DragonBuff)
+	{
+		switch (HeroBuff)
+		{
+		case Buff::DragonBuff:
+		case Buff::RedAndDragon:
+		case Buff::BlueAndDragon:
+		case Buff::BlueAndRedAndDragon:
+			GetWorldTimerManager().ClearTimer(DragonBuffTimer);
+			break;
+		case Buff::RedBuff:
+			HeroBuff = Buff::RedAndDragon;
+			GetAttackStrength() += 80.0f;
+			GetPowerStrength() += 80.0f;
+			GetWorldTimerManager().SetTimer(DragonBuffTimer, this, &AMOBAHeroCharacter::ResetDragonBuff, Time);
+			break;
+		case Buff::BlueBuff:
+			HeroBuff = Buff::BlueAndDragon;
+			GetAttackStrength() += 80.0f;
+			GetPowerStrength() += 80.0f;
+			GetWorldTimerManager().SetTimer(DragonBuffTimer, this, &AMOBAHeroCharacter::ResetDragonBuff, Time);
+			break;
+		case Buff::RedAndBlue:
+			HeroBuff = Buff::BlueAndRedAndDragon;
+			GetAttackStrength() += 80.0f;
+			GetPowerStrength() += 80.0f;
+			GetWorldTimerManager().SetTimer(DragonBuffTimer, this, &AMOBAHeroCharacter::ResetDragonBuff, Time);
+		default:
+			break;
+		}
+	}
+}
+
 void AMOBAHeroCharacter::ServerAttackToCharacter_Implementation(AMOBABaseCharacter* BeAttackedCharacter)
 {
 	StopMove();
@@ -998,6 +1092,79 @@ void AMOBAHeroCharacter::assignHeroValueForAPI(FBaseActorProperty aBaseProperty,
 void AMOBAHeroCharacter::SellEquipment(float PackageNumber)
 {
 	ServerRPCSellEquipment(PackageNumber);
+}
+
+void AMOBAHeroCharacter::ResetRedBuff()
+{
+	GetHpRecovery() -= 18.0f;
+	GetAttackStrength() -= 30.0f;
+	switch (HeroBuff)
+	{
+	case Buff::RedBuff:
+		HeroBuff = Buff::NullBuff;
+		break;
+	case Buff::RedAndBlue:
+		HeroBuff = Buff::BlueBuff;
+		break;
+	case Buff::RedAndDragon:
+		HeroBuff = Buff::DragonBuff;
+		break;
+	case Buff::BlueAndRedAndDragon:
+		HeroBuff = Buff::BlueAndDragon;
+		break;
+	default:
+		GetHpRecovery() += 18.0f;
+		GetAttackStrength() += 30.0f;
+		break;
+	}
+}
+
+void AMOBAHeroCharacter::ResetBlueBuff()
+{
+	GetMpRecovery() -= 12.0f;
+	switch (HeroBuff)
+	{
+	case Buff::BlueBuff:
+		HeroBuff = Buff::NullBuff;
+		break;
+	case Buff::RedAndBlue:
+		HeroBuff = Buff::RedBuff;
+		break;
+	case Buff::BlueAndDragon:
+		HeroBuff = Buff::DragonBuff;
+		break;
+	case Buff::BlueAndRedAndDragon:
+		HeroBuff = Buff::RedAndDragon;
+		break;
+	default:
+		GetMpRecovery() += 12.0f;
+		break;
+	}
+}
+
+void AMOBAHeroCharacter::ResetDragonBuff()
+{
+	GetAttackStrength() -= 80.0f;
+	GetPowerStrength() -= 80.0f;
+	switch (HeroBuff)
+	{
+	case Buff::DragonBuff:
+		HeroBuff = Buff::NullBuff;
+		break;
+	case Buff::RedAndDragon:
+		HeroBuff = Buff::RedBuff;
+		break;
+	case Buff::BlueAndDragon:
+		HeroBuff = Buff::BlueBuff;
+		break;
+	case Buff::BlueAndRedAndDragon:
+		HeroBuff = Buff::RedAndBlue;
+		break;
+	default:
+		GetAttackStrength() += 80.0f;
+		GetPowerStrength() += 80.0f;
+		break;
+	}
 }
 
 void AMOBAHeroCharacter::ServerRPCSellEquipment_Implementation(float PackageNumber)

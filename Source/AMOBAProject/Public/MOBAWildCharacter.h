@@ -64,9 +64,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FTimerHandle AttackTimer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
-		AMOBAHeroCharacter* BuffedHero;
-
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void QuickRecovery();
 
@@ -88,15 +85,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void SetWildLevel(float level);
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetBlueBuffValue();
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetRedBuffValue();
-
-	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void ResetNashBuffValue();
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
