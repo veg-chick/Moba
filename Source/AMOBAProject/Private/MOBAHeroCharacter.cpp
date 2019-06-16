@@ -25,6 +25,7 @@
 #include "Net/UnrealNetwork.h"
 #include "MOBAPlayerState.h"
 #include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroCharacter::AMOBAHeroCharacter()
 {
@@ -125,6 +126,10 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 		SkillProperty.RemainingECD = ETimerManager.GetTimerRemaining(TimeHandles.SkillETimer);
 	}
 
+	if (GetbIsRecalling())
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, RecallFX, this->GetActorLocation());
+	}
 }
 
 void AMOBAHeroCharacter::SetNewMoveDestination(const FVector DestLocation, float Speed)

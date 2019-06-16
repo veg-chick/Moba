@@ -3,6 +3,7 @@
 
 #include "MOBAHeroAssassinOne.h"
 #include "Components/DecalComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroAssassinOne::AMOBAHeroAssassinOne()
 {
@@ -23,6 +24,7 @@ void AMOBAHeroAssassinOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 	{
 		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, QFX, Target->GetActorLocation());
 			auto QDamage = this->GetAttackStrength() * 0.8f + 30.0f + this->GetQPoint() * 30.0f;
 			Target->ReceiveDamageFromCharacter(Target, DamageType::physical, QDamage, this);
 
@@ -37,6 +39,7 @@ void AMOBAHeroAssassinOne::ReleaseW(float MpCost)
 {
 	if (this->GetbMayW() && this->GetbCanW())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, WFX, this->GetActorLocation());
 		MyStrikeRateAddValue = this->GetWPoint() * 0.05f;
 		this->GetStrikeRate() += MyStrikeRateAddValue;
 
@@ -55,6 +58,7 @@ void AMOBAHeroAssassinOne::ReleaseE(AMOBAHeroCharacter* Target, float MpCost)
 	{
 		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, EFX, Target->GetActorLocation());
 			FVector TargetLocation = Target->GetActorLocation();
 			TargetLocation.X += 10.0f;
 			TargetLocation.Y += 10.0f;

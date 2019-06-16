@@ -294,6 +294,18 @@ protected:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* QFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* WFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* EFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* RecallFX;
+
 	bool bHaveBlueBuff;
 	bool bHaveRedBuff;
 	bool bHaveDragonBuff;

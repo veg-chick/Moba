@@ -41,6 +41,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		AMOBABaseCharacter* Attacker;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* AttackedFX;
+
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void DeadHandle(AMOBABaseCharacter* DeadCharacter, AMOBABaseCharacter* DamageCauser);
 

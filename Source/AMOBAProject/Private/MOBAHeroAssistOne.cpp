@@ -3,6 +3,7 @@
 
 #include "MOBAHeroAssistOne.h"
 #include "Components/DecalComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroAssistOne::AMOBAHeroAssistOne()
 {
@@ -27,6 +28,7 @@ void AMOBAHeroAssistOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 			auto TreatValue = 50.0f + this->GetQPoint() * 50.0f + this->GetPowerStrength() * 0.3f;
 			if (this->GetHp() > TreatValue)
 			{
+				UGameplayStatics::SpawnEmitterAtLocation(this, QFX, Target->GetActorLocation());
 				Target->ReceiveDamageFromCharacter(Target, DamageType::treat, TreatValue, this);
 				this->ReceiveDamageFromCharacter(this, DamageType::real, TreatValue * 0.8f, this);
 
@@ -44,6 +46,7 @@ void AMOBAHeroAssistOne::ReleaseW(AMOBAHeroCharacter* Target, float MpCost)
 	{
 		if (Target && this->GetCamp() != Target->GetCamp() && Target->GetbCanBeAttacked())
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, WFX, Target->GetActorLocation());
 			Target->ExceptionState(State::Silence, 2.5f);
 
 			this->GetMp() -= MpCost;
@@ -59,6 +62,7 @@ void AMOBAHeroAssistOne::ReleaseE(AMOBAHeroCharacter* Target, float MpCost)
 	{
 		if (Target && Target != this && this->GetCamp() == Target->GetCamp())
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, EFX, Target->GetActorLocation());
 			auto MpRecoveryValue = 30.0f + this->GetEPoint() * 50.0f + this->GetPowerStrength() * 0.5f;
 			Target->GetMp() = FMath::Clamp(Target->GetMp() + MpRecoveryValue, 0.0f, Target->GetMaxMp());
 

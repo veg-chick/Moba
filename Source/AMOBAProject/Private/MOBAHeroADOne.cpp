@@ -3,6 +3,7 @@
 
 #include "MOBAHeroADOne.h"
 #include "Components/DecalComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroADOne::AMOBAHeroADOne()
 {
@@ -22,6 +23,7 @@ void AMOBAHeroADOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 	{
 		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, QFX, Target->GetActorLocation());
 			auto MyStunTime = 2.5f + this->GetQPoint() * 0.5f;
 			Target->ExceptionState(State::Stun, MyStunTime);
 
@@ -36,6 +38,7 @@ void AMOBAHeroADOne::ReleaseW(float MpCost)
 {
 	if (this->GetbMayQ() && this->GetbCanQ())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, WFX, this->GetActorLocation());
 		MyAttackStrengthAddValue = (this->GetMaxHp() - this->GetHp()) * (this->GetWPoint() * 0.05f + 0.1f);
 		this->GetAttackStrength() += MyAttackStrengthAddValue;
 
@@ -52,6 +55,7 @@ void AMOBAHeroADOne::ReleaseE(float MpCost)
 {
 	if (this->GetbMayE() && this->GetbCanE())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, EFX, this->GetActorLocation());
 		this->GetArmor() += 1000.0f;
 		this->GetMagicResist() += 1000.0f;
 

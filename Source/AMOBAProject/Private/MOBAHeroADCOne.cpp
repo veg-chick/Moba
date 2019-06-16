@@ -3,6 +3,7 @@
 
 #include "MOBAHeroADCOne.h"
 #include "Components/DecalComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroADCOne::AMOBAHeroADCOne()
 {
@@ -23,6 +24,7 @@ void AMOBAHeroADCOne::ReleaseQ(AMOBAHeroCharacter* Target, float MpCost)
 	{
 		if (Target && this->GetCamp() != Target->GetCamp() && Target->GetbCanBeAttacked())
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, QFX, Target->GetActorLocation());
 			this->GetMp() -= MpCost;
 
 			auto QDamage = 50.0f + this->GetQPoint() * 20.0f + this->GetAttackStrength() * 0.8f;
@@ -46,6 +48,7 @@ void AMOBAHeroADCOne::ReleaseW(float MpCost)
 {
 	if (this->GetbMayW() && this->GetbCanW())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, WFX, this->GetActorLocation());
 		MyAttackSpeedAddValue = 0.4f + GetWPoint() * 0.2f;
 		this->GetFakeAttackSpeed() += MyAttackSpeedAddValue;
 		this->GetAttackSpeed() = FMath::Clamp(this->GetFakeAttackSpeed(), 0.0f, this->GetMaxAttackSpeed());
@@ -63,6 +66,7 @@ void AMOBAHeroADCOne::ReleaseE(float MpCost)
 {
 	if (this->GetbMayE() && this->GetbCanE())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, EFX, this->GetActorLocation());
 		this->GetMp() -= MpCost;
 
 		MyLifeStealAddValue = this->GetEPoint() * 0.05f + 0.05f;

@@ -11,6 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "MOBAPlayerState.h"
 #include "MOBAGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -94,6 +95,7 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 
 	if (DamagedActor)
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, AttackedFX, this->GetActorLocation());
 		Attacker = DamageCauser;
 		DamagedActor->GetbIsBeingAttacked() = true;
 

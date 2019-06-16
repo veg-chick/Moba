@@ -126,6 +126,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		FBaseActorProperty baseProperty;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+		UParticleSystem* BeAttackedFX;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
 		bool bIsBroken;
 

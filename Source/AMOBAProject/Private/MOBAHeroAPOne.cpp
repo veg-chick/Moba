@@ -3,6 +3,7 @@
 
 #include "MOBAHeroAPOne.h"
 #include "Components/DecalComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroAPOne::AMOBAHeroAPOne()
 {
@@ -23,6 +24,7 @@ void AMOBAHeroAPOne::ReleaseQ(AMOBABaseCharacter* Target, float MpCost)
 	{
 		if (Target && Target->GetCamp() != this->GetCamp() && Target->GetbCanBeAttacked())
 		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, QFX, Target->GetActorLocation());
 
 			auto QDamage = 40.0f + this->GetQPoint() * 20.0f + this->GetPowerStrength() * 0.2f;
 			Target->ReceiveDamageFromCharacter(Target, DamageType::magic, QDamage, this);
@@ -39,6 +41,7 @@ void AMOBAHeroAPOne::ReleaseW(float MpCost)
 {
 	if (this->GetbMayE() && this->GetbCanE())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, WFX, this->GetActorLocation());
 		this->GetbCanBeAttacked() = false;
 		this->GetbCanReleaseSkills() = false;
 		this->GetbAbleToAttack() = false;
@@ -66,6 +69,7 @@ void AMOBAHeroAPOne::ReleaseE(AMOBAHeroCharacter* Target, float MpCost)
 				auto EDamage = 200.0f + this->GetEPoint() * 60.0f + this->GetPowerStrength() * 0.7f;
 				Target->ReceiveDamageFromCharacter(Target, DamageType::magic, EDamage, this);
 			}
+			UGameplayStatics::SpawnEmitterAtLocation(this, EFX, Target->GetActorLocation());
 		}
 
 		this->GetMp() -= MpCost;

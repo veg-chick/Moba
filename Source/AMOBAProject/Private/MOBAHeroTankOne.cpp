@@ -3,6 +3,7 @@
 
 #include "MOBAHeroTankOne.h"
 #include "Components/DecalComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMOBAHeroTankOne::AMOBAHeroTankOne()
 {
@@ -26,12 +27,15 @@ void AMOBAHeroTankOne::ReleaseQ(AMOBAHeroCharacter* TargetHero,float MpCost)
 		{
 			auto MyTreat = 50.0f + this->GetQPoint() * 50.0f;
 			TargetHero->ReceiveDamageFromCharacter(TargetHero, DamageType::treat, MyTreat, this);
+			UGameplayStatics::SpawnEmitterAtLocation(this, QFX, TargetHero->GetActorLocation());
 		}
 		else
 		{
 			auto MyDamage = 50.0f + this->GetQPoint() * 50.0f + this->GetAttackStrength() * 0.8f;
 			TargetHero->ReceiveDamageFromCharacter(TargetHero, DamageType::physical, MyDamage, this);
+			UGameplayStatics::SpawnEmitterAtLocation(this, QFX, TargetHero->GetActorLocation());
 		}
+
 		this->GetbCanQ() = false;
 		ChangeReleasingSkill(1.0f);
 		ResetSkills(1.0f);
@@ -42,6 +46,7 @@ void AMOBAHeroTankOne::ReleaseW(float MpCost)
 {
 	if (this->GetbMayW() && this->GetbCanW())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, WFX, this->GetActorLocation());
 		float WPoint = GetWPoint();
 		float Armor = GetArmor();
 		float MagicResist = GetMagicResist();
@@ -62,6 +67,7 @@ void AMOBAHeroTankOne::ReleaseE(float MpCost)
 {
 	if (this->GetbMayE() && this->GetbCanE())
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, EFX, this->GetActorLocation());
 		RecoveryValue = this->GetMaxHp() * (this->GetEPoint() * 0.05f + 0.35f) / 8.0f;
 		this->GetHpRecovery() += RecoveryValue;
 
