@@ -30,7 +30,9 @@ void AMOBAPlayerController::SetupInputComponent()
 	InputComponent->BindAction("AttackTarget", IE_Pressed, this, &AMOBAPlayerController::AttackToMouseCursor);
 	InputComponent->BindAction("StopMove", IE_Pressed, this, &AMOBAPlayerController::StopMove);
 	InputComponent->BindAction("Recall", IE_Pressed, this, &AMOBAPlayerController::Recall);
+	InputComponent->BindAction("OpenStore", IE_Pressed, this, &AMOBAPlayerController::OpenStore);
 }
+
 
 
 void AMOBAPlayerController::MoveToMouseCursor()

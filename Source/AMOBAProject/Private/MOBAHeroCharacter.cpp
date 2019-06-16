@@ -83,8 +83,7 @@ void AMOBAHeroCharacter::Tick(float DeltaSeconds)
 
 	if (HeroState == State::Dead)
 	{
-		FTimerManager CalDeadtime;
-		heroProperty.deadtime = CalDeadtime.GetTimerRemaining(DeadTimer);
+		heroProperty.deadtime -= DeltaSeconds;
 	}
 
 	if (CursorToWorld != nullptr)
