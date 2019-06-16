@@ -557,6 +557,7 @@ void AMOBAHeroCharacter::SetValue()
 	baseProperty.armor = 50.0f;
 	baseProperty.magicResist = 30.0f;
 	baseProperty.level = 1.0f;
+	SkillProperty.SkillPoint = 1.0f;
 	baseProperty.maxLevel = 18.0f;
 	baseProperty.maxAttackSpeed = 2.5f;
 
