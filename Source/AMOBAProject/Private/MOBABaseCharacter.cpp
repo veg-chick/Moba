@@ -192,7 +192,7 @@ void AMOBABaseCharacter::ReceiveDamageFromCharacter(AMOBABaseCharacter* DamagedA
 		auto RecallingHero = Cast<AMOBAHeroCharacter>(DamagedActor);
 		if (RecallingHero)
 		{
-			RecallingHero->GetbRecallSucceed() = false;
+			RecallingHero->GetbIsRecalling() = false;
 		}
 
 	}

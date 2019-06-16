@@ -18,6 +18,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "PlayerController")
 		void OnGameOver(Camp SuccessCamp);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "PlayerController")
+		void OpenStore();
+
 protected:
 
 	// Begin PlayerController interface
