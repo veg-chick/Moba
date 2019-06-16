@@ -7,7 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-AMOBACrystalActor::AMOBACrystalActor(FBaseActorProperty ABaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad) :AMOBABaseActor(ABaseProperty, aBaseValue), road(aRoad) {
+AMOBACrystalActor::AMOBACrystalActor(FBaseActorProperty ABaseProperty, FBaseActorValue ABaseValue, CrystalRoad ARoad) :AMOBABaseActor(ABaseProperty, ABaseValue), Road(ARoad) {
 	
 	RootComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootComp"));
 	RootComponent = RootComp;
@@ -46,14 +46,15 @@ AMOBACrystalActor::AMOBACrystalActor() {
 }
 
 CrystalRoad& AMOBACrystalActor::getRoad() {
-	return road;
+	return Road;
 }
 
-void AMOBACrystalActor::assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad){
+void AMOBACrystalActor::assignCrystalValueForAPI(FBaseActorProperty aBaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad)
+{
 
 	assignBaseValueForAPI(aBaseProperty, aBaseValue);
 
-	this->road = aRoad;
+	this->Road = aRoad;
 
 }
 

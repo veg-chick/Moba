@@ -1076,7 +1076,7 @@ void AMOBAHeroCharacter::ResetDragonBuff()
 void AMOBAHeroCharacter::ServerRPCSellEquipment_Implementation(float PackageNumber)
 {
 	float* MyEquip = nullptr;
-	switch ((int)PackageNumber)
+	switch (static_cast<int>(PackageNumber))
 	{
 	case 1:
 		MyEquip = &(HeroPack.PackOne);

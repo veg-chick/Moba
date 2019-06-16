@@ -57,12 +57,14 @@ void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageTyp
 		float physicalPercent = 1.0f - (myArmor / (100.0f + myArmor));
 		float magicPercent = 1.0f - (myMagicResist / (100.0f + myMagicResist));
 
-		if (Type == DamageType::real) {
+		if (Type == DamageType::real) 
+		{
 			UE_LOG(LogTemp, Warning, TEXT("Real Damage Applyed!"));
 			myHp = FMath::Clamp(myHp - Damage, 0.0f, myMaxHp);
 		}
 
-		if (Type == DamageType::physical) {
+		if (Type == DamageType::physical) 
+		{
 
 			float tDamage = Damage * physicalPercent;
 
@@ -70,7 +72,8 @@ void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageTyp
 
 		}
 
-		if (Type == DamageType::magic) {
+		if (Type == DamageType::magic) 
+		{
 
 			float tDamage = Damage * magicPercent;
 
@@ -78,11 +81,13 @@ void AMOBABaseCharacter::ApplyDamage(AMOBABaseCharacter* DamagedActor, DamageTyp
 
 		}
 
-		if (Type == DamageType::treat) {
+		if (Type == DamageType::treat)
+		{
 			myHp = FMath::Clamp(myHp + Damage, 0.0f, myMaxHp);
 		}
 
-		if (myHp <= 0.0f) {
+		if (myHp <= 0.0f) 
+		{
 			//DeadHandle(DamagedActor, DamageCauser);
 		}
 
@@ -250,30 +255,36 @@ bool AMOBABaseCharacter::canAttack(AActor* damagedActor, DamageType damageType, 
 	auto myActor = Cast<AMOBABaseCharacter>(damageCauser);
 
 	auto otherActor = Cast<AMOBABaseActor>(damagedActor);
-	if (otherActor) {
+	if (otherActor)
+	{
 		bool can = myActor->baseProperty.bAbleToAttack;
 		bool canBe = otherActor->GetbCanBeAttacked();
 
 		auto causerCamp = myActor->baseProperty.baseCamp;
 		auto damagedCamp = otherActor->GetCamp();
 
-		if (causerCamp != damagedCamp) {
-			if (can && canBe) {
+		if (causerCamp != damagedCamp) 
+		{
+			if (can && canBe)
+			{
 				return true;
 			}
 		}
 	}
 
 	auto otherCharacter = Cast<AMOBABaseCharacter>(damagedActor);
-	if (otherCharacter) {
+	if (otherCharacter) 
+	{
 		bool can = myActor->baseProperty.bAbleToAttack;
 		bool canBe = otherCharacter->GetbCanBeAttacked();
 
 		auto causerCamp = myActor->baseProperty.baseCamp;
 		auto damagedCamp = otherCharacter->GetCamp();
 
-		if (causerCamp != damagedCamp) {
-			if (can && canBe) {
+		if (causerCamp != damagedCamp) 
+		{
+			if (can && canBe) 
+			{
 				return true;
 			}
 		}

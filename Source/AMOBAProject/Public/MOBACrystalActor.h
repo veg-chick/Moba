@@ -30,12 +30,12 @@ class AMOBAPROJECT_API AMOBACrystalActor : public AMOBABaseActor
 public:
 	AMOBACrystalActor();
 
-	AMOBACrystalActor(FBaseActorProperty ABaseProperty, FBaseActorValue aBaseValue, CrystalRoad aRoad);
+	AMOBACrystalActor(FBaseActorProperty ABaseProperty, FBaseActorValue ABaseValue, CrystalRoad ARoad);
 
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MyMOBA")
-		CrystalRoad road;
+		CrystalRoad Road;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		UStaticMeshComponent* RootComp;
