@@ -658,4 +658,22 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool GetbHaveDragonBuff() { return bHaveDragonBuff; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageOne() { return HeroPack.PackOne; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageTwo() { return HeroPack.PackTwo; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageThree() { return HeroPack.PackThree; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageFour() { return HeroPack.PackFour; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageFive() { return HeroPack.PackFive; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float GetPackageSix() { return HeroPack.PackSix; }
 };
