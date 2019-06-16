@@ -47,19 +47,6 @@ enum class Equip : uint8
 	MagicPotion UMETA(DisplayName = "MagicPotion")
 };
 
-UENUM(BlueprintType)
-enum class Buff : uint8
-{
-	NullBuff UMETA(DisplayName = "NullBuff"),
-	BlueBuff UMETA(DisplayName = "BlueBuff"),
-	RedBuff UMETA(DisplayName = "RedBuff"),
-	DragonBuff UMETA(DisplayName = "DragonBuff"),
-	BlueAndDragon UMETA(DisplayName = "BlueAndDragon"),
-	RedAndDragon UMETA(DisplayName = "RedAndDragon"),
-	RedAndBlue UMETA(DisplayName = "RedAndBlue"),
-	BlueAndRedAndDragon UMETA(DisplayName = "BlueAndRedAndDragon"),
-};
-
 USTRUCT(BlueprintType)
 struct FHeroProperty {
 
@@ -140,12 +127,12 @@ struct FHeroPack
 {
 	GENERATED_BODY()
 
-	Equip PackOne = Equip::NullEquip;
-	Equip PackTwo = Equip::NullEquip;
-	Equip PackThree = Equip::NullEquip;
-	Equip PackFour = Equip::NullEquip;
-	Equip PackFive = Equip::NullEquip;
-	Equip PackSix = Equip::NullEquip;
+	float PackOne = 0.0f;
+	float PackTwo = 0.0f;
+	float PackThree = 0.0f;
+	float PackFour = 0.0f;
+	float PackFive = 0.0f;
+	float PackSix = 0.0f;
 };
 
 USTRUCT(BlueprintType)
@@ -307,8 +294,9 @@ protected:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
 		State HeroState;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "MOBAComponents")
-		Buff HeroBuff;
+	bool bHaveBlueBuff;
+	bool bHaveRedBuff;
+	bool bHaveDragonBuff;
 
 	FTimerManager QTimerManager;
 	FTimerManager WTimerManager;
@@ -378,7 +366,7 @@ protected:
 		void ResetSkills(float Target);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void ServerRPCBuyEquipment(Equip BuyingEquip);
+		void ServerRPCBuyEquipment(float BuyingEquip);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerRPCSellEquipment(float PackageNumber);
@@ -449,7 +437,7 @@ public:
 		void Recall();
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		void BuyEquipment(Equip BuyingEquip);
+		void BuyEquipment(float BuyingEquip);
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		void SellEquipment(float PackageNumber);
@@ -471,7 +459,7 @@ public:
 
 	void AttackToACharacter(AMOBABaseCharacter* BeAttackedCharacter);
 
-	void AddBuff(Buff BuffType, float Time);
+	void AddBuff(float BuffType, float Time);
 
 protected:
 	/** Top down camera */
@@ -549,7 +537,7 @@ public:
 		float& GetGold() { return heroProperty.Gold; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		bool& GetbRecallSucceed() { return heroProperty.bRecallSucceed; }
+		bool& GetbIsRecalling() { return heroProperty.bRecallSucceed; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		bool& GetbCanQ() { return SkillProperty.bCanQ; }
@@ -663,6 +651,11 @@ public:
 		float GetRemainingECD() { return SkillProperty.RemainingWCD; }
 
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
-		Buff GetBuff() { return HeroBuff; }
+		bool GetbHaveBlueBuff() { return bHaveBlueBuff; }
 
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetbHaveRedBuff() { return bHaveRedBuff; }
+
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		bool GetbHaveDragonBuff() { return bHaveDragonBuff; }
 };
