@@ -475,7 +475,8 @@ protected:
 		class UDecalComponent* CursorToWorld;
 
 public:
-
+	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
+		float& GetDeadTime() { return heroProperty.deadtime; }
 	UFUNCTION(BlueprintCallable, Category = "MyMOBA")
 		float& GetHpGrowth() { return heroGrowth.hpGrowth; }
 
